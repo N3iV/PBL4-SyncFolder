@@ -33,58 +33,57 @@ public class UserRoleFileEntity {
 	@Column
 	private boolean updatePermission;
 
-//	public RoleID getRoleIds() {
-//		return roleIds;
-//	}
-//
-//	public void setRoleIds(RoleID roleIds) {
-//		this.roleIds = roleIds;
-//	}
-//
-//	public UserEntity getUser() {
-//		return user;
-//	}
-//
-//	public void setUser(UserEntity user) {
-//		this.user = user;
-//	}
-//
-//	public FileEntity getFile() {
-//		return file;
-//	}
-//
-//	public void setFile(FileEntity file) {
-//		this.file = file;
-//	}
-//
-//	public boolean isReadPermission() {
-//		return readPermission;
-//	}
-//
-//	public void setReadPermission(boolean readPermission) {
-//		this.readPermission = readPermission;
-//	}
-//
-//	public boolean isUpdatePermission() {
-//		return updatePermission;
-//	}
-//
-//	public void setUpdatePermission(boolean updatePermission) {
-//		this.updatePermission = updatePermission;
-//	}
-//
-//	public UserRoleFileEntity(RoleID roleIds, UserEntity user, FileEntity file, boolean readPermission,
-//			boolean updatePermission) {
-//		super();
-//		this.roleIds = roleIds;
-//		this.user = user;
-//		this.file = file;
-//		this.readPermission = readPermission;
-//		this.updatePermission = updatePermission;
-//	}
-//	
-//	public UserRoleFileEntity() {
-//		// TODO Auto-generated constructor stub
-//	}
+	public RoleID getRoleIds() {
+		return roleIds;
+	}
+
+	public void setRoleIds(RoleID roleIds) {
+		this.roleIds = roleIds;
+	}
+
+	public UserEntity getUser() {
+		return user;
+	}
+
+	public void setUser(UserEntity user) {
+		this.user = user;
+	}
+
+	public FileEntity getFile() {
+		return file;
+	}
+
+	public void setFile(FileEntity file) {
+		this.file = file;
+	}
+
+	public boolean isReadPermission() {
+		return readPermission;
+	}
+
+	public void setReadPermission(boolean readPermission) {
+		this.readPermission = readPermission;
+	}
+
+	public boolean isUpdatePermission() {
+		return updatePermission;
+	}
+
+	public void setUpdatePermission(boolean updatePermission) {
+		this.updatePermission = updatePermission;
+	}
+
+	public UserRoleFileEntity(RoleID roleIds, UserEntity user, FileEntity file, boolean readPermission,
+			boolean updatePermission) {
+		this.roleIds = roleIds;
+		this.user = user;
+		this.file = file;
+		this.readPermission = readPermission;
+		this.updatePermission = updatePermission;
+	}
+	
+	public UserRoleFileEntity() {
+		// TODO Auto-generated constructor stub
+	}
 	
 }

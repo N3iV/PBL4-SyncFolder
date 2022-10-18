@@ -26,7 +26,7 @@
          
         <!-- Automatically validates or exports schema DDL to the database when the SessionFactory is created -->
         <!-- validate, create, update, create-drop -->
-        <property name="hibernate.hbm2ddl.auto">create</property>
+        <property name="hibernate.hbm2ddl.auto">create-drop</property>
  
         <!-- Entity mapping -->
         <mapping class="com.SyncFolderPBL4.model.entities.UserEntity" />

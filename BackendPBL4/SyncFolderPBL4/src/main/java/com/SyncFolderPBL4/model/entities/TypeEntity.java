@@ -22,38 +22,36 @@ public class TypeEntity {
 	@OneToMany(mappedBy = "type", fetch = FetchType.LAZY)
 	private List<FileEntity> files;
 
-//	public int getId() {
-//		return id;
-//	}
-//
-//	public void setId(int id) {
-//		this.id = id;
-//	}
-//
-//	public String getName() {
-//		return name;
-//	}
-//
-//	public void setName(String name) {
-//		this.name = name;
-//	}
-//
-//	public List<FileEntity> getFiles() {
-//		return files;
-//	}
-//
-//	public void setFiles(List<FileEntity> files) {
-//		this.files = files;
-//	}
-//
-//	public TypeEntity(int id, String name, List<FileEntity> files) {
-//		super();
-//		this.id = id;
-//		this.name = name;
-//		this.files = files;
-//	}
-//	
-//	public TypeEntity() {
-//		// TODO Auto-generated constructor stub
-//	}
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public List<FileEntity> getFiles() {
+		return files;
+	}
+
+	public void setFiles(List<FileEntity> files) {
+		this.files = files;
+	}
+
+	public TypeEntity(int id, String name, List<FileEntity> files) {
+		this.id = id;
+		this.name = name;
+		this.files = files;
+	}
+	
+	public TypeEntity() {
+	}
 }

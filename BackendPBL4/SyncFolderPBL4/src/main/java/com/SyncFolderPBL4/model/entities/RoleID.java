@@ -16,29 +16,27 @@ public class RoleID implements Serializable {
 	@Column(name = "file_id")
 	private int fileId;
 
-//	public int getUserId() {
-//		return userId;
-//	}
-//
-//	public void setUserId(int userId) {
-//		this.userId = userId;
-//	}
-//
-//	public int getFileId() {
-//		return fileId;
-//	}
-//
-//	public void setFileId(int fileId) {
-//		this.fileId = fileId;
-//	}
-//
-//	public RoleID(int userId, int fileId) {
-//		super();
-//		this.userId = userId;
-//		this.fileId = fileId;
-//	}
-//	public RoleID() {
-//		// TODO Auto-generated constructor stub
-//	}
+	public int getUserId() {
+		return userId;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+
+	public int getFileId() {
+		return fileId;
+	}
+
+	public void setFileId(int fileId) {
+		this.fileId = fileId;
+	}
+
+	public RoleID(int userId, int fileId) {
+		this.userId = userId;
+		this.fileId = fileId;
+	}
+	public RoleID() {
+	}
 	
 }
