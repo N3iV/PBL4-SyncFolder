@@ -20,7 +20,7 @@ public class HomeController extends HttpServlet {
 	
 	private static final long serialVersionUID = -8404487490153647739L;
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {			
-		Session session = HibernateUtils.getSessionFactory().openSession();
+//		Session session = HibernateUtils.getSessionFactory().openSession();
 		
 		RequestDispatcher rd = request.getRequestDispatcher("/views/home.jsp");
 		rd.forward(request, response);
