@@ -22,6 +22,10 @@ const Login = ({ heading, role }) => {
                 initialValues={{
                   remember: true,
                 }}
+                labelCol={{ flex: "110px" }}
+                labelAlign="left"
+                labelWrap
+                wrapperCol={{ flex: 1 }}
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 autoComplete="off"

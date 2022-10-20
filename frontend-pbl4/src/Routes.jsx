@@ -3,6 +3,7 @@ import { Route, Switch } from "react-router-dom";
 import { path } from "./constant/path";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 const Routes = () => {
   return (
@@ -13,6 +14,10 @@ const Routes = () => {
 
       <Route path={path.login}>
         <Login />
+      </Route>
+
+      <Route path={path.register}>
+        <Register />
       </Route>
 
       {/* <Route path={path.notFound}>
