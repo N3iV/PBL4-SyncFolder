@@ -11,16 +11,25 @@ import com.SyncFolderPBL4.utils.HibernateUtils;
 
 public abstract class AbstractDao<T> implements GenericDao<T> {
 	private Class<T> clazz;
-	protected static SessionFactory sessionFactory = HibernateUtils.getSessionFactory();
-	protected static Session session;
+	protected Session session;
 
 	protected AbstractDao(Class<T> clazz) {
 		this.clazz = clazz;
 	}
 
 	@Override
-	public T findOneById(Long id) {
-		return getCurrentSession().get(clazz, id);
+	public void setSession(Session s) {
+		this.session = s;
+	}
+
+	@Override
+	public Session getSession() {
+		return session;
+	}
+
+	@Override
+	public T findOneById(Integer id) {
+		return session.get(clazz, id);
 	}
 
 	@Override
@@ -30,8 +39,8 @@ public abstract class AbstractDao<T> implements GenericDao<T> {
 	}
 
 	@Override
-	public Long save(T obj) {
-		return (Long) getCurrentSession().save(obj);
+	public Integer save(T obj) {
+		return (Integer)session.save(obj);
 	}
 
 	protected Query<T> setListParamsInHQL(Query<T> query, Object... params) {
@@ -42,7 +51,4 @@ public abstract class AbstractDao<T> implements GenericDao<T> {
 
 	}
 
-	protected Session getCurrentSession() {
-		return sessionFactory.getCurrentSession();
-	}
 }

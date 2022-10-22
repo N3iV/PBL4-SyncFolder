@@ -1,5 +1,6 @@
 package com.SyncFolderPBL4.model.entities;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -17,6 +18,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.google.gson.annotations.Expose;
+
 @Entity
 @Table(name = "User")
 public class UserEntity {
@@ -26,46 +29,58 @@ public class UserEntity {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Expose
 	private int id;
 	
 	@Column
+	@Expose
 	private String username;
 	
 	@Column(nullable = false)
+	@Expose(serialize = false)
 	private String password;
 	
 	@Column
+	@Expose
 	private String firstname;
 	
 	@Column
+	@Expose
 	private String lastname;
 	
 	@Column
+	@Expose
 	@Temporal(value = TemporalType.DATE)
 	private Date birthday;
 	
 	@Column
+	@Expose
 	private String image;
 	
 	@Column
+	@Expose
 	private boolean gender;
 	
 	@Column
+	@Expose
 	private String phonenumber;
 	
 	@Column
+	@Expose
 	private String email;
 	
 	@Column(name = "created_date")
 	@Temporal(value = TemporalType.DATE)
+	@Expose
 	private Date createdDate;
 	
 	@Column(name = "modified_date")
 	@Temporal(value = TemporalType.DATE)
+	@Expose
 	private Date modifiedDate;
 	
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-	private List<UserRoleFileEntity> roles;
+	private List<UserRoleFileEntity> roles = new ArrayList<>();
 
 	public int getId() {
 		return id;

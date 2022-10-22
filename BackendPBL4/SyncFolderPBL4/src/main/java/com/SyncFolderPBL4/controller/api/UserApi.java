@@ -15,6 +15,7 @@ import com.SyncFolderPBL4.model.service.IUserService;
 import com.SyncFolderPBL4.model.service.impl.UserService;
 import com.SyncFolderPBL4.utils.HttpUtils;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @WebServlet(urlPatterns = {"/user","/user/register"})
 
@@ -23,7 +24,6 @@ public class UserApi extends HttpServlet {
 	private static Gson gson;
 	private static PrintWriter out;
 	private IUserService userService;
-//	private String defaultPath = getServletContext().getRealPath("");
 	
 	public UserApi() {
 		userService = new UserService();
@@ -39,12 +39,14 @@ public class UserApi extends HttpServlet {
 			throws ServletException, IOException {
 		response.setContentType("application/json; charset=UTF-8");
 		request.setCharacterEncoding("UTF-8");
-		gson = new Gson();
+		gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
+								.setPrettyPrinting()
+								.create();
 		out = response.getWriter();
 		UserEntity user = new UserEntity();
 		if(HttpUtils.getPathURL(request.getRequestURI()).equals("register")) {
 			user = gson.fromJson(HttpUtils.getjson(request.getReader()), UserEntity.class);
-			Long id = userService.save(user);
+			Integer id = userService.createUser(user, getServletContext().getRealPath("") + SystemConstant.CONCAT_PATH);
 			if (id == null) {
 				response.setStatus(405);
 				out.print(gson.toJson(HttpUtils.toJsonObject("Đăng kí thất bại")));

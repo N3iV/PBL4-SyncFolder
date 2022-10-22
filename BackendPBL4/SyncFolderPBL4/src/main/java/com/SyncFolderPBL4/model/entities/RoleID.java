@@ -1,6 +1,7 @@
 package com.SyncFolderPBL4.model.entities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -36,6 +37,24 @@ public class RoleID implements Serializable {
 		this.userId = userId;
 		this.fileId = fileId;
 	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(fileId, userId);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RoleID other = (RoleID) obj;
+		return fileId == other.fileId && userId == other.userId;
+	}
+
 	public RoleID() {
 	}
 	

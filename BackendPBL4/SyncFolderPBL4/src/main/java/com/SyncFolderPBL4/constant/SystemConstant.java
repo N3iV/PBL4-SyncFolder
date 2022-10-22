@@ -4,5 +4,5 @@ import java.io.File;
 
 public class SystemConstant {
 	public static final String MESSAGE = "message";
-	public static final String CONCAT_PATH = "data";
+	public static final String CONCAT_PATH = "StoreLocation";
 }

@@ -6,6 +6,8 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.service.ServiceRegistry;
 
+import com.SyncFolderPBL4.model.dao.impl.AbstractDao;
+
 public class HibernateUtils {
 
   private static final SessionFactory sessionFactory = buildSessionFactory();
@@ -30,5 +32,15 @@ public class HibernateUtils {
   public static void shutdown() {
       getSessionFactory().close();
   }
-
+  
+  public static void setListSession(Object...objects)
+  {
+	  for(Object i : objects)
+	  {
+		  if (i instanceof AbstractDao)
+		  {
+			  ((AbstractDao) i).setSession(HibernateUtils.getSessionFactory().getCurrentSession());
+		  }
+	  }
+  }
 }

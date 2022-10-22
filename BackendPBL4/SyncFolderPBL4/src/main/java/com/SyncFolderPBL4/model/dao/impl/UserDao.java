@@ -7,10 +7,11 @@ public class UserDao extends AbstractDao<UserEntity> implements IUserDao {
 
 	public UserDao(Class<UserEntity> clazz) {
 		super(clazz);
+		
 	}
 	@Override
 	public Boolean checkEmail(String email) {
-		UserEntity user = setListParamsInHQL(getCurrentSession().createQuery("from UserEntity u where u.email = ?0",UserEntity.class), 
+		UserEntity user = setListParamsInHQL(session.createQuery("from UserEntity u where u.email = ?0",UserEntity.class), 
 							email)
 							.uniqueResult();
 		return (user == null) ? true : false;

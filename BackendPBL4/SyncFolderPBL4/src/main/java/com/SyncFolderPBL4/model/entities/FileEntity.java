@@ -1,5 +1,6 @@
 package com.SyncFolderPBL4.model.entities;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +19,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Type;
+
 @Entity
 @Table(name = "File")
 public class FileEntity {
@@ -33,6 +36,7 @@ public class FileEntity {
 	private String name;
 	
 	@Column
+	@Type(type = "text")
 	private String path;
 	
 	@Column(name = "created_date")
@@ -44,7 +48,7 @@ public class FileEntity {
 	private Date modifiedDate;
 	
 	@OneToMany(mappedBy = "file", fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
-	private List<UserRoleFileEntity> roles;
+	private List<UserRoleFileEntity> roles = new ArrayList<>();
 	
 	@ManyToOne
 	@JoinColumn(name = "type_id", foreignKey = @ForeignKey(name = "fk_file_type"))
@@ -114,9 +118,8 @@ public class FileEntity {
 		this.type = type;
 	}
 
-	public FileEntity(int id, int nodeId, String name, String path, Date createdDate, Date modifiedDate,
+	public FileEntity(int nodeId, String name, String path, Date createdDate, Date modifiedDate,
 			List<UserRoleFileEntity> roles, TypeEntity type) {
-		this.id = id;
 		this.nodeId = nodeId;
 		this.name = name;
 		this.path = path;

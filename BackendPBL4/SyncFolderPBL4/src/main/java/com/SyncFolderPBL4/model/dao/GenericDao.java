@@ -2,8 +2,13 @@ package com.SyncFolderPBL4.model.dao;
 
 import java.util.List;
 
+import org.hibernate.Session;
+
 public interface GenericDao<T> {
-	T findOneById(Long id);
+	T findOneById(Integer id);
 	List<T> findAll();
-	Long save(T obj);
+	Integer save(T obj);
+	Session getSession();
+	void setSession(Session s);
+	
 }
