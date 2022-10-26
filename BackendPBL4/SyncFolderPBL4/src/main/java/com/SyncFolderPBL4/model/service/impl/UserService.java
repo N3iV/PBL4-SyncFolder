@@ -47,12 +47,18 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public UserEntity findOne(UserEntity obj) {
-		return null;
+	public UserEntity findOne(UserEntity user) {
+		HibernateUtils.getSessionFactory().getCurrentSession().beginTransaction();
+		HibernateUtils.setListSession(userDao);
+		
+		UserEntity userResult = userDao.findOneByEmailPassword(user.getEmail(), user.getPassword());
+		
+		HibernateUtils.getSessionFactory().getCurrentSession().getTransaction().commit();
+		return userResult;
 	}
 
 	@Override
-	public Integer save(UserEntity obj) {
+	public Integer save(UserEntity user) {
 		return null;
 	}
 

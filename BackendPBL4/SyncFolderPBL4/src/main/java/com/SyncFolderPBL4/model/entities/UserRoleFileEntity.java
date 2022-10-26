@@ -3,7 +3,7 @@ package com.SyncFolderPBL4.model.entities;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
@@ -17,14 +17,14 @@ public class UserRoleFileEntity {
 	@EmbeddedId
 	private RoleID roleIds;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId(value = "userId")
-	@JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_user_role"))
+	@JoinColumn(name = "user_id", referencedColumnName = "id")
 	private UserEntity user;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId(value = "fileId")
-	@JoinColumn(name = "file_id", foreignKey = @ForeignKey(name = "fk_file_role"))
+	@JoinColumn(name = "file_id", referencedColumnName = "id")
 	private FileEntity file;
 	
 	@Column

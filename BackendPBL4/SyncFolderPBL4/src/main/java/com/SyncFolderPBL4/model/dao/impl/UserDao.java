@@ -16,4 +16,11 @@ public class UserDao extends AbstractDao<UserEntity> implements IUserDao {
 							.uniqueResult();
 		return (user == null) ? true : false;
 	}
+	@Override
+	public UserEntity findOneByEmailPassword(String email, String password) {
+		UserEntity user = setListParamsInHQL(session.createQuery("from UserEntity u where u.email = ?0 and u.password = ?1",UserEntity.class), 
+				email,password)
+				.uniqueResult();
+		return user;
+	}
 }

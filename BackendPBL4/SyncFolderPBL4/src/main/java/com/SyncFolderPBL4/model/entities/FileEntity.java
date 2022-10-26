@@ -7,8 +7,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -35,7 +33,7 @@ public class FileEntity {
 	@Column
 	private String name;
 	
-	@Column
+	@Column(nullable = false)
 	@Type(type = "text")
 	private String path;
 	
@@ -47,11 +45,11 @@ public class FileEntity {
 	@Temporal(value = TemporalType.DATE)
 	private Date modifiedDate;
 	
-	@OneToMany(mappedBy = "file", fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "file",cascade = CascadeType.REMOVE)
 	private List<UserRoleFileEntity> roles = new ArrayList<>();
 	
 	@ManyToOne
-	@JoinColumn(name = "type_id", foreignKey = @ForeignKey(name = "fk_file_type"))
+	@JoinColumn(name = "type_id")
 	private TypeEntity type;
 
 	public int getId() {

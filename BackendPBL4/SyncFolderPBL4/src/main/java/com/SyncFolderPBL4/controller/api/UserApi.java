@@ -17,34 +17,43 @@ import com.SyncFolderPBL4.utils.HttpUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-@WebServlet(urlPatterns = {"/user","/user/register"})
+@WebServlet(urlPatterns = { "/user", "/user/register", "/user/login", "/user/file/*" })
 
 public class UserApi extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static Gson gson;
 	private static PrintWriter out;
 	private IUserService userService;
-	
+
 	public UserApi() {
 		userService = new UserService();
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-//		String applicationPath = getServletContext().getRealPath("");
-//		System.out.println(applicationPath + SystemConstant.CONCAT_PATH);
+		response.setContentType("application/json; charset=UTF-8");
+		request.setCharacterEncoding("UTF-8");
+		gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
+				.setPrettyPrinting()
+				.create();
+		out = response.getWriter();
+		
+		Integer id = Integer.parseInt(request.getPathInfo().split("/")[1]);
+		
+		
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+
 		response.setContentType("application/json; charset=UTF-8");
 		request.setCharacterEncoding("UTF-8");
 		gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
-								.setPrettyPrinting()
-								.create();
+				.setPrettyPrinting()
+				.create();
 		out = response.getWriter();
 		UserEntity user = new UserEntity();
-		if(HttpUtils.getPathURL(request.getRequestURI()).equals("register")) {
+		if (HttpUtils.getPathURL(request.getRequestURI()).equals("register")) {
 			user = gson.fromJson(HttpUtils.getjson(request.getReader()), UserEntity.class);
 			Integer id = userService.createUser(user, getServletContext().getRealPath("") + SystemConstant.CONCAT_PATH);
 			if (id == null) {
@@ -53,8 +62,17 @@ public class UserApi extends HttpServlet {
 			} else {
 				out.print(gson.toJson(userService.findOne(id)));
 			}
+		} else if ((HttpUtils.getPathURL(request.getRequestURI()).equals("login"))) {
+			user = gson.fromJson(HttpUtils.getjson(request.getReader()), UserEntity.class);
+			UserEntity userFind = userService.findOne(user);
+			if (userFind == null) {
+				response.setStatus(405);
+				out.print(gson.toJson(HttpUtils.toJsonObject("Đăng nhập thất bại")));
+			} else {
+				out.print(gson.toJson(HttpUtils.toJsonObject("Đăng nhập thành công")));
+			}
 		}
-		
+
 	}
 
 }

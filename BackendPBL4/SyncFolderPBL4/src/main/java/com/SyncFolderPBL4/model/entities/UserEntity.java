@@ -3,17 +3,14 @@ package com.SyncFolderPBL4.model.entities;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -65,7 +62,7 @@ public class UserEntity {
 	@Expose
 	private String phonenumber;
 	
-	@Column
+	@Column(nullable = false)
 	@Expose
 	private String email;
 	
@@ -79,7 +76,7 @@ public class UserEntity {
 	@Expose
 	private Date modifiedDate;
 	
-	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
 	private List<UserRoleFileEntity> roles = new ArrayList<>();
 
 	public int getId() {
