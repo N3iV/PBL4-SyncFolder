@@ -9,14 +9,18 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.google.gson.annotations.Expose;
+
 @Entity
 @Table(name = "Type")
 public class TypeEntity {
 	
 	@Id
+	@Expose
 	private int id;
 	
 	@Column
+	@Expose
 	private String name;
 	
 	@OneToMany(mappedBy = "type", fetch = FetchType.LAZY)

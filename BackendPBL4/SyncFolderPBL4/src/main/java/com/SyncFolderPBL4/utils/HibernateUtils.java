@@ -43,4 +43,13 @@ public class HibernateUtils {
 		  }
 	  }
   }
+  public static void startTrans(Object...objects)
+  {
+	  HibernateUtils.getSessionFactory().getCurrentSession().beginTransaction();
+	  HibernateUtils.setListSession(objects);
+  }
+  public static void commitTrans()
+  {
+	  HibernateUtils.getSessionFactory().getCurrentSession().getTransaction().commit();
+  }
 }

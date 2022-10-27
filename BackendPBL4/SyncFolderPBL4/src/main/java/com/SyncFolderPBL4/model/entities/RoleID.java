@@ -6,15 +6,19 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import com.google.gson.annotations.Expose;
+
 @Embeddable
 public class RoleID implements Serializable {
 	
 	private static final long serialVersionUID = 330144007988058875L;
 
 	@Column(name = "user_id")
+	@Expose
 	private int userId;
 	
 	@Column(name = "file_id")
+	@Expose
 	private int fileId;
 
 	public int getUserId() {

@@ -34,7 +34,6 @@ public abstract class AbstractDao<T> implements GenericDao<T> {
 
 	@Override
 	public List<T> findAll() {
-
 		return null;
 	}
 

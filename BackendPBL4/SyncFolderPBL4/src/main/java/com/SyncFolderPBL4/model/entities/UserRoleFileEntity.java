@@ -9,13 +9,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
 
+import com.google.gson.annotations.Expose;
+
 
 @Entity
 @Table(name = "user_role_file")
 public class UserRoleFileEntity {
 	
 	@EmbeddedId
+	@Expose
 	private RoleID roleIds;
+	
+	@Column(name = "owner_id",nullable = false)
+	private int ownerId;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId(value = "userId")
@@ -28,9 +34,11 @@ public class UserRoleFileEntity {
 	private FileEntity file;
 	
 	@Column
+	@Expose
 	private boolean readPermission;
 	
 	@Column
+	@Expose
 	private boolean updatePermission;
 
 	public RoleID getRoleIds() {
@@ -72,16 +80,31 @@ public class UserRoleFileEntity {
 	public void setUpdatePermission(boolean updatePermission) {
 		this.updatePermission = updatePermission;
 	}
+	
+	public int getOwnerId() {
+		return ownerId;
+	}
 
-	public UserRoleFileEntity(RoleID roleIds, UserEntity user, FileEntity file, boolean readPermission,
+	public void setOwnerId(int ownerId) {
+		this.ownerId = ownerId;
+	}
+
+	public UserRoleFileEntity(RoleID roleIds, int ownerId, UserEntity user, FileEntity file, boolean readPermission,
 			boolean updatePermission) {
 		this.roleIds = roleIds;
+		this.ownerId = ownerId;
 		this.user = user;
 		this.file = file;
 		this.readPermission = readPermission;
 		this.updatePermission = updatePermission;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "\n UserRoleFileEntity [roleIds=" + roleIds + ", user=" + user + ", file=" + file + ", readPermission="
+				+ readPermission + ", updatePermission=" + updatePermission + "]";
+	}
+
 	public UserRoleFileEntity() {
 		// TODO Auto-generated constructor stub
 	}

@@ -19,30 +19,37 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Type;
 
+import com.google.gson.annotations.Expose;
+
 @Entity
 @Table(name = "File")
 public class FileEntity {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Expose
 	private int id;
-	
 	@Column(name = "node_id",nullable = false)
+	@Expose
 	private int nodeId;
 	
 	@Column
+	@Expose
 	private String name;
 	
 	@Column(nullable = false)
 	@Type(type = "text")
+	@Expose
 	private String path;
 	
 	@Column(name = "created_date")
 	@Temporal(value = TemporalType.DATE)
+	@Expose
 	private Date createdDate;
 	
 	@Column(name = "modified_date")
 	@Temporal(value = TemporalType.DATE)
+	@Expose
 	private Date modifiedDate;
 	
 	@OneToMany(mappedBy = "file",cascade = CascadeType.REMOVE)
@@ -50,6 +57,7 @@ public class FileEntity {
 	
 	@ManyToOne
 	@JoinColumn(name = "type_id")
+	@Expose
 	private TypeEntity type;
 
 	public int getId() {
@@ -127,6 +135,12 @@ public class FileEntity {
 		this.type = type;
 	}
 	
+	@Override
+	public String toString() {
+		return "\nFileEntity [id=" + id + ", nodeId=" + nodeId + ", name=" + name + ", path=" + path + ", createdDate="
+				+ createdDate + ", modifiedDate=" + modifiedDate + ", type=" + type + "]";
+	}
+
 	public FileEntity() {
 		// TODO Auto-generated constructor stub
 	}

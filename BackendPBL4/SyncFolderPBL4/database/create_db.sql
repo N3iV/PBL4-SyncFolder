@@ -30,6 +30,7 @@ CREATE TABLE user(
 CREATE TABLE user_role_file(
 	file_id INT,
     user_id INT,
+    owner_id INT NOT NULL,
     readPermission BIT NOT NULL,
     updatePermission BIT NOT NULL,
     CONSTRAINT PK_user_file PRIMARY KEY (file_id,user_id),

@@ -1,7 +1,11 @@
 package com.SyncFolderPBL4.model.service.impl;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.SyncFolderPBL4.constant.SystemConstant;
 import com.SyncFolderPBL4.model.dao.IFileDao;
@@ -38,22 +42,20 @@ public class UserService implements IUserService {
 
 	@Override
 	public UserEntity findOne(Integer id) {
-		HibernateUtils.getSessionFactory().getCurrentSession().beginTransaction();
-		HibernateUtils.setListSession(userDao);
+		HibernateUtils.startTrans(userDao);
 		UserEntity user = userDao.findOneById(id);
 
-		HibernateUtils.getSessionFactory().getCurrentSession().getTransaction().commit();
+		HibernateUtils.commitTrans();
 		return user;
 	}
 
 	@Override
 	public UserEntity findOne(UserEntity user) {
-		HibernateUtils.getSessionFactory().getCurrentSession().beginTransaction();
-		HibernateUtils.setListSession(userDao);
+		HibernateUtils.startTrans(userDao);
 		
 		UserEntity userResult = userDao.findOneByEmailPassword(user.getEmail(), user.getPassword());
 		
-		HibernateUtils.getSessionFactory().getCurrentSession().getTransaction().commit();
+		HibernateUtils.commitTrans();
 		return userResult;
 	}
 
@@ -65,8 +67,7 @@ public class UserService implements IUserService {
 	@Override
 	public Integer createUser(UserEntity user, String dirPath) {
 		Integer idUser = null;
-		HibernateUtils.getSessionFactory().getCurrentSession().beginTransaction();
-		HibernateUtils.setListSession(userDao,typeDao,fileDao,roleDao);
+		HibernateUtils.startTrans(userDao,typeDao,fileDao,roleDao);
 		
 		if (userDao.checkEmail(user.getEmail())) {
 			user.setCreatedDate(new Date());
@@ -78,7 +79,8 @@ public class UserService implements IUserService {
 				
 				File userDir = FileUtils.createNewDir(userRootPath);
 				
-				FileEntity file = new FileBuilder().addNodeId(0)
+				FileEntity file = new FileBuilder()
+						.addNodeId(0)
 						.addName(user.getEmail().substring(0, user.getEmail().indexOf("@")))
 						.addPath(userRootPath.substring(userRootPath.indexOf(SystemConstant.CONCAT_PATH)))
 						.addCreatedDate(new Date())
@@ -87,6 +89,7 @@ public class UserService implements IUserService {
 						.build();
 				Integer idFile = fileDao.save(file);
 				UserRoleFileEntity role = new UserRoleFileEntity(new RoleID(idUser,idFile),
+																idUser,
 																userDao.findOneById(idUser),
 																fileDao.findOneById(idFile),
 																true,true);
@@ -94,8 +97,10 @@ public class UserService implements IUserService {
 			}
 
 		}
-		HibernateUtils.getSessionFactory().getCurrentSession().getTransaction().commit();
+		HibernateUtils.commitTrans();
 		return idUser;
 	}
+
+	
 
 }
