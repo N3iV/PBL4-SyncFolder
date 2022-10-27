@@ -2,6 +2,8 @@ import { Breadcrumb, List } from "antd";
 import React from "react";
 import { FaFileExcel, FaFolder } from "react-icons/fa";
 import Default from "../layout/Default";
+import { Link } from "react-router-dom";
+import { path } from "../constant/path";
 const Home = () => {
   const data = [
     {
@@ -38,12 +40,15 @@ const Home = () => {
       <List
         itemLayout="horizontal"
         dataSource={data}
-        renderItem={(item) => (
+        renderItem={(item, idx) => (
           <List.Item className="hover:bg-slate-200 px-4">
-            <div className="flex items-center  cursor-pointer">
+            <Link
+              to={`${path.folders}/${idx}`}
+              className="flex items-center  cursor-pointer"
+            >
               <span className="text-xl">{item.icon}</span>
               <span className="ml-4 text-xl text-gray-500">{item.title}</span>
-            </div>
+            </Link>
           </List.Item>
         )}
       />

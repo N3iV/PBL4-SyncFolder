@@ -217,14 +217,24 @@ a {
 .ant-menu-item-selected,
 .ant-menu-item a:hover,
 .ant-menu-item-selected a,
-.ant-menu-item-selected a:hover {
+.ant-menu-item-selected a:hover,
+.ant-menu-submenu-selected,
+.ant-menu-submenu:hover
+  > .ant-menu-submenu-title
+  > .ant-menu-submenu-expand-icon,
+.ant-menu-submenu:hover > .ant-menu-submenu-title > .ant-menu-submenu-arrow {
   color: $--color-secondary;
 }
 .profile-menu .ant-menu-item {
   display: flex;
   align-items: center;
 }
-
+.ant-menu-vertical .ant-menu-item::after,
+.ant-menu-vertical-left .ant-menu-item::after,
+.ant-menu-vertical-right .ant-menu-item::after,
+.ant-menu-inline .ant-menu-item::after {
+  border-right: 3px solid $--color-secondary;
+}
 .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn,
 .ant-tabs-tab:hover {
   color: $--color-secondary;
