@@ -32,10 +32,6 @@ const Register = () => {
             initialValues={{
               remember: true,
             }}
-            labelCol={{ flex: "80px" }}
-            labelAlign="left"
-            labelWrap
-            wrapperCol={{ flex: 1 }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="off"
@@ -56,8 +52,8 @@ const Register = () => {
             <Form.Item
               label="Email"
               name="email"
-              validateStatus="error"
-              help={error || null}
+              // validateStatus="error"
+              // help={error || null}
             >
               <Input />
             </Form.Item>

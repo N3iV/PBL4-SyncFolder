@@ -22,10 +22,6 @@ const Login = ({ heading, role }) => {
                 initialValues={{
                   remember: true,
                 }}
-                labelCol={{ flex: "110px" }}
-                labelAlign="left"
-                labelWrap
-                wrapperCol={{ flex: 1 }}
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 autoComplete="off"
@@ -44,8 +40,8 @@ const Login = ({ heading, role }) => {
                   label="Mật khẩu"
                   name="password"
                   //   rules={rules.password}
-                  validateStatus="error"
-                  help={error || null}
+                  // validateStatus="error"
+                  // help={error || null}
                 >
                   <Input.Password />
                 </Form.Item>
