@@ -3,7 +3,7 @@ INSERT INTO `file` (`id`,`name`,`node_id`,`path`,`created_date`,`modified_date`,
 INSERT INTO `file` (`id`,`name`,`node_id`,`path`,`created_date`,`modified_date`,`type_id`) VALUES (2,'a.txt',1,'StoreLocation\\dangvannhatminh33\\a.txt','2022-10-26','2022-10-26',2);
 INSERT INTO `file` (`id`,`name`,`node_id`,`path`,`created_date`,`modified_date`,`type_id`) VALUES (3,'b.txt',1,'StoreLocation\\dangvannhatminh33\\b.txt','2022-10-26','2022-10-26',2);
 INSERT INTO `file` (`id`,`name`,`node_id`,`path`,`created_date`,`modified_date`,`type_id`) VALUES (4,'c.txt',1,'StoreLocation\\dangvannhatminh33\\c.txt','2022-10-26','2022-10-26',2);
-INSERT INTO `file` (`id`,`name`,`node_id`,`path`,`created_date`,`modified_date`,`type_id`) VALUES (5,'d.txt',1,'StoreLocation\\dangvannhatminh33\\d.txt','2022-10-26','2022-10-26',2);
+INSERT INTO `file` (`id`,`name`,`node_id`,`path`,`created_date`,`modified_date`,`type_id`) VALUES (5,'d.pdf',1,'StoreLocation\\dangvannhatminh33\\d.pdf','2022-10-26','2022-10-26',2);
 INSERT INTO `file` (`id`,`name`,`node_id`,`path`,`created_date`,`modified_date`,`type_id`) VALUES (6,'e.txt',1,'StoreLocation\\dangvannhatminh33\\e.txt','2022-10-26','2022-10-26',2);
 INSERT INTO `file` (`id`,`name`,`node_id`,`path`,`created_date`,`modified_date`,`type_id`) VALUES (7,'f.txt',1,'StoreLocation\\dangvannhatminh33\\f.txt','2022-10-26','2022-10-26',2);
 INSERT INTO `file` (`id`,`name`,`node_id`,`path`,`created_date`,`modified_date`,`type_id`) VALUES (8,'g.txt',1,'StoreLocation\\dangvannhatminh33\\g.txt','2022-10-26','2022-10-26',2);
