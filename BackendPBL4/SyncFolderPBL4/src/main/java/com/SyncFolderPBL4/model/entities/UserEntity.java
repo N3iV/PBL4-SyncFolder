@@ -10,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -19,63 +21,71 @@ import com.google.gson.annotations.Expose;
 
 @Entity
 @Table(name = "User")
+@NamedQueries({
+	@NamedQuery(name = UserEntity.Q_GET_EMAIL, query = "from UserEntity u where u.email = ?0"),
+	@NamedQuery(name = UserEntity.Q_FIND_ONE_BY_EMAIL_PASSWORD, query = "from UserEntity u where u.email = ?0 and u.password = ?1") 
+})
+
 public class UserEntity {
-	
+
+	public static final String Q_GET_EMAIL = "Q_GET_EMAIL";
+	public static final String Q_FIND_ONE_BY_EMAIL_PASSWORD = "Q_FIND_ONE_BY_EMAIL_PASSWORD";
+
 	public UserEntity() {
 	}
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	private int id;
-	
+
 	@Column
 	@Expose
 	private String username;
-	
+
 	@Column(nullable = false)
 	@Expose(serialize = false)
 	private String password;
-	
+
 	@Column
 	@Expose
 	private String firstname;
-	
+
 	@Column
 	@Expose
 	private String lastname;
-	
+
 	@Column
 	@Expose
 	@Temporal(value = TemporalType.DATE)
 	private Date birthday;
-	
+
 	@Column
 	@Expose
 	private String image;
-	
+
 	@Column
 	@Expose
 	private boolean gender;
-	
+
 	@Column
 	@Expose
 	private String phonenumber;
-	
+
 	@Column(nullable = false)
 	@Expose
 	private String email;
-	
+
 	@Column(name = "created_date")
 	@Temporal(value = TemporalType.DATE)
 	@Expose
 	private Date createdDate;
-	
+
 	@Column(name = "modified_date")
 	@Temporal(value = TemporalType.DATE)
 	@Expose
 	private Date modifiedDate;
-	
+
 	@OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
 	private List<UserRoleFileEntity> roles = new ArrayList<>();
 
@@ -183,7 +193,6 @@ public class UserEntity {
 		this.roles = roles;
 	}
 
-
 	public UserEntity(int id, String username, String password, String firstname, String lastname, Date birthday,
 			String image, boolean gender, String phonenumber, String email, Date createdDate, Date modifiedDate,
 			List<UserRoleFileEntity> roles) {
@@ -201,8 +210,5 @@ public class UserEntity {
 		this.modifiedDate = modifiedDate;
 		this.roles = roles;
 	}
-	
-	
-	
-	
+
 }

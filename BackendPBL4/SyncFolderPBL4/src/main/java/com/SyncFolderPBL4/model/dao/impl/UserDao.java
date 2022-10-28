@@ -11,14 +11,14 @@ public class UserDao extends AbstractDao<UserEntity> implements IUserDao {
 	}
 	@Override
 	public Boolean checkEmail(String email) {
-		UserEntity user = setListParamsInHQL(session.createQuery("from UserEntity u where u.email = ?0",UserEntity.class), 
+		UserEntity user = setListParamsInHQL(session.createNamedQuery(UserEntity.Q_GET_EMAIL, UserEntity.class), 
 							email)
 							.uniqueResult();
 		return (user == null) ? true : false;
 	}
 	@Override
 	public UserEntity findOneByEmailPassword(String email, String password) {
-		UserEntity user = setListParamsInHQL(session.createQuery("from UserEntity u where u.email = ?0 and u.password = ?1",UserEntity.class), 
+		UserEntity user = setListParamsInHQL(session.createNamedQuery(UserEntity.Q_FIND_ONE_BY_EMAIL_PASSWORD, UserEntity.class), 
 				email,password)
 				.uniqueResult();
 		return user;
