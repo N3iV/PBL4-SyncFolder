@@ -9,6 +9,7 @@ import com.SyncFolderPBL4.model.entities.UserRoleFileEntity;
 
 public interface IFileBuilder {
 	FileBuilder addNodeId(int nodeid);
+	FileBuilder addOwnerId(int ownerId);
 	FileBuilder addName(String name);
 	FileBuilder addPath(String path);
 	FileBuilder addCreatedDate(Date date);

@@ -20,8 +20,6 @@ public class UserRoleFileEntity {
 	@Expose
 	private RoleID roleIds;
 	
-	@Column(name = "owner_id",nullable = false)
-	private int ownerId;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId(value = "userId")
@@ -81,18 +79,10 @@ public class UserRoleFileEntity {
 		this.updatePermission = updatePermission;
 	}
 	
-	public int getOwnerId() {
-		return ownerId;
-	}
 
-	public void setOwnerId(int ownerId) {
-		this.ownerId = ownerId;
-	}
-
-	public UserRoleFileEntity(RoleID roleIds, int ownerId, UserEntity user, FileEntity file, boolean readPermission,
+	public UserRoleFileEntity(RoleID roleIds, UserEntity user, FileEntity file, boolean readPermission,
 			boolean updatePermission) {
 		this.roleIds = roleIds;
-		this.ownerId = ownerId;
 		this.user = user;
 		this.file = file;
 		this.readPermission = readPermission;

@@ -29,9 +29,14 @@ public class FileEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	private int id;
+	
 	@Column(name = "node_id",nullable = false)
 	@Expose
 	private int nodeId;
+	
+	@Column(name = "owner_id",nullable = false)
+	@Expose
+	private int ownerId;
 	
 	@Column
 	@Expose
@@ -123,9 +128,17 @@ public class FileEntity {
 	public void setType(TypeEntity type) {
 		this.type = type;
 	}
+	public int getOwnerId() {
+		return ownerId;
+	}
 
-	public FileEntity(int nodeId, String name, String path, Date createdDate, Date modifiedDate,
+	public void setOwnerId(int ownerId) {
+		this.ownerId = ownerId;
+	}
+
+	public FileEntity(int nodeId,int ownerId, String name, String path, Date createdDate, Date modifiedDate,
 			List<UserRoleFileEntity> roles, TypeEntity type) {
+		this.ownerId = ownerId;
 		this.nodeId = nodeId;
 		this.name = name;
 		this.path = path;

@@ -25,6 +25,8 @@ public class FileBuilder implements IFileBuilder {
 	
 	private int nodeId;
 	
+	private int ownerId;
+	
 	private String name;
 	
 	private String path;
@@ -80,8 +82,15 @@ public class FileBuilder implements IFileBuilder {
 	}
 
 	@Override
-	public FileEntity build() {
-		return new FileEntity(nodeId, name, path, createdDate, modifiedDate,roles,type);
+	public FileBuilder addOwnerId(int ownerId) {
+		this.ownerId = ownerId;
+		return this;
 	}
+	
+	@Override
+	public FileEntity build() {
+		return new FileEntity(nodeId, ownerId, name, path, createdDate, modifiedDate,roles,type);
+	}
+
 
 }

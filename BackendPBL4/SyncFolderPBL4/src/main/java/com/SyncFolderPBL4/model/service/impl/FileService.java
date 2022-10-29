@@ -24,8 +24,8 @@ import com.SyncFolderPBL4.model.entities.UserRoleFileEntity;
 import com.SyncFolderPBL4.model.service.IFileService;
 import com.SyncFolderPBL4.utils.HibernateUtils;
 
-public class FileService implements IFileService{
-	
+public class FileService implements IFileService {
+
 	private IUserDao userDao;
 	private ITypeDao typeDao;
 	private IFileDao fileDao;
@@ -37,13 +37,14 @@ public class FileService implements IFileService{
 		fileDao = new FileDao(FileEntity.class);
 		roleDao = new RoleDao(UserRoleFileEntity.class);
 	}
+
 	@Override
 	public FileEntity findOne(Integer fileId) {
 		FileEntity result = null;
 		HibernateUtils.startTrans(fileDao);
-		
+
 		result = fileDao.findOneById(fileId);
-		
+
 		HibernateUtils.commitTrans();
 		return result;
 	}
@@ -59,31 +60,26 @@ public class FileService implements IFileService{
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 	@Override
-	public Map<String,Object> getFileUsers(int id, int nodeId, int page) {
-		List<FileEntity> filesResult = new ArrayList<>();
-		Map<String,Object> result = new HashMap<>();
-		HibernateUtils.startTrans(roleDao);
-		
-		BigInteger maxItem = roleDao.countFilesByUserIdAndNodeId(id, nodeId);
-		int numPage = (int)(Math.ceil((double)maxItem.intValue()/ SystemConstant.MAX_PAGE_SIZE));
-		
-		List<UserRoleFileEntity> roles = roleDao.getFilesByUserIdAndNodeId(id, nodeId, page);
-		
-		filesResult = roles.stream()
-							.map(UserRoleFileEntity::getFile)
-							.collect(Collectors.toList());
-		result.put("files", filesResult);
+	public Map<String, Object> getFileUsers(int id, int nodeId, int page) {
+		Map<String, Object> result = new HashMap<>();
+		HibernateUtils.startTrans(fileDao);
+
+		Long maxItem = fileDao.countFilesByOwnerIdAndNodeId(id, nodeId);
+		int numPage = (int) (Math.ceil((double) maxItem / SystemConstant.MAX_PAGE_SIZE));
+
+		result.put("files", fileDao.getFilesByOwnerIdAndNodeId(id, nodeId, page));
 		result.put("page", page);
 		result.put("numberOfPage", numPage);
-		
+
 		HibernateUtils.commitTrans();
 		return result;
 	}
 
 	@Override
-	public Map<String,Object> getFileUsers(int id,int page) {
-		return getFileUsers(id,1,page);
+	public Map<String, Object> getFileUsers(int id, int page) {
+		return getFileUsers(id, 1, page);
 	}
-	
+
 }

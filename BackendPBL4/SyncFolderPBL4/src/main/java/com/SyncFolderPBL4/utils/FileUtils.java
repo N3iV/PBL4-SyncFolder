@@ -14,6 +14,11 @@ public class FileUtils {
 
 	}
 
+	public static String getPathProject(String source) {
+		String nameProject = (new File(source)).getName();
+		return source.replace(source.substring(source.indexOf(".metadata"), source.lastIndexOf(nameProject)), "");
+	}
+
 	public static Path copy(String sourcePathName, String targetPathName) {
 		Path source = Paths.get(sourcePathName);
 		Path target = createNewDirAsPath(targetPathName);

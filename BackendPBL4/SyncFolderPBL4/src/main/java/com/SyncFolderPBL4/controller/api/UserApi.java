@@ -2,14 +2,10 @@ package com.SyncFolderPBL4.controller.api;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.Buffer;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -24,6 +20,7 @@ import com.SyncFolderPBL4.model.service.IFileService;
 import com.SyncFolderPBL4.model.service.IUserService;
 import com.SyncFolderPBL4.model.service.impl.FileService;
 import com.SyncFolderPBL4.model.service.impl.UserService;
+import com.SyncFolderPBL4.utils.FileUtils;
 import com.SyncFolderPBL4.utils.HttpUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -36,12 +33,11 @@ public class UserApi extends HttpServlet {
 	private static PrintWriter out;
 	private IUserService userService;
 	private IFileService fileService;
-
 	public UserApi() {
 		userService = new UserService();
 		fileService = new FileService();
 	}
-
+	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.setContentType("application/json; charset=UTF-8");
@@ -50,7 +46,9 @@ public class UserApi extends HttpServlet {
 				.excludeFieldsWithoutExposeAnnotation()
 				.setPrettyPrinting()
 				.create();
-
+		
+		System.out.println();
+		
 		Integer ownerId = Integer.parseInt(request.getPathInfo().split("/")[1]);
 		Integer fileId = (request.getParameter("fileId") != null) ? Integer.parseInt(request.getParameter("fileId"))
 				: null;
@@ -95,10 +93,11 @@ public class UserApi extends HttpServlet {
 				setPrettyPrinting()
 				.create();
 		out = response.getWriter();
+		String storePath = FileUtils.getPathProject(getServletContext().getRealPath("")).concat(SystemConstant.CONCAT_PATH);
 		UserEntity user = new UserEntity();
 		if (HttpUtils.getPathURL(request.getRequestURI()).equals("register")) {
 			user = gson.fromJson(HttpUtils.getjson(request.getReader()), UserEntity.class);
-			Integer id = userService.createUser(user, getServletContext().getRealPath("") + SystemConstant.CONCAT_PATH);
+			Integer id = userService.createUser(user,storePath);
 			if (id == null) {
 				response.setStatus(405);
 				out.print(gson.toJson(HttpUtils.toJsonObject("Đăng kí thất bại")));

@@ -1,11 +1,7 @@
 package com.SyncFolderPBL4.model.service.impl;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import com.SyncFolderPBL4.constant.SystemConstant;
 import com.SyncFolderPBL4.model.dao.IFileDao;
@@ -81,6 +77,7 @@ public class UserService implements IUserService {
 				
 				FileEntity file = new FileBuilder()
 						.addNodeId(0)
+						.addOwnerId(idUser)
 						.addName(user.getEmail().substring(0, user.getEmail().indexOf("@")))
 						.addPath(userRootPath.substring(userRootPath.indexOf(SystemConstant.CONCAT_PATH)))
 						.addCreatedDate(new Date())
@@ -89,7 +86,6 @@ public class UserService implements IUserService {
 						.build();
 				Integer idFile = fileDao.save(file);
 				UserRoleFileEntity role = new UserRoleFileEntity(new RoleID(idUser,idFile),
-																idUser,
 																userDao.findOneById(idUser),
 																fileDao.findOneById(idFile),
 																true,true);
