@@ -1,0 +1,146 @@
+package com.SyncFolderPBL4.controller.api;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+
+import javax.servlet.ServletContext;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
+
+import com.SyncFolderPBL4.constant.SystemConstant;
+import com.SyncFolderPBL4.model.entities.FileEntity;
+import com.SyncFolderPBL4.model.entities.UserEntity;
+import com.SyncFolderPBL4.model.service.IFileService;
+import com.SyncFolderPBL4.model.service.IUserService;
+import com.SyncFolderPBL4.model.service.impl.FileService;
+import com.SyncFolderPBL4.model.service.impl.UserService;
+import com.SyncFolderPBL4.utils.FileUtils;
+import com.SyncFolderPBL4.utils.HttpUtils;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+@Path("/users")
+public class UserRestApi {
+
+	@Context
+	private ServletContext application;
+	
+	private static Gson gson;
+	private IUserService userService;
+	private IFileService fileService;
+	public UserRestApi() {
+		userService = new UserService();
+		fileService = new FileService();
+		gson = new GsonBuilder()
+				.excludeFieldsWithoutExposeAnnotation()
+				.setPrettyPrinting()
+				.create();	
+	}
+	
+	@GET
+	@Path("/{ownerId}/file")
+	public Response getUserFiles(@PathParam("ownerId") int ownerId,
+								@QueryParam("fileId") int fileId,
+								@DefaultValue("1") @QueryParam("page") int page)
+	{
+		if(fileId == 0)
+			{
+				return Response
+						.ok(gson.toJson(fileService.getFileUsers(ownerId, page)))
+						.type(MediaType.APPLICATION_JSON)
+						.build();
+			}
+			FileEntity fileEntity = fileService.findOne(fileId);
+			if (fileEntity != null) {
+				if (fileEntity.getType().getName().equals("Directory")) {	
+					return Response
+							.ok(gson.toJson(fileService.getFileUsers(ownerId, fileEntity.getNodeId() + 1)))
+							.type(MediaType.APPLICATION_JSON)
+							.build();
+					
+				} else if (fileEntity.getType().getName().equals("File")) {
+					
+					String readPath = FileUtils.getPathProject(application.getRealPath(""))
+												.concat(fileEntity.getPath());
+					File file = new File(readPath);
+					String extension = fileEntity.getName().substring(fileEntity.getName().lastIndexOf("."));
+					return writeFileResponse(file, extension);
+				}
+			} else {
+				return Response
+						.status(Response.Status.NOT_FOUND)
+						.entity(gson.toJson(HttpUtils.toJsonObject("File Không tồn tại")))
+						.build();
+			}
+		return null;
+	}
+	
+	@POST
+	@Path("/login")
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response loginUser(UserEntity user)
+	{
+		UserEntity userFind = userService.findOne(user);
+		if (userFind == null) {
+			return Response.status(Response.Status.UNAUTHORIZED)
+					.entity(gson.toJson(HttpUtils.toJsonObject("Đăng nhập thất bại")))
+					.build();
+		} else {
+			return Response.ok(gson.toJson(HttpUtils.toJsonObject("Đăng nhập thành công")))
+					.build();
+		}
+	}
+	@POST
+	@Path("/register")
+	@Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+	public Response registerUser(UserEntity user)
+	{
+		String storePath = FileUtils.getPathProject(application.getRealPath("")).concat(SystemConstant.CONCAT_PATH);
+		Integer id = userService.createUser(user,storePath);
+		if (id == null) {
+			return Response.status(Response.Status.UNAUTHORIZED)
+					.entity(gson.toJson(HttpUtils.toJsonObject("Đăng kí thất bại")))
+					.build();
+		} else {
+			return Response.status(Response.Status.UNAUTHORIZED)
+					.entity(gson.toJson(userService.findOne(id)))
+					.build();
+		}
+	}
+	
+	private Response writeFileResponse(File file, String extension) {
+		StreamingOutput so = (output -> {
+			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+			BufferedOutputStream bos = new BufferedOutputStream(output);
+			int s;
+			while ((s = bis.read()) != -1) {
+				bos.write(s);
+			}
+			bis.close();
+			bos.close();
+		});
+		switch (extension) {
+		case ".txt":
+			return Response.ok(so,MediaType.TEXT_PLAIN).build();
+		case ".pdf":
+			return Response.ok(so,"application/pdf").build();
+		default:			
+			return null;
+		}
+		
+	}
+}
