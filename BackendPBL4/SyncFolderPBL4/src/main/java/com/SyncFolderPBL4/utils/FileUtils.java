@@ -1,17 +1,76 @@
 package com.SyncFolderPBL4.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import com.SyncFolderPBL4.model.entities.FileEntity;
 
 public class FileUtils {
 	private static Random rd = new Random();
+	public static final byte[] BUFFER = new byte[1024];
 
 	private FileUtils() {
 
+	}
+
+	public static File zippingFile(FileEntity fileEntity, String sourcePath) {
+		File outputZipFile = new File(
+				new File(sourcePath).getParentFile().toString() + File.separator + fileEntity.getName() + ".zip");
+
+		File inputFolder = new File(sourcePath);
+		List<File> files = listChildFiles(inputFolder);
+		ZipOutputStream zos = null;
+		FileInputStream fis = null;
+		try {
+			zos = new ZipOutputStream(new FileOutputStream(outputZipFile));
+			for (File file : files) {
+				String filePath = file.getAbsolutePath();
+				System.out.println("Zipping " + filePath);
+				String entryName = file.getName();
+				ZipEntry ze = new ZipEntry(entryName);
+				zos.putNextEntry(ze);
+				fis = new FileInputStream(filePath);
+				int len;
+				while ((len = fis.read(BUFFER)) > 0) {
+					zos.write(BUFFER, 0, len);
+				}
+				close(fis);
+
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			close(zos, fis);
+		}
+
+		return outputZipFile;
+	}
+
+	public static List<File> listChildFiles(File inputFile) {
+		List<File> result = new ArrayList<>();
+		File[] files = inputFile.listFiles();
+		for (File file : files) {
+			if (file.isFile()) {
+				result.add(file);
+			} else {
+				List<File> filesTemp = listChildFiles(file);
+				result.addAll(filesTemp);
+			}
+		}
+		return result;
 	}
 
 	public static String getPathProject(String source) {

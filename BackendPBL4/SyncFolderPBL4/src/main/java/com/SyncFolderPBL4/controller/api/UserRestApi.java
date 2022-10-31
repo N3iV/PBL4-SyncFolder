@@ -51,6 +51,7 @@ public class UserRestApi {
 	
 	@GET
 	@Path("/{ownerId}/file")
+	@Produces(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
 	public Response getUserFiles(@PathParam("ownerId") int ownerId,
 								@QueryParam("fileId") int fileId,
 								@DefaultValue("1") @QueryParam("page") int page)
@@ -59,7 +60,6 @@ public class UserRestApi {
 			{
 				return Response
 						.ok(gson.toJson(fileService.getFileUsers(ownerId, page)))
-						.type(MediaType.APPLICATION_JSON)
 						.build();
 			}
 			FileEntity fileEntity = fileService.findOne(fileId);
@@ -67,7 +67,6 @@ public class UserRestApi {
 				if (fileEntity.getType().getName().equals("Directory")) {	
 					return Response
 							.ok(gson.toJson(fileService.getFileUsers(ownerId, fileEntity.getNodeId() + 1)))
-							.type(MediaType.APPLICATION_JSON)
 							.build();
 					
 				} else if (fileEntity.getType().getName().equals("File")) {
@@ -89,8 +88,8 @@ public class UserRestApi {
 	
 	@POST
 	@Path("/login")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
 	public Response loginUser(UserEntity user)
 	{
 		UserEntity userFind = userService.findOne(user);
@@ -106,7 +105,7 @@ public class UserRestApi {
 	@POST
 	@Path("/register")
 	@Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
 	public Response registerUser(UserEntity user)
 	{
 		String storePath = FileUtils.getPathProject(application.getRealPath("")).concat(SystemConstant.CONCAT_PATH);
@@ -135,9 +134,9 @@ public class UserRestApi {
 		});
 		switch (extension) {
 		case ".txt":
-			return Response.ok(so,MediaType.TEXT_PLAIN).build();
+			return Response.ok(so,MediaType.TEXT_PLAIN + SystemConstant.CHARSET).build();
 		case ".pdf":
-			return Response.ok(so,"application/pdf").build();
+			return Response.ok(so,"application/pdf" + SystemConstant.CHARSET).build();
 		default:			
 			return null;
 		}

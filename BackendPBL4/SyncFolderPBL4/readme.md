@@ -3,7 +3,8 @@
 
  - **Back-end language**: Java
  - **ORM Framework**: JPA/Hibernate
- - **RESTful API**: Servlet, Gson (library)
+ - **RESTful API**: Jersey
+ - **Json library**: Gson
 
 # Config project
 
@@ -22,5 +23,6 @@
 - Login
 - Read Folder
 - Read File (pdf, txt)
+- Download file
 
 ```
