@@ -1,11 +1,14 @@
 package com.SyncFolderPBL4.controller.api;
 
 import java.io.File;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -36,6 +39,23 @@ public class FileRestApi {
 		gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create();
 	}
 
+	
+	@GET
+	public Response getAllDirs(@DefaultValue("1") @QueryParam("page") int page) {
+		Map<String, Object> allDirs = fileService.getAllDirs(page, 0);
+		
+		if(allDirs.get("dirs") == null) {
+			return Response.status(Response.Status.NOT_FOUND)
+					.entity(gson.toJson(HttpUtils.toJsonObject("Chưa có thư mục chia sẻ")))
+					.type(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
+					.build();
+		} else {			
+			return Response.ok(gson.toJson(allDirs), MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
+					.build();
+		}
+	}
+	
+	
 	@GET
 	@Path("/download/{fileId}")
 	public Response downloadFile(@PathParam("fileId") int fileId) {
@@ -62,7 +82,7 @@ public class FileRestApi {
 					.build();
 		} else {
 			return Response.status(Response.Status.NOT_FOUND)
-					.entity(gson.toJson(HttpUtils.toJsonObject("File Không tồn tại")))
+					.entity(gson.toJson(HttpUtils.toJsonObject("File KhÃ´ng tá»“n táº¡i")))
 					.type(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
 					.build();
 		}

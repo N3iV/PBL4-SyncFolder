@@ -82,4 +82,22 @@ public class FileService implements IFileService {
 		return getFileUsers(id, 1, page);
 	}
 
+	@Override
+	public Map<String, Object> getAllDirs(int page, int nodeId) {
+		Map<String, Object> rs = new HashMap<>();
+
+		HibernateUtils.startTrans(fileDao);
+		Long maxItem = fileDao.countDir(nodeId);
+		int numPage = (int) Math.ceil((double) maxItem / SystemConstant.MAX_PAGE_SIZE);
+		
+		rs.put("dirs", fileDao.getAllDirs(page, nodeId));
+		rs.put("page", page);
+		rs.put("numberOfPage", numPage);
+		HibernateUtils.commitTrans();
+		
+		return rs;
+	}
+
+	
+
 }
