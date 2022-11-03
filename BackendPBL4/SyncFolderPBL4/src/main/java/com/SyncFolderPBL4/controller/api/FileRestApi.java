@@ -8,6 +8,7 @@ import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -41,16 +42,16 @@ public class FileRestApi {
 
 	
 	@GET
+	@Produces(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
 	public Response getAllDirs(@DefaultValue("1") @QueryParam("page") int page) {
 		Map<String, Object> allDirs = fileService.getAllDirs(page, 0);
-		
+		 
 		if(allDirs.get("dirs") == null) {
 			return Response.status(Response.Status.NOT_FOUND)
 					.entity(gson.toJson(HttpUtils.toJsonObject("Chưa có thư mục chia sẻ")))
-					.type(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
 					.build();
 		} else {			
-			return Response.ok(gson.toJson(allDirs), MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
+			return Response.ok(gson.toJson(allDirs))
 					.build();
 		}
 	}
