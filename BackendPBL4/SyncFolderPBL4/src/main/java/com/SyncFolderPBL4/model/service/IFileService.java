@@ -1,6 +1,7 @@
 package com.SyncFolderPBL4.model.service;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -13,4 +14,5 @@ public interface IFileService extends GenericService<FileEntity> {
 	Map<String, Object> getAllDirs(int page, int nodeId);
 	FileEntity createFolder(int fileParentId, String fileName, String dirPath);
 	FileEntity uploadFile(int fileParentId, InputStream is, FormDataContentDisposition fdcd, String dirPath);
+	Map<String, Object> getAllFilesDESC(int ownerId, int page, int nodeId);
 }
