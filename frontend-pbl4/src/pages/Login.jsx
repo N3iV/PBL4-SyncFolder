@@ -1,11 +1,29 @@
+import { unwrapResult } from "@reduxjs/toolkit";
+import { useDispatch } from "react-redux";
 import { Button, Col, Form, Input, Row } from "antd";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import styles from "../styles/pages/login.module.scss";
+import { login } from "../slices/auth.slice";
+import { rules } from "../constant/rules";
 const Login = ({ heading, role }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [error, setError] = useState("");
   const onFinish = async (values) => {
-    console.log(values);
+    try {
+      console.log(values);
+      const res = await dispatch(login(values));
+      unwrapResult(res);
+
+      // if (res.payload.data.roleId === 0) history.push("/admin");
+      // else history.goBack();
+      navigate("/");
+    } catch (error) {
+      if (error.status === 405) {
+        setError(error.data.message);
+      }
+    }
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
@@ -39,9 +57,9 @@ const Login = ({ heading, role }) => {
                 <Form.Item
                   label="Mật khẩu"
                   name="password"
-                  //   rules={rules.password}
-                  // validateStatus="error"
-                  // help={error || null}
+                  rules={rules.password}
+                  validateStatus="error"
+                  help={error || null}
                 >
                   <Input.Password />
                 </Form.Item>

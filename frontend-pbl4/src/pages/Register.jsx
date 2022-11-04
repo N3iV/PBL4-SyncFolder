@@ -1,13 +1,23 @@
+import { unwrapResult } from "@reduxjs/toolkit";
 import { Button, Col, Form, Input, Row } from "antd";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { register } from "../slices/auth.slice";
 import styles from "../styles/pages/login.module.scss";
 
 const Register = () => {
   const [error, setError] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const onFinish = async (values) => {
+    const { firstname, lastname, email, password } = values;
+    const data = { firstname, lastname, email, password };
+    console.log(data);
     try {
-      console.log(values);
+      const res = await dispatch(register(data));
+      unwrapResult(res);
+      navigate("/");
     } catch (error) {
       console.log(error);
       if (error.status === 405) {
@@ -42,10 +52,10 @@ const Register = () => {
               </div>
             </Form.Item>
 
-            <Form.Item label="Họ" name="firstName">
+            <Form.Item label="Họ" name="firstname">
               <Input />
             </Form.Item>
-            <Form.Item label="Tên" name="lastName">
+            <Form.Item label="Tên" name="lastname">
               <Input />
             </Form.Item>
 
