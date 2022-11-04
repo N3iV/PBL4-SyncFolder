@@ -1,12 +1,13 @@
 package com.SyncFolderPBL4.model.service.impl;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 
 import com.SyncFolderPBL4.constant.SystemConstant;
 import com.SyncFolderPBL4.model.dao.IFileDao;
@@ -18,10 +19,13 @@ import com.SyncFolderPBL4.model.dao.impl.RoleDao;
 import com.SyncFolderPBL4.model.dao.impl.TypeDao;
 import com.SyncFolderPBL4.model.dao.impl.UserDao;
 import com.SyncFolderPBL4.model.entities.FileEntity;
+import com.SyncFolderPBL4.model.entities.RoleID;
 import com.SyncFolderPBL4.model.entities.TypeEntity;
 import com.SyncFolderPBL4.model.entities.UserEntity;
 import com.SyncFolderPBL4.model.entities.UserRoleFileEntity;
+import com.SyncFolderPBL4.model.entities.builder.FileBuilder;
 import com.SyncFolderPBL4.model.service.IFileService;
+import com.SyncFolderPBL4.utils.FileUtils;
 import com.SyncFolderPBL4.utils.HibernateUtils;
 
 public class FileService implements IFileService {
@@ -81,5 +85,69 @@ public class FileService implements IFileService {
 	public Map<String, Object> getFileUsers(int id, int page) {
 		return getFileUsers(id, 1, page);
 	}
+
+	@Override
+	public Map<String, Object> getAllDirs(int page, int nodeId) {
+		Map<String, Object> rs = new HashMap<>();
+
+		HibernateUtils.startTrans(fileDao);
+		Long maxItem = fileDao.countDir(nodeId);
+		int numPage = (int) Math.ceil((double) maxItem / SystemConstant.MAX_PAGE_SIZE);
+		
+		rs.put("dirs", fileDao.getAllDirs(page, nodeId));
+		rs.put("page", page);
+		rs.put("numberOfPage", numPage);
+		HibernateUtils.commitTrans();
+		
+		return rs;
+	}
+
+	@Override
+	public FileEntity createFolder(int fileParentId, String fileName, String dirPath) {
+		HibernateUtils.startTrans(fileDao,typeDao,userDao,roleDao);
+		FileEntity parentFile = fileDao.findOneById(fileParentId);
+		FileEntity fileCreate = new FileBuilder()
+									.addName(fileName)
+									.addNodeId(parentFile.getNodeId() + 1)
+									.addOwnerId(parentFile.getOwnerId())
+									.addPath(parentFile.getPath() + File.separator + fileName)
+									.addType(typeDao.findOneById(1))
+									.addCreatedDate(LocalDateTime.now())
+									.addModifiedDate(LocalDateTime.now())
+									.build();
+		fileCreate = fileDao.findOneById(fileDao.save(fileCreate));
+		UserEntity user = userDao.findOneById(fileCreate.getOwnerId());
+		UserRoleFileEntity role = new UserRoleFileEntity(new RoleID(user.getId(),fileCreate.getId()),
+				user,
+				fileCreate,
+				true,true);
+		roleDao.save(role);
+		FileUtils.createNewDir(dirPath + File.separator + fileCreate.getPath());
+		HibernateUtils.commitTrans();
+		return fileCreate;
+	}
+
+	@Override
+	public FileEntity uploadFile(int fileParentId, InputStream is, FormDataContentDisposition fdcd, String dirPath) {
+		HibernateUtils.startTrans(fileDao,typeDao,userDao,roleDao);
+		FileEntity parentFile = fileDao.findOneById(fileParentId);
+		FileEntity fileEntityUpload = new FileBuilder()
+								.addName(fdcd.getFileName())
+								.addNodeId(parentFile.getNodeId() + 1)
+								.addOwnerId(parentFile.getOwnerId())
+								.addPath(parentFile.getPath() + File.separator + fdcd.getFileName())
+								.addType(typeDao.findOneById(2))
+								.addCreatedDate(LocalDateTime.now())
+								.addModifiedDate(LocalDateTime.now())
+								.build();
+		fileEntityUpload = fileDao.findOneById(fileDao.save(fileEntityUpload));
+		File fileUpload = FileUtils.createNewFile(dirPath + File.separator + fileEntityUpload.getPath());
+		FileUtils.writeFile(fileUpload, is);
+		
+		HibernateUtils.commitTrans();
+		return fileEntityUpload;
+	}
+
+	
 
 }

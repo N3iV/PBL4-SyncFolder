@@ -1,21 +1,8 @@
 package com.SyncFolderPBL4.model.entities.builder;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import com.SyncFolderPBL4.model.entities.FileEntity;
 import com.SyncFolderPBL4.model.entities.TypeEntity;
@@ -31,9 +18,9 @@ public class FileBuilder implements IFileBuilder {
 	
 	private String path;
 	
-	private Date createdDate;
+	private LocalDateTime createdDate;
 	
-	private Date modifiedDate;
+	private LocalDateTime modifiedDate;
 	
 	private List<UserRoleFileEntity> roles = new ArrayList<>();
 	
@@ -58,13 +45,13 @@ public class FileBuilder implements IFileBuilder {
 	}
 
 	@Override
-	public FileBuilder addCreatedDate(Date date) {
+	public FileBuilder addCreatedDate(LocalDateTime date) {
 		this.createdDate = date;
 		return this;
 	}
 
 	@Override
-	public FileBuilder addModifiedDate(Date date) {
+	public FileBuilder addModifiedDate(LocalDateTime date) {
 		this.modifiedDate = date;
 		return this;
 	}

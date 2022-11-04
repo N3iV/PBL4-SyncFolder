@@ -2,6 +2,7 @@ package com.SyncFolderPBL4.model.dao.impl;
 
 import java.util.List;
 
+import org.hibernate.Session;
 import org.hibernate.query.Query;
 
 import com.SyncFolderPBL4.constant.SystemConstant;
@@ -32,6 +33,23 @@ public class FileDao extends AbstractDao<FileEntity> implements IFileDao {
 						.setParameter(0, ownerId)
 						.setParameter(1, nodeId);		
 		return query.uniqueResult();
+	}
+
+	@Override
+	public Long countDir(int nodeId) {
+		String hql = "SELECT COUNT(*) FROM FileEntity f WHERE f.nodeId = ?0";
+		Query<Long> query = session.createQuery(hql, Long.class).setParameter(0, nodeId);
+		return query.uniqueResult();
+		
+	}
+
+	@Override
+	public List<FileEntity> getAllDirs(int page, int nodeId) {
+		String hql = "FROM FileEntity f WHERE f.nodeId = ?0";
+		Query<FileEntity> query = setListParamsInHQL(session.createQuery(hql, FileEntity.class), nodeId)
+									.setFirstResult((page - 1) * SystemConstant.MAX_PAGE_SIZE)
+									.setMaxResults(SystemConstant.MAX_PAGE_SIZE);
+		return query.getResultList();
 	}
 
 	

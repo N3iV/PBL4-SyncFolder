@@ -1,6 +1,6 @@
 package com.SyncFolderPBL4.model.entities.builder;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.SyncFolderPBL4.model.entities.FileEntity;
@@ -12,8 +12,8 @@ public interface IFileBuilder {
 	FileBuilder addOwnerId(int ownerId);
 	FileBuilder addName(String name);
 	FileBuilder addPath(String path);
-	FileBuilder addCreatedDate(Date date);
-	FileBuilder addModifiedDate(Date date);
+	FileBuilder addCreatedDate(LocalDateTime date);
+	FileBuilder addModifiedDate(LocalDateTime date);
 	FileBuilder addType(TypeEntity type);
 	FileBuilder addRoles(List<UserRoleFileEntity> roles);
 	FileEntity build();
