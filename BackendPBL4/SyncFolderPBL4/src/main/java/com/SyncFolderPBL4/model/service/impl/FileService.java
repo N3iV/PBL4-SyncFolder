@@ -1,12 +1,7 @@
 package com.SyncFolderPBL4.model.service.impl;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.SyncFolderPBL4.constant.SystemConstant;
 import com.SyncFolderPBL4.model.dao.IFileDao;

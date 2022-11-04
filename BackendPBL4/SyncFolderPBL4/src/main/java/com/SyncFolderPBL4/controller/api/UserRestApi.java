@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.time.LocalDateTime;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
@@ -19,6 +20,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
+import com.SyncFolderPBL4.config.LocalDateTimeAdapter;
 import com.SyncFolderPBL4.constant.SystemConstant;
 import com.SyncFolderPBL4.model.entities.FileEntity;
 import com.SyncFolderPBL4.model.entities.UserEntity;
@@ -46,6 +48,7 @@ public class UserRestApi {
 		fileService = new FileService();
 		gson = new GsonBuilder()
 				.excludeFieldsWithoutExposeAnnotation()
+				.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
 				.setPrettyPrinting()
 				.create();
 	}

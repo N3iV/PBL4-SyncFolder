@@ -1,6 +1,7 @@
 package com.SyncFolderPBL4.controller.api;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -14,6 +15,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.SyncFolderPBL4.config.LocalDateTimeAdapter;
 import com.SyncFolderPBL4.constant.SystemConstant;
 import com.SyncFolderPBL4.model.entities.FileEntity;
 import com.SyncFolderPBL4.model.service.IFileService;
@@ -37,7 +39,11 @@ public class FileRestApi {
 	public FileRestApi() {
 		userService = new UserService();
 		fileService = new FileService();
-		gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create();
+		gson = new GsonBuilder()
+				.excludeFieldsWithoutExposeAnnotation()
+				.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+				.setPrettyPrinting()
+				.create();
 	}
 
 	

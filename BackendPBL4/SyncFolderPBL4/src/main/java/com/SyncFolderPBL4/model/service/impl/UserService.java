@@ -1,6 +1,7 @@
 package com.SyncFolderPBL4.model.service.impl;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import com.SyncFolderPBL4.constant.SystemConstant;
@@ -66,8 +67,8 @@ public class UserService implements IUserService {
 		HibernateUtils.startTrans(userDao,typeDao,fileDao,roleDao);
 		
 		if (userDao.checkEmail(user.getEmail())) {
-			user.setCreatedDate(new Date());
-			user.setModifiedDate(new Date());
+			user.setCreatedDate(LocalDateTime.now());
+			user.setModifiedDate(LocalDateTime.now());
 			idUser = userDao.save(user);
 			if (idUser != null) {
 				String userRootPath = dirPath + File.separator
@@ -80,8 +81,8 @@ public class UserService implements IUserService {
 						.addOwnerId(idUser)
 						.addName(user.getEmail().substring(0, user.getEmail().indexOf("@")))
 						.addPath(userRootPath.substring(userRootPath.indexOf(SystemConstant.CONCAT_PATH)))
-						.addCreatedDate(new Date())
-						.addModifiedDate(new Date())
+						.addCreatedDate(LocalDateTime.now())
+						.addModifiedDate(LocalDateTime.now())
 						.addType(typeDao.findOneById(1))
 						.build();
 				Integer idFile = fileDao.save(file);

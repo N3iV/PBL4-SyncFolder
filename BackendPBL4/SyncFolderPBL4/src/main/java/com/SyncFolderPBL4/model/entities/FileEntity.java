@@ -1,5 +1,6 @@
 package com.SyncFolderPBL4.model.entities;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,15 +48,13 @@ public class FileEntity {
 	@Expose
 	private String path;
 	
-	@Column(name = "created_date")
-	@Temporal(value = TemporalType.DATE)
+	@Column(name = "created_date",columnDefinition = "TIMESTAMP")
 	@Expose
-	private Date createdDate;
+	private LocalDateTime createdDate;
 	
-	@Column(name = "modified_date")
-	@Temporal(value = TemporalType.DATE)
+	@Column(name = "modified_date",columnDefinition = "TIMESTAMP")
 	@Expose
-	private Date modifiedDate;
+	private LocalDateTime modifiedDate;
 	
 	@OneToMany(mappedBy = "file",cascade = CascadeType.REMOVE)
 	private List<UserRoleFileEntity> roles = new ArrayList<>();
@@ -97,19 +96,19 @@ public class FileEntity {
 		this.path = path;
 	}
 
-	public Date getCreatedDate() {
+	public LocalDateTime getCreatedDate() {
 		return createdDate;
 	}
 
-	public void setCreatedDate(Date createdDate) {
+	public void setCreatedDate(LocalDateTime createdDate) {
 		this.createdDate = createdDate;
 	}
 
-	public Date getModifiedDate() {
+	public LocalDateTime getModifiedDate() {
 		return modifiedDate;
 	}
 
-	public void setModifiedDate(Date modifiedDate) {
+	public void setModifiedDate(LocalDateTime modifiedDate) {
 		this.modifiedDate = modifiedDate;
 	}
 
@@ -136,7 +135,7 @@ public class FileEntity {
 		this.ownerId = ownerId;
 	}
 
-	public FileEntity(int nodeId,int ownerId, String name, String path, Date createdDate, Date modifiedDate,
+	public FileEntity(int nodeId,int ownerId, String name, String path, LocalDateTime createdDate, LocalDateTime modifiedDate,
 			List<UserRoleFileEntity> roles, TypeEntity type) {
 		this.ownerId = ownerId;
 		this.nodeId = nodeId;
