@@ -2,7 +2,6 @@ package com.SyncFolderPBL4.model.entities;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -15,8 +14,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Type;
 
@@ -25,40 +22,40 @@ import com.google.gson.annotations.Expose;
 @Entity
 @Table(name = "File")
 public class FileEntity {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	private int id;
-	
-	@Column(name = "node_id",nullable = false)
+
+	@Column(name = "node_id", nullable = false)
 	@Expose
 	private int nodeId;
-	
-	@Column(name = "owner_id",nullable = false)
+
+	@Column(name = "owner_id", nullable = false)
 	@Expose
 	private int ownerId;
-	
+
 	@Column
 	@Expose
 	private String name;
-	
+
 	@Column(nullable = false)
 	@Type(type = "text")
 	@Expose
 	private String path;
-	
-	@Column(name = "created_date",columnDefinition = "TIMESTAMP")
+
+	@Column(name = "created_date", columnDefinition = "TIMESTAMP")
 	@Expose
 	private LocalDateTime createdDate;
-	
-	@Column(name = "modified_date",columnDefinition = "TIMESTAMP")
+
+	@Column(name = "modified_date", columnDefinition = "TIMESTAMP")
 	@Expose
 	private LocalDateTime modifiedDate;
-	
-	@OneToMany(mappedBy = "file",cascade = CascadeType.REMOVE)
+
+	@OneToMany(mappedBy = "file", cascade = CascadeType.REMOVE)
 	private List<UserRoleFileEntity> roles = new ArrayList<>();
-	
+
 	@ManyToOne
 	@JoinColumn(name = "type_id")
 	@Expose
@@ -127,6 +124,7 @@ public class FileEntity {
 	public void setType(TypeEntity type) {
 		this.type = type;
 	}
+
 	public int getOwnerId() {
 		return ownerId;
 	}
@@ -135,8 +133,8 @@ public class FileEntity {
 		this.ownerId = ownerId;
 	}
 
-	public FileEntity(int nodeId,int ownerId, String name, String path, LocalDateTime createdDate, LocalDateTime modifiedDate,
-			List<UserRoleFileEntity> roles, TypeEntity type) {
+	public FileEntity(int nodeId, int ownerId, String name, String path, LocalDateTime createdDate,
+			LocalDateTime modifiedDate, List<UserRoleFileEntity> roles, TypeEntity type) {
 		this.ownerId = ownerId;
 		this.nodeId = nodeId;
 		this.name = name;
@@ -146,7 +144,7 @@ public class FileEntity {
 		this.roles = roles;
 		this.type = type;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "\nFileEntity [id=" + id + ", nodeId=" + nodeId + ", name=" + name + ", path=" + path + ", createdDate="

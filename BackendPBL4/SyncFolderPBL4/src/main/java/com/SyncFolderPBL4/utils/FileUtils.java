@@ -1,16 +1,25 @@
 package com.SyncFolderPBL4.utils;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -27,26 +36,23 @@ public class FileUtils {
 	public static File zippingFile(FileEntity fileEntity, String sourcePath) {
 		File outputZipFile = new File(
 				new File(sourcePath).getParentFile().toString() + File.separator + fileEntity.getName() + ".zip");
-
 		File inputFolder = new File(sourcePath);
 		List<File> files = listChildFiles(inputFolder);
 		ZipOutputStream zos = null;
 		FileInputStream fis = null;
+		Set<String> names = new HashSet<>();
 		try {
 			zos = new ZipOutputStream(new FileOutputStream(outputZipFile));
 			for (File file : files) {
 				String filePath = file.getAbsolutePath();
-				System.out.println("Zipping " + filePath);
-				String entryName = file.getName();
-				ZipEntry ze = new ZipEntry(entryName);
-				zos.putNextEntry(ze);
+				String entryName = filePath.substring(inputFolder.getAbsolutePath().length() + 1);
+				zos.putNextEntry(new ZipEntry(entryName));
 				fis = new FileInputStream(filePath);
 				int len;
 				while ((len = fis.read(BUFFER)) > 0) {
 					zos.write(BUFFER, 0, len);
 				}
 				close(fis);
-
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -63,10 +69,12 @@ public class FileUtils {
 		List<File> result = new ArrayList<>();
 		File[] files = inputFile.listFiles();
 		for (File file : files) {
+			System.out.println(file);
 			if (file.isFile()) {
 				result.add(file);
 			} else {
 				List<File> filesTemp = listChildFiles(file);
+//				if(filesTemp.isEmpty()) result.add(file);
 				result.addAll(filesTemp);
 			}
 		}
@@ -89,6 +97,27 @@ public class FileUtils {
 			e.printStackTrace();
 		}
 		return targetPath;
+	}
+
+	public static <T> void writeFile(File file, InputStream is) {
+		BufferedInputStream bis = null;
+		BufferedOutputStream bos = null;
+		try {
+			bis = new BufferedInputStream(is);
+			bos = new BufferedOutputStream(new FileOutputStream(file));
+			int s;
+			while( (s=bis.read()) != -1)
+			{
+				bos.write(s);
+			}
+			close(bis,bos);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		
 	}
 
 	public static Path renameTo(Path source) {
