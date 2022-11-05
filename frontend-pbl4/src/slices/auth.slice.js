@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import authApi from "../api/auth";
+import LocalStorage from "../constant/localStorage";
 import { payloadCreator } from "../utils/helper";
 
 export const register = createAsyncThunk(
@@ -27,18 +28,18 @@ export const logout = createAsyncThunk(
 //     payloadCreator(authApi.changePass)
 //   );
 const handleAuthFulfilled = (state, action) => {
-  const _data = action.payload.data;
+  const _data = action.payload;
+  console.log(_data);
   state.profile = _data;
-  // localStorage.setItem(LocalStorage.user, JSON.stringify(_data.user));
-  // localStorage.setItem(LocalStorage.hotel, JSON.stringify(_data.hotel));
+  localStorage.setItem(LocalStorage.user, JSON.stringify(state.profile));
 };
 const handleRegisterFulfilled = (state, action) => {
   state.profile.user = action.payload.data;
   // localStorage.setItem(LocalStorage.user, JSON.stringify(action.payload.data));
 };
 const handleUnauth = (state) => {
-  state.profile = {};
-  // localStorage.removeItem(LocalStorage.user);
+  state.profile = JSON.parse(localStorage.getItem(LocalStorage.user)) || {};
+  localStorage.removeItem(LocalStorage.user);
   // localStorage.removeItem(LocalStorage.hotel);
   // localStorage.removeItem(LocalStorage.filters);
 };

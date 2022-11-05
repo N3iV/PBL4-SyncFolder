@@ -12,7 +12,9 @@ import {
   FaShare,
   FaUser,
 } from "react-icons/fa";
+import { useDispatch } from "react-redux";
 import Sidebar from "../components/Sidebar";
+import { createFolder } from "../slices/folders.slice";
 
 const { Header, Content, Sider } = Layout;
 
@@ -37,11 +39,17 @@ const Default = ({ children }) => {
   ];
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [folderName, setFolderName] = useState("Untitled folder");
+  const dispatch = useDispatch();
   const showModal = () => {
     setIsModalOpen(true);
   };
 
   const handleOk = () => {
+    const _createFolder = async () => {
+      const res = await dispatch(createFolder());
+      console.log(res);
+    };
+    _createFolder();
     setIsModalOpen(false);
   };
 
