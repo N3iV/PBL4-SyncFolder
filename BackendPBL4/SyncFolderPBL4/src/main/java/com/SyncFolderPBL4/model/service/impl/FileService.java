@@ -1,10 +1,11 @@
 package com.SyncFolderPBL4.model.service.impl;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -146,6 +147,22 @@ public class FileService implements IFileService {
 		
 		HibernateUtils.commitTrans();
 		return fileEntityUpload;
+	}
+
+	@Override
+	public Map<String, Object> getAllFilesDESC(int ownerId ,int page, int nodeId) {
+		Map<String, Object> rs = new HashMap<>();
+		HibernateUtils.startTrans(fileDao);
+		
+		Long maxItem = fileDao.countDir(nodeId);
+		int numPage = (int) Math.ceil((double) maxItem / SystemConstant.MAX_PAGE_SIZE);
+		
+		rs.put("files", fileDao.getAllFilesDESC(ownerId,page, nodeId));
+		rs.put("page", page);
+		rs.put("numberOfPage", numPage);
+		HibernateUtils.commitTrans();
+		
+		return rs;
 	}
 
 	

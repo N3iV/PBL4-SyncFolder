@@ -55,29 +55,16 @@ public class FileRestApi {
 	@POST
 	@Path("/{folderId}")
 	@Produces(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
-	public Response createFile(@PathParam("folderId") int folderId ,
-							   @QueryParam("name") String name) {
+	public Response createFile(@PathParam("folderId") int folderId,
+							   FileEntity fileRequest) {
 		String readPath = FileUtils.getPathProject(application.getRealPath(""));
-		FileEntity file = fileService.createFolder(folderId, name, readPath);
+		FileEntity file = fileService.createFolder(folderId, fileRequest.getName(), readPath);
+		
 		return Response
-				.ok(gson.toJson(file))
+				.ok(gson.toJson(fileService.getAllFilesDESC(file.getOwnerId(),1, file.getNodeId())))
 				.build();
 	}
 	
-	@GET
-	@Produces(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
-	public Response getAllDirs(@DefaultValue("1") @QueryParam("page") int page) {
-		Map<String, Object> allDirs = fileService.getAllDirs(page, 0);
-		 
-		if(allDirs.get("dirs") == null) {
-			return Response.status(Response.Status.NOT_FOUND)
-					.entity(gson.toJson(HttpUtils.toJsonObject("Chưa có thư mục chia sẻ")))
-					.build();
-		} else {			
-			return Response.ok(gson.toJson(allDirs))
-					.build();
-		}
-	}
 	
 	@GET
 	@Path("/{folderId}/download")
@@ -93,7 +80,7 @@ public class FileRestApi {
 					.build();
 		} else {
 			return Response.status(Response.Status.NOT_FOUND)
-					.entity(gson.toJson(HttpUtils.toJsonObject("Folder KhÃ´ng tá»“n táº¡i")))
+					.entity(gson.toJson(HttpUtils.toJsonObject("Folder không tồn tại")))
 					.type(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
 					.build();
 		}
@@ -113,7 +100,7 @@ public class FileRestApi {
 					.build();
 		} else {
 			return Response.status(Response.Status.NOT_FOUND)
-					.entity(gson.toJson(HttpUtils.toJsonObject("File KhÃ´ng tá»“n táº¡i")))
+					.entity(gson.toJson(HttpUtils.toJsonObject("File không tồn tại")))
 					.type(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
 					.build();
 		}
@@ -129,7 +116,9 @@ public class FileRestApi {
 	{
 		String readPath = FileUtils.getPathProject(application.getRealPath(""));
 		FileEntity file = fileService.uploadFile(folderId, is, fdcd, readPath);
-		return null;
+		return Response
+				.ok(gson.toJson(fileService.getAllFilesDESC(file.getOwnerId(),1, file.getNodeId())))
+				.build();
 	}
 
 }

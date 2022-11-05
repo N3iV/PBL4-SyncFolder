@@ -52,6 +52,15 @@ public class FileDao extends AbstractDao<FileEntity> implements IFileDao {
 		return query.getResultList();
 	}
 
+	@Override
+	public List<FileEntity> getAllFilesDESC(int ownerId, int page, int nodeId) {
+		String hql = "FROM FileEntity f WHERE f.nodeId = ?0 and f.ownerId = ?1 ORDER BY f.id DESC";
+		Query<FileEntity> query = setListParamsInHQL(session.createQuery(hql, FileEntity.class), nodeId,ownerId)
+									.setFirstResult((page - 1) * SystemConstant.MAX_PAGE_SIZE)
+									.setMaxResults(SystemConstant.MAX_PAGE_SIZE);
+		return query.getResultList();
+	}
+
 	
 
 }
