@@ -51,21 +51,7 @@ public class FileRestApi {
 				.setPrettyPrinting()
 				.create();
 	}
-	
-	@POST
-	@Path("/{folderId}")
-	@Produces(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
-	public Response createFile(@PathParam("folderId") int folderId,
-							   FileEntity fileRequest) {
-		String readPath = FileUtils.getPathProject(application.getRealPath(""));
-		FileEntity file = fileService.createFolder(folderId, fileRequest.getName(), readPath);
 		
-		return Response
-				.ok(gson.toJson(fileService.getAllFilesDESC(file.getOwnerId(),1, file.getNodeId())))
-				.build();
-	}
-	
-	
 	@GET
 	@Path("/{folderId}/download")
 	public Response downloadFolder(@PathParam("folderId") int folderId) {
@@ -79,10 +65,7 @@ public class FileRestApi {
 					.header("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"")
 					.build();
 		} else {
-			return Response.status(Response.Status.NOT_FOUND)
-					.entity(gson.toJson(HttpUtils.toJsonObject("Folder không tồn tại")))
-					.type(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
-					.build();
+			return HttpUtils.errorResponse(Response.Status.NOT_FOUND, "Folder không tồn tại", gson);
 		}
 	}
 	
@@ -99,25 +82,32 @@ public class FileRestApi {
 					.header("Content-Disposition", "attachment; filename=\"" + fileEntity.getName() + "\"")
 					.build();
 		} else {
-			return Response.status(Response.Status.NOT_FOUND)
-					.entity(gson.toJson(HttpUtils.toJsonObject("File không tồn tại")))
-					.type(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
-					.build();
+			return HttpUtils.errorResponse(Response.Status.NOT_FOUND, "File không tồn tại", gson);
 		}
 	}
 	
 	@POST
-	@Path("/file/{folderId}/upload")
+	@Path("/file/{parentFolderId}/upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response uploadFile(@FormDataParam("uploadFile") InputStream is,
 							   @FormDataParam("uploadFile") FormDataContentDisposition fdcd,
-							   @PathParam("folderId") int folderId)
+							   @PathParam("parentFolderId") int parentFolderId)
 	{
 		String readPath = FileUtils.getPathProject(application.getRealPath(""));
-		FileEntity file = fileService.uploadFile(folderId, is, fdcd, readPath);
 		return Response
-				.ok(gson.toJson(fileService.getAllFilesDESC(file.getOwnerId(),1, file.getNodeId())))
+				.ok(gson.toJson(fileService.uploadFile(parentFolderId, is, fdcd, readPath)))
+				.build();
+	}
+	@POST
+	@Path("/{folderId}")
+	@Produces(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
+	public Response createFile(@PathParam("folderId") int folderId,
+							   FileEntity fileRequest) {
+		String readPath = FileUtils.getPathProject(application.getRealPath(""));
+		
+		return Response
+				.ok(gson.toJson(fileService.createFolder(folderId, fileRequest.getName(), readPath)))
 				.build();
 	}
 

@@ -13,5 +13,5 @@ public interface IFileDao extends GenericDao<FileEntity> {
 
 	Long countDir(int nodeId);
 
-	List<FileEntity> getAllFilesDESC(int ownerId, int page, int nodeId);
+	FileEntity findOneByOwnerIdAndNodeId(int ownerId, int nodeId);
 }

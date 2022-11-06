@@ -54,17 +54,14 @@ public class UserRestApi {
 	}
 
 	@GET
-	@Path("/{ownerId}/folders/file")
+	@Path("/{ownerId}/folders/file/{fileId}")
 	@Produces(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
 	public Response readFiles(@PathParam("ownerId") int ownerId, 
-							  @QueryParam("fileId") int fileId)
+								@PathParam("fileId") int fileId)
 
 	{
 		if (fileId == 0) {
-			return Response
-					.status(Response.Status.BAD_REQUEST)
-					.entity(gson.toJson(HttpUtils.toJsonObject("Không đúng định dạng")))
-					.build();
+			return HttpUtils.errorResponse(Response.Status.BAD_REQUEST, "Sai định dạng", gson);
 		}
 		FileEntity fileEntity = fileService.findOne(fileId);
 		if (fileEntity != null && fileEntity.getType().getName().equals("File")) {
@@ -77,24 +74,16 @@ public class UserRestApi {
 										.lastIndexOf("."));
 			return writeFileResponse(file, extension);
 		} else {
-			return Response
-					.status(Response.Status.NOT_FOUND)
-					.entity(gson.toJson(HttpUtils.toJsonObject("File Không tồn tại")))
-					.build();
+			return HttpUtils.errorResponse(Response.Status.NOT_FOUND, "File Không tồn tại", gson);
 		}
 	}
 
 	@GET
-	@Path("/{ownerId}/folders")
+	@Path("/{ownerId}/folders/{folderId}")
 	@Produces(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
 	public Response getUserFiles(@PathParam("ownerId") int ownerId, 
-								@QueryParam("folderId") int folderId,
+									@PathParam("folderId") int folderId,
 								@DefaultValue("1") @QueryParam("page") int page) {
-		if (folderId == 0) {
-			return Response
-					.ok(gson.toJson(fileService.getFileUsers(ownerId, page)))
-					.build();
-		}
 		FileEntity fileEntity = fileService.findOne(folderId);
 		if (fileEntity != null && fileEntity.getType().getName().equals("Directory")) {
 			return Response
@@ -102,11 +91,16 @@ public class UserRestApi {
 					.build();
 
 		} else {
-			return Response
-					.status(Response.Status.NOT_FOUND)
-					.entity(gson.toJson(HttpUtils.toJsonObject("Folder Không tồn tại")))
-					.build();
+			return HttpUtils.errorResponse(Response.Status.NOT_FOUND, "Folder Không tồn tại", gson);
 		}
+	}
+	@GET
+	@Path("/{ownerId}/folders")
+	@Produces(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
+	public Response getUserFolders(@PathParam("ownerId") int ownerId) {
+		return Response
+				.ok(gson.toJson(userService.findUserFolder(ownerId)))
+				.build();
 	}
 
 	@POST
@@ -116,10 +110,7 @@ public class UserRestApi {
 	public Response loginUser(UserEntity user) {
 		UserEntity userFind = userService.findOne(user);
 		if (userFind == null) {
-			return Response
-					.status(Response.Status.UNAUTHORIZED)
-					.entity(gson.toJson(HttpUtils.toJsonObject("Đăng nhập thất bại")))
-					.build();
+			return 	HttpUtils.errorResponse(Response.Status.UNAUTHORIZED, "Đăng nhập thất bại", gson);
 		} else {
 			return Response
 					.ok(gson.toJson(userFind))
@@ -137,10 +128,7 @@ public class UserRestApi {
 							.concat(SystemConstant.CONCAT_PATH);
 		Integer id = userService.createUser(user, storePath);
 		if (id == null) {
-			return Response
-					.status(Response.Status.UNAUTHORIZED)
-					.entity(gson.toJson(HttpUtils.toJsonObject("Đăng kí thất bại")))
-					.build();
+			return 	HttpUtils.errorResponse(Response.Status.UNAUTHORIZED, "Đăng kí thất bại", gson);
 		} else {
 			return Response
 					.ok(gson.toJson(userService.findOne(id)))

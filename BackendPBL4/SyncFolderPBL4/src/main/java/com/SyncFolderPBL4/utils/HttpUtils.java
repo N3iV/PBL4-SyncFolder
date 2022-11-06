@@ -9,6 +9,8 @@ import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import com.SyncFolderPBL4.constant.SystemConstant;
 import com.google.gson.Gson;
@@ -44,12 +46,12 @@ public class HttpUtils {
 		return map;
 	}
 
-	public static void setStartParam(HttpServletRequest request, HttpServletResponse response, PrintWriter out)
-			throws ServletException, IOException {
-		response.setContentType("application/json; charset=UTF-8");
-		request.setCharacterEncoding("UTF-8");
-
-		out = response.getWriter();
+	public static Response errorResponse(Response.Status status, String errorMessage, Gson gson)
+	{
+		return Response.status(status)
+				.entity(gson.toJson(toJsonObject(errorMessage)))
+				.type(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
+				.build();
 	}
 
 }

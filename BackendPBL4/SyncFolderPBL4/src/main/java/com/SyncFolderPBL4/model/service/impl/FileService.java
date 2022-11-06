@@ -3,7 +3,6 @@ package com.SyncFolderPBL4.model.service.impl;
 import java.io.File;
 import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,83 +86,70 @@ public class FileService implements IFileService {
 		return getFileUsers(id, 1, page);
 	}
 
-	@Override
-	public Map<String, Object> getAllDirs(int page, int nodeId) {
-		Map<String, Object> rs = new HashMap<>();
-
-		HibernateUtils.startTrans(fileDao);
-		Long maxItem = fileDao.countDir(nodeId);
-		int numPage = (int) Math.ceil((double) maxItem / SystemConstant.MAX_PAGE_SIZE);
-		
-		rs.put("dirs", fileDao.getAllDirs(page, nodeId));
-		rs.put("page", page);
-		rs.put("numberOfPage", numPage);
-		HibernateUtils.commitTrans();
-		
-		return rs;
-	}
+	
 
 	@Override
-	public FileEntity createFolder(int fileParentId, String fileName, String dirPath) {
+	public Map<String,Object> createFolder(int fileParentId, String fileName, String dirPath) {
+		Map<String,Object> result = new HashMap<>();
 		HibernateUtils.startTrans(fileDao,typeDao,userDao,roleDao);
-		FileEntity parentFile = fileDao.findOneById(fileParentId);
-		FileEntity fileCreate = new FileBuilder()
-									.addName(fileName)
-									.addNodeId(parentFile.getNodeId() + 1)
-									.addOwnerId(parentFile.getOwnerId())
-									.addPath(parentFile.getPath() + File.separator + fileName)
-									.addType(typeDao.findOneById(1))
-									.addCreatedDate(LocalDateTime.now())
-									.addModifiedDate(LocalDateTime.now())
-									.build();
-		fileCreate = fileDao.findOneById(fileDao.save(fileCreate));
+		
+		FileEntity fileCreate = saveFile(fileParentId, fileName, typeDao.findOneById(1));
 		UserEntity user = userDao.findOneById(fileCreate.getOwnerId());
 		UserRoleFileEntity role = new UserRoleFileEntity(new RoleID(user.getId(),fileCreate.getId()),
-				user,
-				fileCreate,
-				true,true);
+															user,
+															fileCreate,
+															true,true);
 		roleDao.save(role);
 		FileUtils.createNewDir(dirPath + File.separator + fileCreate.getPath());
+		
 		HibernateUtils.commitTrans();
-		return fileCreate;
+		
+		result = getFileUsers(fileCreate.getOwnerId(), fileCreate.getNodeId(), 1);
+		@SuppressWarnings("unchecked")
+		List<FileEntity> entitiesInMap = (List<FileEntity>)result.get("files");
+		entitiesInMap.add(0, fileCreate);
+		entitiesInMap.remove(entitiesInMap.size()-1);
+		
+		return result;
 	}
 
 	@Override
-	public FileEntity uploadFile(int fileParentId, InputStream is, FormDataContentDisposition fdcd, String dirPath) {
+	public Map<String,Object> uploadFile(int fileParentId, InputStream is, FormDataContentDisposition fdcd, String dirPath) {
+		Map<String,Object> result = new HashMap<>();
 		HibernateUtils.startTrans(fileDao,typeDao,userDao,roleDao);
+		
+		FileEntity fileEntityUpload = saveFile(fileParentId, fdcd.getFileName(), typeDao.findOneById(2));
+		File fileUpload = FileUtils.createNewFile(dirPath + File.separator + fileEntityUpload.getPath());
+		FileUtils.writeFile(fileUpload, is);
+		
+		HibernateUtils.commitTrans();
+		
+		result = getFileUsers(fileEntityUpload.getOwnerId(), fileEntityUpload.getNodeId(), 1);
+		@SuppressWarnings("unchecked")
+		List<FileEntity> entitiesInMap = (List<FileEntity>)result.get("files");
+		entitiesInMap.add(0, fileEntityUpload);
+		entitiesInMap.remove(entitiesInMap.size()-1);
+		
+		return result;
+	}
+
+	@Override
+	public FileEntity saveFile(int fileParentId, String fileName, TypeEntity type) {
 		FileEntity parentFile = fileDao.findOneById(fileParentId);
 		FileEntity fileEntityUpload = new FileBuilder()
-								.addName(fdcd.getFileName())
+								.addName(fileName)
 								.addNodeId(parentFile.getNodeId() + 1)
 								.addOwnerId(parentFile.getOwnerId())
-								.addPath(parentFile.getPath() + File.separator + fdcd.getFileName())
+								.addPath(parentFile.getPath() + File.separator + fileName)
 								.addType(typeDao.findOneById(2))
 								.addCreatedDate(LocalDateTime.now())
 								.addModifiedDate(LocalDateTime.now())
 								.build();
 		fileEntityUpload = fileDao.findOneById(fileDao.save(fileEntityUpload));
-		File fileUpload = FileUtils.createNewFile(dirPath + File.separator + fileEntityUpload.getPath());
-		FileUtils.writeFile(fileUpload, is);
-		
-		HibernateUtils.commitTrans();
 		return fileEntityUpload;
 	}
 
-	@Override
-	public Map<String, Object> getAllFilesDESC(int ownerId ,int page, int nodeId) {
-		Map<String, Object> rs = new HashMap<>();
-		HibernateUtils.startTrans(fileDao);
-		
-		Long maxItem = fileDao.countDir(nodeId);
-		int numPage = (int) Math.ceil((double) maxItem / SystemConstant.MAX_PAGE_SIZE);
-		
-		rs.put("files", fileDao.getAllFilesDESC(ownerId,page, nodeId));
-		rs.put("page", page);
-		rs.put("numberOfPage", numPage);
-		HibernateUtils.commitTrans();
-		
-		return rs;
-	}
+	
 
 	
 
