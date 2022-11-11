@@ -2,7 +2,8 @@ package com.SyncFolderPBL4.model.service.impl;
 
 import java.io.File;
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.SyncFolderPBL4.constant.SystemConstant;
 import com.SyncFolderPBL4.model.dao.IFileDao;
@@ -74,7 +75,7 @@ public class UserService implements IUserService {
 				String userRootPath = dirPath + File.separator
 						+ user.getEmail().substring(0, user.getEmail().indexOf("@"));
 				
-				File userDir = FileUtils.createNewDir(userRootPath);
+				FileUtils.createNewDir(userRootPath);
 				
 				FileEntity file = new FileBuilder()
 						.addNodeId(0)
@@ -90,12 +91,54 @@ public class UserService implements IUserService {
 																userDao.findOneById(idUser),
 																fileDao.findOneById(idFile),
 																true,true);
-				Integer idRole = roleDao.save(role);
+				roleDao.save(role);
 			}
 
 		}
 		HibernateUtils.commitTrans();
 		return idUser;
+	}
+
+	@Override
+	public FileEntity findUserFolder(int ownerId) {
+		HibernateUtils.startTrans(userDao,typeDao,fileDao,roleDao);
+		
+		FileEntity fileResult = fileDao.findOneByOwnerIdAndNodeId(ownerId, 0);
+		
+		HibernateUtils.commitTrans();
+		return fileResult;
+	}
+
+	@Override
+	public Map<String, Object> getAllUser(int userId, int page) {
+		Map<String, Object> result = new HashMap<>();
+		HibernateUtils.startTrans(userDao);
+		
+		Long maxItem = userDao.countAllUser(userId);
+		int numPage = (int) (Math.ceil((double) maxItem / SystemConstant.MAX_PAGE_SIZE));
+
+		result.put("users", userDao.getAllUser(userId, page));
+		result.put("page", page);
+		result.put("numberOfPage", numPage);
+		
+		HibernateUtils.commitTrans();
+		return result;
+	}
+
+	@Override
+	public Map<String, Object> getSharedFiles(int userId, int page) {
+		Map<String, Object> result = new HashMap<>();
+		HibernateUtils.startTrans(fileDao);
+		
+		Long maxItem = fileDao.countSharedFiles(userId);
+		int numPage = (int) (Math.ceil((double) maxItem / SystemConstant.MAX_PAGE_SIZE));
+
+		result.put("files", fileDao.getSharedFiles(userId, page));
+		result.put("page", page);
+		result.put("numberOfPage", numPage);
+		
+		HibernateUtils.commitTrans();
+		return result;
 	}
 
 	

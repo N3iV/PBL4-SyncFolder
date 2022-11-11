@@ -47,7 +47,7 @@ const handleUnauth = (state) => {
 const auth = createSlice({
   name: "auth",
   initialState: {
-    profile: {},
+    profile: JSON.parse(localStorage.getItem(LocalStorage.user)) || {},
   },
   reducers: {
     unauthorize: handleUnauth,

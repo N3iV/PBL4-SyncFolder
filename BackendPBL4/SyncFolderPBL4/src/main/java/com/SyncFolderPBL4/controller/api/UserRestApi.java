@@ -21,12 +21,16 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
 import com.SyncFolderPBL4.config.LocalDateTimeAdapter;
+import com.SyncFolderPBL4.config.UserRoleFileAdapter;
 import com.SyncFolderPBL4.constant.SystemConstant;
 import com.SyncFolderPBL4.model.entities.FileEntity;
 import com.SyncFolderPBL4.model.entities.UserEntity;
+import com.SyncFolderPBL4.model.entities.UserRoleFileEntity;
 import com.SyncFolderPBL4.model.service.IFileService;
+import com.SyncFolderPBL4.model.service.IRoleService;
 import com.SyncFolderPBL4.model.service.IUserService;
 import com.SyncFolderPBL4.model.service.impl.FileService;
+import com.SyncFolderPBL4.model.service.impl.RoleService;
 import com.SyncFolderPBL4.model.service.impl.UserService;
 import com.SyncFolderPBL4.utils.FileUtils;
 import com.SyncFolderPBL4.utils.HttpUtils;
@@ -42,29 +46,40 @@ public class UserRestApi {
 	private static Gson gson;
 	private IUserService userService;
 	private IFileService fileService;
+	private IRoleService roleService;
 
 	public UserRestApi() {
 		userService = new UserService();
 		fileService = new FileService();
+		roleService = new RoleService();
 		gson = new GsonBuilder()
 				.excludeFieldsWithoutExposeAnnotation()
+				.registerTypeAdapter(UserRoleFileEntity.class, new UserRoleFileAdapter())
 				.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
 				.setPrettyPrinting()
 				.create();
 	}
+	
+	@GET
+	@Path("/{userId}")
+	@Produces(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
+	public Response getAllUser( @PathParam("userId") int userId,
+			@DefaultValue("1") @QueryParam("page") int page)
+	{
+		return Response
+				.ok(gson.toJson(userService.getAllUser(userId, page)))
+				.build();
+	}
 
 	@GET
-	@Path("/{ownerId}/folders/file")
+	@Path("/{ownerId}/folders/file/{fileId}")
 	@Produces(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
 	public Response readFiles(@PathParam("ownerId") int ownerId, 
-							  @QueryParam("fileId") int fileId)
+								@PathParam("fileId") int fileId)
 
 	{
 		if (fileId == 0) {
-			return Response
-					.status(Response.Status.BAD_REQUEST)
-					.entity(gson.toJson(HttpUtils.toJsonObject("Không đúng định dạng")))
-					.build();
+			return HttpUtils.messageResponse(Response.Status.BAD_REQUEST, "Sai định dạng", gson);
 		}
 		FileEntity fileEntity = fileService.findOne(fileId);
 		if (fileEntity != null && fileEntity.getType().getName().equals("File")) {
@@ -77,24 +92,16 @@ public class UserRestApi {
 										.lastIndexOf("."));
 			return writeFileResponse(file, extension);
 		} else {
-			return Response
-					.status(Response.Status.NOT_FOUND)
-					.entity(gson.toJson(HttpUtils.toJsonObject("File Không tồn tại")))
-					.build();
+			return HttpUtils.messageResponse(Response.Status.NOT_FOUND, "File Không tồn tại", gson);
 		}
 	}
 
 	@GET
-	@Path("/{ownerId}/folders")
+	@Path("/{ownerId}/folders/{folderId}")
 	@Produces(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
 	public Response getUserFiles(@PathParam("ownerId") int ownerId, 
-								@QueryParam("folderId") int folderId,
+									@PathParam("folderId") int folderId,
 								@DefaultValue("1") @QueryParam("page") int page) {
-		if (folderId == 0) {
-			return Response
-					.ok(gson.toJson(fileService.getFileUsers(ownerId, page)))
-					.build();
-		}
 		FileEntity fileEntity = fileService.findOne(folderId);
 		if (fileEntity != null && fileEntity.getType().getName().equals("Directory")) {
 			return Response
@@ -102,11 +109,26 @@ public class UserRestApi {
 					.build();
 
 		} else {
-			return Response
-					.status(Response.Status.NOT_FOUND)
-					.entity(gson.toJson(HttpUtils.toJsonObject("Folder Không tồn tại")))
-					.build();
+			return HttpUtils.messageResponse(Response.Status.NOT_FOUND, "Folder Không tồn tại", gson);
 		}
+	}
+	@GET
+	@Path("/{ownerId}/folders")
+	@Produces(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
+	public Response getUserFolders(@PathParam("ownerId") int ownerId) {
+		return Response
+				.ok(gson.toJson(userService.findUserFolder(ownerId)))
+				.build();
+	}
+	
+	@GET
+	@Path("/{userId}/folders/share")
+	@Produces(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
+	public Response getUserShareFiles(@PathParam("userId") int userId, 
+									  @DefaultValue("1") @QueryParam("page") int page) {
+		return Response
+				.ok(gson.toJson(userService.getSharedFiles(userId, page)))
+				.build();
 	}
 
 	@POST
@@ -116,10 +138,7 @@ public class UserRestApi {
 	public Response loginUser(UserEntity user) {
 		UserEntity userFind = userService.findOne(user);
 		if (userFind == null) {
-			return Response
-					.status(Response.Status.UNAUTHORIZED)
-					.entity(gson.toJson(HttpUtils.toJsonObject("Đăng nhập thất bại")))
-					.build();
+			return 	HttpUtils.messageResponse(Response.Status.UNAUTHORIZED, "Đăng nhập thất bại", gson);
 		} else {
 			return Response
 					.ok(gson.toJson(userFind))
@@ -137,17 +156,28 @@ public class UserRestApi {
 							.concat(SystemConstant.CONCAT_PATH);
 		Integer id = userService.createUser(user, storePath);
 		if (id == null) {
-			return Response
-					.status(Response.Status.UNAUTHORIZED)
-					.entity(gson.toJson(HttpUtils.toJsonObject("Đăng kí thất bại")))
-					.build();
+			return 	HttpUtils.messageResponse(Response.Status.UNAUTHORIZED, "Đăng kí thất bại", gson);
 		} else {
 			return Response
 					.ok(gson.toJson(userService.findOne(id)))
 					.build();
 		}
 	}
-
+	
+	@POST
+	@Path("/folders/permission")
+	@Produces(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
+	public Response setPermissionFile(String s)
+	{
+		UserRoleFileEntity role = gson.fromJson(s, UserRoleFileEntity.class);
+		if (roleService.setRole(role)) {
+			return HttpUtils.messageResponse(Response.Status.ACCEPTED, "Chia sẻ quyền thành công", gson);
+		} else 
+		{			
+			return HttpUtils.messageResponse(Response.Status.NOT_FOUND, "Chia sẻ quyền thất bại", gson);
+		}
+	}
+	
 	private Response writeFileResponse(File file, String extension) {
 		StreamingOutput so = (output -> {
 			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));

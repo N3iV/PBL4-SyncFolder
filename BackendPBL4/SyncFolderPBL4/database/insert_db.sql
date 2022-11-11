@@ -14,7 +14,6 @@ INSERT INTO `file` (`id`,`name`,`node_id`,`owner_id`,`path`,`created_date`,`modi
 
 INSERT INTO user(id,username,password,firstname,lastname,birthday,image,gender,phonenumber,email,created_date,modified_date) values (1,NULL,'1234567',NULL,NULL,NULL,NULL,0,NULL,'dangvannhatminh33@gmail.com','2022-10-26','2022-10-26');
 
-
 INSERT INTO `user_role_file` (`file_id`,`user_id`,`readPermission`,`updatePermission`) VALUES (1,1,1,1);
 INSERT INTO `user_role_file` (`file_id`,`user_id`,`readPermission`,`updatePermission`) VALUES (2,1,1,1);
 INSERT INTO `user_role_file` (`file_id`,`user_id`,`readPermission`,`updatePermission`) VALUES (3,1,1,1);

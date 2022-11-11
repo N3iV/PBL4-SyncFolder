@@ -1,24 +1,43 @@
-import {
-  LaptopOutlined,
-  NotificationOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
+import { unwrapResult } from "@reduxjs/toolkit";
 import { Avatar, Button, Input, Layout, Menu, Modal } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
+  FaFolder,
   FaGripHorizontal,
   FaPlus,
   FaSearch,
   FaShare,
   FaUser,
 } from "react-icons/fa";
-import { useDispatch } from "react-redux";
-import Sidebar from "../components/Sidebar";
-import { createFolder } from "../slices/folders.slice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  createFolder,
+  folderShareWithMe,
+  getFolder,
+} from "../slices/folders.slice";
 
 const { Header, Content, Sider } = Layout;
 
-const Default = ({ children }) => {
+const Default = ({ onMenuSelect, children }) => {
+  const [personalFolder, setPersonalFolder] = useState([]);
+  const [sharedFolders, setSharedFolders] = useState([]);
+
+  const { profile } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const _getFolder = async () => {
+      try {
+        const res = await dispatch(getFolder(profile.id));
+        const sharedFoldersRes = await dispatch(folderShareWithMe(profile.id));
+        unwrapResult(res);
+        setSharedFolders(sharedFoldersRes.payload.files);
+        setPersonalFolder(res.payload);
+      } catch (error) {}
+    };
+    _getFolder();
+  }, [dispatch, profile.id]);
   function getItem(label, key, icon, children) {
     return {
       key,
@@ -29,24 +48,28 @@ const Default = ({ children }) => {
   }
   const items = [
     getItem("Drive của tôi", "1", <FaUser />, [
-      getItem("Option 3", "2"),
-      getItem("Option 4", "3"),
+      getItem(personalFolder.name, personalFolder.id, <FaFolder />),
     ]),
-    getItem("Chia sẻ với tôi", "sub1", <FaShare />, [
-      getItem("Option 3", "4"),
-      getItem("Option 4", "5"),
-    ]),
+    getItem(
+      "Chia sẻ với tôi",
+      "sub1",
+      <FaShare />,
+      sharedFolders?.map((item) => getItem(item.name, item.id))
+    ),
   ];
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [folderName, setFolderName] = useState("Untitled folder");
-  const dispatch = useDispatch();
   const showModal = () => {
     setIsModalOpen(true);
   };
 
   const handleOk = () => {
     const _createFolder = async () => {
-      const res = await dispatch(createFolder());
+      const res = await dispatch(
+        createFolder({
+          name: folderName,
+        })
+      );
       console.log(res);
     };
     _createFolder();
@@ -57,7 +80,7 @@ const Default = ({ children }) => {
     setIsModalOpen(false);
   };
   const handleChangeFolderName = (e) => {
-    console.log(e.target.value);
+    setFolderName(e.target.value);
   };
   return (
     <Layout className="min-h-screen">
@@ -99,7 +122,10 @@ const Default = ({ children }) => {
         />
       </Modal>
       <Layout>
-        <Sider className=" w-full min-h-screen site-layout-background">
+        <Sider
+          style={{ width: "400px", minWidth: "400px" }}
+          className=" min-h-screen site-layout-background"
+        >
           <Button
             className="my-4 flex items-center justify-center w-3/4 rounded-3xl font-bold text-xl py-5"
             icon={<FaPlus className="mr-3" />}
@@ -117,6 +143,7 @@ const Default = ({ children }) => {
               borderRight: 0,
             }}
             items={items}
+            onClick={onMenuSelect}
           ></Menu>
         </Sider>
         <Layout

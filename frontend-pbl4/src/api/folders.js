@@ -1,19 +1,22 @@
 import LocalStorage from "../constant/localStorage";
 import http from "../utils/http";
-const user = JSON.parse(localStorage.getItem(LocalStorage.user));
 const foldersApi = {
-  getFolders(config) {
-    console.log(user.id);
-    return http.get(`/users/${user.id}/folders`, config);
+  getFolders(id, config) {
+    return http.get(`/users/${id}/folders`, config);
   },
-  getFileById(id, config) {
-    return http.get(`users/${user.id}/folders/file?fileId=${id}`, config);
+
+  getFileById(data) {
+    console.log(data);
+    return http.get(`users/${data.id}/folders/${data.folderID}?page=1`);
   },
   downloadFile(id, config) {
     return http.get(`folders/file/${id}/download`, config);
   },
-  createFolder(data, config) {
-    return http.post(`folders/1?name=Foldertest`, data, config);
+  createFolder(folderId) {
+    return http.post(`folders/1`, folderId);
+  },
+  sharedFolders(id, config) {
+    return http.get(`/users/${id}/folders/share?page=1`, config);
   },
 };
 
