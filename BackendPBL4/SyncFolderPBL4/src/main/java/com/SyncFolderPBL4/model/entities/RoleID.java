@@ -59,6 +59,11 @@ public class RoleID implements Serializable {
 		return fileId == other.fileId && userId == other.userId;
 	}
 
+	@Override
+	public String toString() {
+		return "RoleID [userId=" + userId + ", fileId=" + fileId + "]";
+	}
+
 	public RoleID() {
 	}
 	

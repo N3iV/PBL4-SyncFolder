@@ -2,6 +2,8 @@ package com.SyncFolderPBL4.model.service.impl;
 
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.SyncFolderPBL4.constant.SystemConstant;
 import com.SyncFolderPBL4.model.dao.IFileDao;
@@ -105,6 +107,38 @@ public class UserService implements IUserService {
 		
 		HibernateUtils.commitTrans();
 		return fileResult;
+	}
+
+	@Override
+	public Map<String, Object> getAllUser(int userId, int page) {
+		Map<String, Object> result = new HashMap<>();
+		HibernateUtils.startTrans(userDao);
+		
+		Long maxItem = userDao.countAllUser(userId);
+		int numPage = (int) (Math.ceil((double) maxItem / SystemConstant.MAX_PAGE_SIZE));
+
+		result.put("users", userDao.getAllUser(userId, page));
+		result.put("page", page);
+		result.put("numberOfPage", numPage);
+		
+		HibernateUtils.commitTrans();
+		return result;
+	}
+
+	@Override
+	public Map<String, Object> getSharedFiles(int userId, int page) {
+		Map<String, Object> result = new HashMap<>();
+		HibernateUtils.startTrans(fileDao);
+		
+		Long maxItem = fileDao.countSharedFiles(userId);
+		int numPage = (int) (Math.ceil((double) maxItem / SystemConstant.MAX_PAGE_SIZE));
+
+		result.put("files", fileDao.getSharedFiles(userId, page));
+		result.put("page", page);
+		result.put("numberOfPage", numPage);
+		
+		HibernateUtils.commitTrans();
+		return result;
 	}
 
 	

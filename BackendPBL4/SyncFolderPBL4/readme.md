@@ -24,5 +24,11 @@
 - Read Folder
 - Read File (pdf, txt)
 - Download file
+- Download folder
+- Get All User
+- create Folder
+- Upload file
+- Set Permission
+- Get shared files
 
 ```

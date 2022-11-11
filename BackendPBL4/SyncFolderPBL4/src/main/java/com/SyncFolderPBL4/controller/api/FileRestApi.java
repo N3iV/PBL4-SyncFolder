@@ -3,17 +3,14 @@ package com.SyncFolderPBL4.controller.api;
 import java.io.File;
 import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -65,7 +62,7 @@ public class FileRestApi {
 					.header("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"")
 					.build();
 		} else {
-			return HttpUtils.errorResponse(Response.Status.NOT_FOUND, "Folder không tồn tại", gson);
+			return HttpUtils.messageResponse(Response.Status.NOT_FOUND, "Folder không tồn tại", gson);
 		}
 	}
 	
@@ -82,7 +79,7 @@ public class FileRestApi {
 					.header("Content-Disposition", "attachment; filename=\"" + fileEntity.getName() + "\"")
 					.build();
 		} else {
-			return HttpUtils.errorResponse(Response.Status.NOT_FOUND, "File không tồn tại", gson);
+			return HttpUtils.messageResponse(Response.Status.NOT_FOUND, "File không tồn tại", gson);
 		}
 	}
 	

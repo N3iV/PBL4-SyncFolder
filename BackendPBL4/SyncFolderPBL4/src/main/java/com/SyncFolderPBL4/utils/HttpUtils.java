@@ -46,7 +46,7 @@ public class HttpUtils {
 		return map;
 	}
 
-	public static Response errorResponse(Response.Status status, String errorMessage, Gson gson)
+	public static Response messageResponse(Response.Status status, String errorMessage, Gson gson)
 	{
 		return Response.status(status)
 				.entity(gson.toJson(toJsonObject(errorMessage)))

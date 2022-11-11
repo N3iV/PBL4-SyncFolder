@@ -1,5 +1,6 @@
 package com.SyncFolderPBL4.model.dao.impl;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.hibernate.query.Query;
@@ -55,6 +56,36 @@ public class FileDao extends AbstractDao<FileEntity> implements IFileDao {
 		String hql = "FROM FileEntity f WHERE f.ownerId = ?0 AND f.nodeId = ?1";
 		Query<FileEntity> query = setListParamsInHQL(session.createQuery(hql, FileEntity.class), ownerId, nodeId);
 		return query.uniqueResult();
+	}
+
+	@Override
+	public Long countSharedFiles(int userId) {
+		String sql = "SELECT count(*) "
+					+ "FROM file f "
+					+ "JOIN user_role_file urf "
+					+ "ON f.id = urf.file_id "
+					+ "WHERE urf.user_id = ?0 AND f.owner_id <> ?1";
+		System.out.println(sql);
+		Query query = session.createNativeQuery(sql)
+				.setParameter(0, userId)
+				.setParameter(1, userId);
+		return ((BigInteger)query.uniqueResult()).longValue();
+	}
+
+	@Override
+	public List<FileEntity> getSharedFiles(int userId, int page) {
+		String sql = "SELECT f.* "
+				+ "FROM file f "
+				+ "JOIN user_role_file urf "
+				+ "ON f.id = urf.file_id "
+				+ "WHERE urf.user_id = ?0 AND f.owner_id <> ?1 "
+				+ "ORDER BY f.type_id ASC , f.id ASC ";
+		Query<FileEntity> query = session.createNativeQuery(sql, FileEntity.class)
+							.setParameter(0, userId)
+							.setParameter(1, userId)
+							.setFirstResult((page -1) * SystemConstant.MAX_PAGE_SIZE)
+							.setMaxResults(SystemConstant.MAX_PAGE_SIZE);
+		return query.getResultList();
 	}
 
 }
