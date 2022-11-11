@@ -150,6 +150,35 @@ public class FileService implements IFileService {
 	}
 
 	
+	
+	@Override
+	public void deleteFile(FileEntity file) {
+		int fileId = file.getId();
+		String path = file.getPath();
+		HibernateUtils.startTrans(roleDao, fileDao);
+		if(file.getType().getName().equals("File")) {
+			UserRoleFileEntity userRoleFile =  roleDao.getRoleByFileId(fileId);
+			roleDao.delete(userRoleFile);
+			fileDao.delete(file);
+		} else {
+			int ownerId = file.getOwnerId();
+			path = path.replace(File.separator, "%").concat("%");
+			roleDao.deleteRoleByPath(path, fileId, ownerId);
+			fileDao.deleteFileByPath(path, ownerId);
+		}
+		
+		HibernateUtils.commitTrans();
+	}
+
+	@Override
+	public UserRoleFileEntity getRoleByFileId(int fileId) {
+		HibernateUtils.startTrans(roleDao);
+		UserRoleFileEntity userRoleFile =  roleDao.getRoleByFileId(fileId);
+		HibernateUtils.commitTrans();
+		return userRoleFile;
+	}
+
+	
 
 	
 

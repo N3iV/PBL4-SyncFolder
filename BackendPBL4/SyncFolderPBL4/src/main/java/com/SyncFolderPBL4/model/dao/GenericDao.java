@@ -10,5 +10,5 @@ public interface GenericDao<T> {
 	Integer save(T obj);
 	Session getSession();
 	void setSession(Session s);
-	
+	void delete(T obj);
 }

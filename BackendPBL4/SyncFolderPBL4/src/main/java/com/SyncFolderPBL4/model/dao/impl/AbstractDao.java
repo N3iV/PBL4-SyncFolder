@@ -7,6 +7,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 
 import com.SyncFolderPBL4.model.dao.GenericDao;
+import com.SyncFolderPBL4.model.entities.UserRoleFileEntity;
 import com.SyncFolderPBL4.utils.HibernateUtils;
 
 public abstract class AbstractDao<T> implements GenericDao<T> {
@@ -48,6 +49,11 @@ public abstract class AbstractDao<T> implements GenericDao<T> {
 		}
 		return query;
 
+	}
+	
+	@Override
+	public void delete(T obj) {
+		session.delete(obj);
 	}
 
 }

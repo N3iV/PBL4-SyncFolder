@@ -1,12 +1,14 @@
 package com.SyncFolderPBL4.model.service;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 
 import com.SyncFolderPBL4.model.entities.FileEntity;
 import com.SyncFolderPBL4.model.entities.TypeEntity;
+import com.SyncFolderPBL4.model.entities.UserRoleFileEntity;
 
 public interface IFileService extends GenericService<FileEntity> {
 
@@ -19,4 +21,6 @@ public interface IFileService extends GenericService<FileEntity> {
 	Map<String, Object> uploadFile(int fileParentId, InputStream is, FormDataContentDisposition fdcd, String dirPath);
 
 	FileEntity saveFile(int fileParentId, String fileName, TypeEntity type);
+	void deleteFile(FileEntity file);
+	UserRoleFileEntity getRoleByFileId(int fileId);
 }
