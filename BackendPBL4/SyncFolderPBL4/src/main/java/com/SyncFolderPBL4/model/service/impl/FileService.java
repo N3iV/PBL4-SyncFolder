@@ -107,8 +107,13 @@ public class FileService implements IFileService {
 		result = getFileUsers(fileCreate.getOwnerId(), fileCreate.getNodeId(), 1);
 		@SuppressWarnings("unchecked")
 		List<FileEntity> entitiesInMap = (List<FileEntity>)result.get("files");
+		System.out.println(entitiesInMap.contains(fileCreate));
+		if(entitiesInMap.contains(fileCreate)) 
+			entitiesInMap.remove(fileCreate);
+		else {			
+			entitiesInMap.remove(entitiesInMap.size()-1);
+		}
 		entitiesInMap.add(0, fileCreate);
-		entitiesInMap.remove(entitiesInMap.size()-1);
 		
 		return result;
 	}
@@ -127,8 +132,12 @@ public class FileService implements IFileService {
 		result = getFileUsers(fileEntityUpload.getOwnerId(), fileEntityUpload.getNodeId(), 1);
 		@SuppressWarnings("unchecked")
 		List<FileEntity> entitiesInMap = (List<FileEntity>)result.get("files");
+		if(entitiesInMap.contains(fileEntityUpload)) 
+			entitiesInMap.remove(fileEntityUpload);
+		else {			
+			entitiesInMap.remove(entitiesInMap.size()-1);
+		}
 		entitiesInMap.add(0, fileEntityUpload);
-		entitiesInMap.remove(entitiesInMap.size()-1);
 		
 		return result;
 	}
@@ -141,7 +150,7 @@ public class FileService implements IFileService {
 								.addNodeId(parentFile.getNodeId() + 1)
 								.addOwnerId(parentFile.getOwnerId())
 								.addPath(parentFile.getPath() + File.separator + fileName)
-								.addType(typeDao.findOneById(2))
+								.addType(type)
 								.addCreatedDate(LocalDateTime.now())
 								.addModifiedDate(LocalDateTime.now())
 								.build();
