@@ -86,6 +86,13 @@ public class FileDao extends AbstractDao<FileEntity> implements IFileDao {
 							.setFirstResult((page -1) * SystemConstant.MAX_PAGE_SIZE)
 							.setMaxResults(SystemConstant.MAX_PAGE_SIZE);
 		return query.getResultList();
+		}
+	public void deleteFileByPath(String path, int ownerId) {
+		String sql = "DELETE FROM file WHERE path LIKE ?0 AND owner_id = ?1";
+		Query<FileEntity> query = session.createNativeQuery(sql, FileEntity.class)
+				.setParameter(0, path)
+				.setParameter(1, ownerId);
+		query.executeUpdate();
 	}
 
 }

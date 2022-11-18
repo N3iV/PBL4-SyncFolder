@@ -33,6 +33,19 @@ public class FileUtils {
 
 	}
 
+	public static void deleteFile(String path, String type) {
+		File file = new File(path);
+		if(type.equals("File")) {			
+			file.delete();
+		} else {
+			try {
+				org.apache.commons.io.FileUtils.deleteDirectory(file);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public static File zippingFile(FileEntity fileEntity, String sourcePath) {
 		File outputZipFile = new File(
 				new File(sourcePath).getParentFile().toString() + File.separator + fileEntity.getName() + ".zip");

@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -21,6 +22,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import com.SyncFolderPBL4.config.LocalDateTimeAdapter;
 import com.SyncFolderPBL4.constant.SystemConstant;
 import com.SyncFolderPBL4.model.entities.FileEntity;
+import com.SyncFolderPBL4.model.entities.UserRoleFileEntity;
 import com.SyncFolderPBL4.model.service.IFileService;
 import com.SyncFolderPBL4.model.service.IUserService;
 import com.SyncFolderPBL4.model.service.impl.FileService;
@@ -106,6 +108,40 @@ public class FileRestApi {
 		return Response
 				.ok(gson.toJson(fileService.createFolder(folderId, fileRequest.getName(), readPath)))
 				.build();
+	}
+	
+	@DELETE
+	@Path("/file")
+	public Response deleteFile(FileEntity fileBody) {
+		FileEntity file =  fileService.findOne(fileBody.getId());
+		UserRoleFileEntity userRole = fileService.getRoleByFileId(fileBody.getId());
+		String type = file.getType().getName();
+		if(!userRole.isUpdatePermission()) {
+			return HttpUtils.messageResponse(Response.Status.BAD_REQUEST,"Không cho phép xóa", gson);
+		}
+		if (type.equals("File")) {
+			fileService.deleteFile(file);
+			String readPath = FileUtils.getPathProject(application.getRealPath(""))
+					.concat(file.getPath());
+			FileUtils.deleteFile(readPath, type);
+			return null;
+		}else {
+			return HttpUtils.messageResponse(Response.Status.NOT_FOUND, "File không tồn tại", gson);
+		}
+	}
+	@DELETE
+	public Response deleteFolder(FileEntity fileBody) {
+		FileEntity file =  fileService.findOne(fileBody.getId());
+		String type = file.getType().getName();
+		if (type.equals("Directory")) {
+			fileService.deleteFile(file);
+			String readPath = FileUtils.getPathProject(application.getRealPath(""))
+					.concat(file.getPath());
+			FileUtils.deleteFile(readPath, type);
+			return null;
+		}else {
+			return HttpUtils.messageResponse(Response.Status.NOT_FOUND, "Folder không tồn tại", gson);
+		}
 	}
 
 }

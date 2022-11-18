@@ -18,4 +18,6 @@ public interface IFileDao extends GenericDao<FileEntity> {
 	Long countSharedFiles(int userId);
 	
 	List<FileEntity> getSharedFiles(int userId, int page);
+	void deleteFileByPath(String path, int ownerId);
+	
 }
