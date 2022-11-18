@@ -15,6 +15,10 @@ export const logout = createAsyncThunk(
   "auth/logout",
   payloadCreator(authApi.logout)
 );
+export const getUsers = createAsyncThunk(
+  "auth/getUsers",
+  payloadCreator(authApi.getUsers)
+);
 //   export const registerMember = createAsyncThunk(
 //     "auth/registerMember",
 //     payloadCreator(authApi.registerMember)

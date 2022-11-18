@@ -17,3 +17,9 @@ export const formatMoney = (value, character = ".") =>
 //   moment(date).format("YYYY-MM-DD").toString();
 
 // export const getDayOfBooking = (date) => moment(date).format("DD").toString();
+
+export const convertDataPersonToSelectOptions = (data) =>
+  data?.map((item) => ({
+    label: item.email,
+    value: item.id,
+  }));

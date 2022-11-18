@@ -7,7 +7,9 @@ const foldersApi = {
 
   getFileById(data) {
     console.log(data);
-    return http.get(`users/${data.id}/folders/${data.folderID}?page=1`);
+    return http.get(
+      `users/${data.id}/folders/${data.folderID}?page=${data.page}`
+    );
   },
   downloadFile(id, config) {
     return http.get(`folders/file/${id}/download`, config);
@@ -18,6 +20,9 @@ const foldersApi = {
   sharedFolders(id, config) {
     return http.get(`/users/${id}/folders/share?page=1`, config);
   },
+  deleteFile(id){
+    return http.post(`folders/file/${id}/delete`)
+  }
 };
 
 export default foldersApi;

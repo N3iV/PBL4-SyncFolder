@@ -1,33 +1,48 @@
-import { Breadcrumb, Button, List } from "antd";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { Button, List, Modal, Pagination } from "antd";
+import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import {
   FaCloudDownloadAlt,
   FaFileAlt,
-  FaFileExcel,
   FaFolder,
+  FaShare,
   FaTrash,
 } from "react-icons/fa";
-import Default from "../layout/Default";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { path } from "../constant/path";
-import { useDispatch, useSelector } from "react-redux";
-import { downloadFile, getFileById, getFolder } from "../slices/folders.slice";
-import { unwrapResult } from "@reduxjs/toolkit";
-import axios from "axios";
+import Default from "../layout/Default";
+import { getFileById } from "../slices/folders.slice";
 const Home = () => {
   const ref = useRef();
   const { folders } = useSelector((state) => state.folders);
   const { profile } = useSelector((state) => state.auth);
   const [files, setFiles] = useState([]);
   const dispatch = useDispatch();
+  const [currPage, setCurrPage] = useState(1);
+  const [currFolder, setCurrFolder] = useState(1);
   const [personalFolder, setPersonalFolder] = useState([]);
-  const handleSelectMenu = async (value) => {
-    console.log(value);
-    const data = { id: profile.id, folderID: value.key };
+  const getFolder = async () => {
+    const data = { id: profile.id, folderID: currFolder, page: currPage };
     const res = await dispatch(getFileById(data));
+    console.log(res);
     unwrapResult(res);
-    setFiles(res.payload.files);
+    setFiles(res.payload);
   };
+  const handleSelectMenu = async (value) => {
+    setCurrFolder(value.key);
+  };
+  useEffect(() => {
+    const getFolder = async () => {
+      const data = { id: profile.id, folderID: currFolder, page: currPage };
+      const res = await dispatch(getFileById(data));
+      console.log(res);
+      unwrapResult(res);
+      setFiles(res.payload);
+    };
+    getFolder();
+  }, [currFolder, currPage, dispatch, profile.id]);
   const type = [
     {
       type: "Directory",
@@ -76,8 +91,32 @@ const Home = () => {
       ///delete folder
     }
   };
+  const handleShare = async (data) => {
+    console.log(data);
+  };
+  const onShowSizeChange = (curr) => {
+    setCurrPage(curr);
+  };
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalShareOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleModalShareCancel = () => {
+    setIsModalOpen(false);
+  };
   return (
-    <Default onMenuSelect={handleSelectMenu}>
+    <Default
+      onMenuSelect={handleSelectMenu}
+      setIsModalShareOpen={setIsModalOpen}
+      showModalShare={isModalOpen}
+    >
       {/* <Breadcrumb className="p-4" separator=">">
         <Breadcrumb.Item className="text-xl">
           Được chia sẻ với tôi
@@ -86,9 +125,10 @@ const Home = () => {
           Provo - Writing
         </Breadcrumb.Item>
       </Breadcrumb> */}
+
       <List
         itemLayout="horizontal"
-        dataSource={folders.files || files}
+        dataSource={folders.files || files.files}
         renderItem={(item, idx) => (
           <List.Item className="hover:bg-slate-200 px-4 flex justify-between">
             <Link
@@ -112,9 +152,13 @@ const Home = () => {
             >
               <FaCloudDownloadAlt />
             </Button>
+
+            <Button shape="round" className="ml-4" onClick={showModal}>
+              <FaShare />
+            </Button>
             <Button
               shape="round"
-              className="ml-12"
+              className="ml-4"
               onClick={() => handleDelete(item)}
             >
               <FaTrash />
@@ -122,6 +166,14 @@ const Home = () => {
           </List.Item>
         )}
       />
+      {files.numberOfPage && (
+        <Pagination
+          defaultCurrent={currPage}
+          current={currPage}
+          total={files.numberOfPage * 10}
+          onChange={onShowSizeChange}
+        />
+      )}
     </Default>
   );
 };

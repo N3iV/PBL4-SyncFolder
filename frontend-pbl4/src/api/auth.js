@@ -7,6 +7,9 @@ const authApi = {
   login(data) {
     return http.post("users/login", data);
   },
+  getUsers(id) {
+    return http.get(`users/${id}?page=1`);
+  },
   logout() {
     return;
   },

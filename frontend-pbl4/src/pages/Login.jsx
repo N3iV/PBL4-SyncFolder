@@ -1,11 +1,11 @@
 import { unwrapResult } from "@reduxjs/toolkit";
-import { useDispatch } from "react-redux";
 import { Button, Col, Form, Input, Row } from "antd";
 import { useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import styles from "../styles/pages/login.module.scss";
-import { login } from "../slices/auth.slice";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import { rules } from "../constant/rules";
+import { login } from "../slices/auth.slice";
+import styles from "../styles/pages/login.module.scss";
 const Login = ({ heading, role }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
