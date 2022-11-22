@@ -89,8 +89,9 @@ public class FileService implements IFileService {
 	
 
 	@Override
-	public Map<String,Object> createFolder(int fileParentId, String fileName, String dirPath) {
+	public Map<String, Object> createFolder(int fileParentId, String fileName, String dirPath) {
 		Map<String,Object> result = new HashMap<>();
+		
 		HibernateUtils.startTrans(fileDao,typeDao,userDao,roleDao);
 		
 		FileEntity fileCreate = saveFile(fileParentId, fileName, typeDao.findOneById(1));
@@ -102,42 +103,38 @@ public class FileService implements IFileService {
 		roleDao.save(role);
 		FileUtils.createNewDir(dirPath + File.separator + fileCreate.getPath());
 		
+		// Pagination 
+		Long maxItem = fileDao.countFiles(fileCreate.getOwnerId(), fileCreate.getNodeId());
+		int numPage = (int) (Math.ceil((double) maxItem / SystemConstant.MAX_PAGE_SIZE));
+		int page = numPage;
+		result.put("files", fileDao.getAllFiles(page, fileCreate.getOwnerId(), fileCreate.getNodeId()));
+		result.put("page", page);
+		result.put("numberOfPage", numPage);
+		
 		HibernateUtils.commitTrans();
 		
-		result = getFileUsers(fileCreate.getOwnerId(), fileCreate.getNodeId(), 1);
-		@SuppressWarnings("unchecked")
-		List<FileEntity> entitiesInMap = (List<FileEntity>)result.get("files");
-		System.out.println(entitiesInMap.contains(fileCreate));
-		if(entitiesInMap.contains(fileCreate)) 
-			entitiesInMap.remove(fileCreate);
-		else {			
-			entitiesInMap.remove(entitiesInMap.size()-1);
-		}
-		entitiesInMap.add(0, fileCreate);
 		
 		return result;
 	}
 
 	@Override
-	public Map<String,Object> uploadFile(int fileParentId, InputStream is, FormDataContentDisposition fdcd, String dirPath) {
+	public Map<String, Object> uploadFile(int fileParentId, InputStream is, FormDataContentDisposition fdcd, String dirPath) {
 		Map<String,Object> result = new HashMap<>();
 		HibernateUtils.startTrans(fileDao,typeDao,userDao,roleDao);
 		
 		FileEntity fileEntityUpload = saveFile(fileParentId, fdcd.getFileName(), typeDao.findOneById(2));
 		File fileUpload = FileUtils.createNewFile(dirPath + File.separator + fileEntityUpload.getPath());
 		FileUtils.writeFile(fileUpload, is);
-		
+		// Pagination 
+		Long maxItem = fileDao.countFiles(fileEntityUpload.getOwnerId(), fileEntityUpload.getNodeId());
+		int numPage = (int) (Math.ceil((double) maxItem / SystemConstant.MAX_PAGE_SIZE));
+		int page = numPage;
+		result.put("files", fileDao.getAllFiles(page, fileEntityUpload.getOwnerId(), fileEntityUpload.getNodeId()));
+		result.put("page", page);
+		result.put("numberOfPage", numPage);
+				
 		HibernateUtils.commitTrans();
-		
-		result = getFileUsers(fileEntityUpload.getOwnerId(), fileEntityUpload.getNodeId(), 1);
-		@SuppressWarnings("unchecked")
-		List<FileEntity> entitiesInMap = (List<FileEntity>)result.get("files");
-		if(entitiesInMap.contains(fileEntityUpload)) 
-			entitiesInMap.remove(fileEntityUpload);
-		else {			
-			entitiesInMap.remove(entitiesInMap.size()-1);
-		}
-		entitiesInMap.add(0, fileEntityUpload);
+
 		
 		return result;
 	}

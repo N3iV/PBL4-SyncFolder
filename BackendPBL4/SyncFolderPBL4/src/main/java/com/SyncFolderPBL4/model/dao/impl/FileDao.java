@@ -34,18 +34,19 @@ public class FileDao extends AbstractDao<FileEntity> implements IFileDao {
 	}
 
 	@Override
-	public Long countDir(int nodeId) {
-		String hql = "SELECT COUNT(*) FROM FileEntity f WHERE f.nodeId = ?0";
+	public Long countFiles(int ownerId, int nodeId) {
+		String hql = "SELECT COUNT(*) FROM FileEntity f WHERE f.nodeId = ?0 and f.ownerId = ?1";
 		Query<Long> query = session.createQuery(hql, Long.class)
-							.setParameter(0, nodeId);
+							.setParameter(0, nodeId)
+							.setParameter(1, ownerId);
 		return query.uniqueResult();
 
 	}
 
 	@Override
-	public List<FileEntity> getAllDirs(int page, int nodeId) {
-		String hql = "FROM FileEntity f WHERE f.nodeId = ?0";
-		Query<FileEntity> query = setListParamsInHQL(session.createQuery(hql, FileEntity.class), nodeId)
+	public List<FileEntity> getAllFiles(int page, int ownerId, int nodeId) {
+		String hql = "FROM FileEntity f WHERE f.nodeId = ?0 and f.ownerId = ?1";
+		Query<FileEntity> query = setListParamsInHQL(session.createQuery(hql, FileEntity.class), nodeId, ownerId)
 									.setFirstResult((page - 1) * SystemConstant.MAX_PAGE_SIZE)
 									.setMaxResults(SystemConstant.MAX_PAGE_SIZE);
 		return query.getResultList();

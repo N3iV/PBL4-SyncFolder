@@ -1,5 +1,8 @@
 package com.SyncFolderPBL4.model.service.impl;
 
+import java.util.function.Predicate;
+
+import com.SyncFolderPBL4.controller.mapper.PermisUserMapper;
 import com.SyncFolderPBL4.model.dao.IFileDao;
 import com.SyncFolderPBL4.model.dao.IRoleDao;
 import com.SyncFolderPBL4.model.dao.ITypeDao;
@@ -9,6 +12,7 @@ import com.SyncFolderPBL4.model.dao.impl.RoleDao;
 import com.SyncFolderPBL4.model.dao.impl.TypeDao;
 import com.SyncFolderPBL4.model.dao.impl.UserDao;
 import com.SyncFolderPBL4.model.entities.FileEntity;
+import com.SyncFolderPBL4.model.entities.RoleID;
 import com.SyncFolderPBL4.model.entities.TypeEntity;
 import com.SyncFolderPBL4.model.entities.UserEntity;
 import com.SyncFolderPBL4.model.entities.UserRoleFileEntity;
@@ -46,21 +50,27 @@ public class RoleService implements IRoleService{
 	}
 
 	@Override
-	public boolean setRole(UserRoleFileEntity role) {
+	public boolean setRoles(PermisUserMapper permisUser) {
 		HibernateUtils.startTrans(userDao,fileDao,roleDao);
-		
-		UserEntity user = userDao.findOneById(role.getRoleIds().getUserId());
-		FileEntity file = fileDao.findOneById(role.getRoleIds().getFileId());
-		if(user == null || file == null) {
+		FileEntity file = fileDao.findOneById(permisUser.getFileId());
+		if(file == null) {
 			HibernateUtils.commitTrans();
 			return false;
 		}
-		UserRoleFileEntity roleResult = new UserRoleFileEntity(role.getRoleIds(),
-															user,
-															file,
-															role.isReadPermission(),
-															role.isUpdatePermission());
-		roleDao.getSession().saveOrUpdate(roleResult);
+		for(Integer userId : permisUser.getUserIds())
+		{			
+			UserEntity user = userDao.findOneById(userId);
+			if(user == null) {
+				HibernateUtils.commitTrans();
+				return false;
+			}
+			UserRoleFileEntity roleResult = new UserRoleFileEntity(new RoleID(userId,permisUser.getFileId()),
+					user,
+					file,
+					permisUser.isReadPermission(),
+					permisUser.isUpdatePermission());
+			roleDao.getSession().saveOrUpdate(roleResult);
+		}
 		
 		HibernateUtils.commitTrans();
 		return true;

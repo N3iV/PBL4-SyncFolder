@@ -23,6 +23,7 @@ import javax.ws.rs.core.StreamingOutput;
 import com.SyncFolderPBL4.config.LocalDateTimeAdapter;
 import com.SyncFolderPBL4.config.UserRoleFileAdapter;
 import com.SyncFolderPBL4.constant.SystemConstant;
+import com.SyncFolderPBL4.controller.mapper.PermisUserMapper;
 import com.SyncFolderPBL4.model.entities.FileEntity;
 import com.SyncFolderPBL4.model.entities.UserEntity;
 import com.SyncFolderPBL4.model.entities.UserRoleFileEntity;
@@ -167,10 +168,10 @@ public class UserRestApi {
 	@POST
 	@Path("/folders/permission")
 	@Produces(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
-	public Response setPermissionFile(String s)
+	public Response setPermissionFile(PermisUserMapper permisUser)
 	{
-		UserRoleFileEntity role = gson.fromJson(s, UserRoleFileEntity.class);
-		if (roleService.setRole(role)) {
+		
+		if (roleService.setRoles(permisUser)) {
 			return HttpUtils.messageResponse(Response.Status.ACCEPTED, "Chia sẻ quyền thành công", gson);
 		} else 
 		{			
