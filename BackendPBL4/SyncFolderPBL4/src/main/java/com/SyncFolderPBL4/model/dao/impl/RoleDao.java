@@ -1,8 +1,11 @@
 package com.SyncFolderPBL4.model.dao.impl;
 
+import java.util.List;
+
 import org.hibernate.query.Query;
 
 import com.SyncFolderPBL4.model.dao.IRoleDao;
+import com.SyncFolderPBL4.model.entities.FileEntity;
 import com.SyncFolderPBL4.model.entities.RoleID;
 import com.SyncFolderPBL4.model.entities.UserRoleFileEntity;
 import com.SyncFolderPBL4.utils.HibernateUtils;
@@ -18,30 +21,42 @@ public class RoleDao extends AbstractDao<UserRoleFileEntity> implements IRoleDao
 	}
 	
 	@Override
-	public void delete(UserRoleFileEntity file) {
-		session.delete(file);
+	public void delete(UserRoleFileEntity role) {
+		String sql =  "DELETE "
+					+ "FROM user_role_file  "
+					+ "WHERE file_id = ?0 ";
+		setListParamsInHQL(
+				session.createNativeQuery(sql,UserRoleFileEntity.class), role.getRoleIds().getFileId())
+				.executeUpdate();
 	}
 	@Override
-	public UserRoleFileEntity getRoleByFileId(int fileId) {
-		String sql = "SELECT * FROM pbl4.user_role_file WHERE file_id = ?0";
-		Query<UserRoleFileEntity> query = setListParamsInHQL(session.createNativeQuery(sql, UserRoleFileEntity.class), fileId);
-		return query.uniqueResult();
+	public UserRoleFileEntity getRoleByRoleId(RoleID roleId) {
+		String sql = " SELECT * "
+					+ "FROM user_role_file "
+					+ "WHERE file_id = ?0 and user_id = ?1 ";
+		return setListParamsInHQL
+				(session.createNativeQuery(sql, UserRoleFileEntity.class), roleId.getFileId(),roleId.getUserId())
+				.uniqueResult();
 	}
 	@Override
-	public void deleteRoleByPath(String path, int fileId, int ownerId) {
-		String sql =  "DELETE " 
-					+ "FROM user_role_file urf "
-					+ "WHERE "
-					+ "EXISTS "
-					+ "(SELECT * "
-						+ "FROM file f "
-						+ "WHERE f.path LIKE ?0 "
-						+ "AND f.id = urf.file_id "
-						+ "AND f.owner_id = urf.user_id)";
-		Query<UserRoleFileEntity> query = session.createNativeQuery(sql, UserRoleFileEntity.class)
-											.setParameter(0, path);
-		query.executeUpdate();
+	public void deleteRoleByPath(String path, int ownerId) {
+		String sqlSubQuery = "SELECT f.id "
+							+ "FROM file f "
+							+ "WHERE f.path LIKE ?0 AND f.owner_id = ?1";
+		String sql = "DELETE FROM UserRoleFileEntity urf WHERE urf.roleIds.fileId IN :ids";
+		@SuppressWarnings("unchecked")
+		List<Long> ids = session.createNativeQuery(sqlSubQuery)
+				.setParameter(0, path)
+				.setParameter(1, ownerId)
+				.getResultList();
+		
+		session.createQuery(sql)
+			  .setParameterList("ids", ids)
+			  .executeUpdate();
+
+												
 	}
+	
 	
 	
 //	@Override

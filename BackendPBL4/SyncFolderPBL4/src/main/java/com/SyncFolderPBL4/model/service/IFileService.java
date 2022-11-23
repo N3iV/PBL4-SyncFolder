@@ -21,6 +21,8 @@ public interface IFileService extends GenericService<FileEntity> {
 	Map<String, Object> uploadFile(int fileParentId, InputStream is, FormDataContentDisposition fdcd, String dirPath);
 
 	FileEntity saveFile(int fileParentId, String fileName, TypeEntity type);
-	void deleteFile(FileEntity file);
-	UserRoleFileEntity getRoleByFileId(int fileId);
+
+	void deleteFile(UserRoleFileEntity role);
+
+	
 }

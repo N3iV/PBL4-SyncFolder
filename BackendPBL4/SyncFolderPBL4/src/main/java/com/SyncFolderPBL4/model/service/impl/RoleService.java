@@ -75,5 +75,17 @@ public class RoleService implements IRoleService{
 		HibernateUtils.commitTrans();
 		return true;
 	}
+	@Override
+	public UserRoleFileEntity getRoleByRoleId(RoleID roleId) {		
+		HibernateUtils.startTrans(roleDao);
+		
+		UserRoleFileEntity userRoleFile =  roleDao.getRoleByRoleId(roleId);
+		System.out.println(userRoleFile.getFile());
+		
+		HibernateUtils.commitTrans();
+		
+		return userRoleFile;
+	}
+	
 
 }
