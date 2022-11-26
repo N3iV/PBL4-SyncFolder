@@ -25,6 +25,7 @@ import {
   createFolder,
   folderShareWithMe,
   getFolder,
+  setPermission,
 } from "../slices/folders.slice";
 import { convertDataPersonToSelectOptions } from "../utils/helper";
 
@@ -36,7 +37,6 @@ const Default = ({
   showModalShare,
   setIsModalShareOpen,
 }) => {
-  console.log(showModalShare, "day ne");
   const [personalFolder, setPersonalFolder] = useState([]);
   const [sharedFolders, setSharedFolders] = useState([]);
   const [users, setUsers] = useState([]);
@@ -56,7 +56,6 @@ const Default = ({
     const _getUsers = async () => {
       try {
         const res = await dispatch(getUsers(profile.id));
-        console.log(res);
         setUsers(res.payload.users);
       } catch (error) {}
     };
@@ -84,6 +83,7 @@ const Default = ({
   ];
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [folderName, setFolderName] = useState("Untitled folder");
+  const [userShare, setUserShare] = useState([]);
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -95,7 +95,6 @@ const Default = ({
           name: folderName,
         })
       );
-      console.log(res);
     };
     _createFolder();
     setIsModalOpen(false);
@@ -112,20 +111,33 @@ const Default = ({
   };
   const handleModalShareOk = async () => {
     setIsModalShareOpen(false);
+    setUserShare([]);
+    setShareOptions([]);
     try {
-      const data = {};
+      const data = {
+        userIds: [...userShare],
+        fileId: Number(localStorage.getItem("IdFileShare")),
+        readPermission: shareOptions.includes("read"),
+        updatePermission: shareOptions.includes("update"),
+      };
+      const res = await dispatch(setPermission(data));
+      unwrapResult(res);
+      console.log(res);
+      console.log(data, "data");
     } catch (error) {}
   };
 
   const handleChange = (value) => {
-    console.log(`selected ${value}`);
+    setUserShare([...value]);
   };
   const options = [
     { label: "Read", value: "read" },
     { label: "Update", value: "update" },
   ];
+
+  const [shareOptions, setShareOptions] = useState([]);
   const onCheckBoxChange = (values) => {
-    console.log(values);
+    setShareOptions([...values]);
   };
   return (
     <Layout className="min-h-screen">
@@ -166,6 +178,7 @@ const Default = ({
           allowClear
           style={{ width: "100%" }}
           placeholder="Please select"
+          defaultValue={userShare}
           // defaultValue={["a10", "c12"]}
           onChange={handleChange}
           options={convertDataPersonToSelectOptions(users)}

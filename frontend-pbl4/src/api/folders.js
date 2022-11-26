@@ -20,9 +20,12 @@ const foldersApi = {
   sharedFolders(id, config) {
     return http.get(`/users/${id}/folders/share?page=1`, config);
   },
-  deleteFile(id){
-    return http.post(`folders/file/${id}/delete`)
-  }
+  deleteFile(id) {
+    return http.post(`folders/file/${id}/delete`);
+  },
+  setPermission(data) {
+    return http.post("/users/folders/permission", data);
+  },
 };
 
 export default foldersApi;

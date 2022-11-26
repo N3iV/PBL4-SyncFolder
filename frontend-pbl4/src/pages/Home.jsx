@@ -10,13 +10,14 @@ import {
   FaTrash,
 } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import LocalStorage from "../constant/localStorage";
 import { path } from "../constant/path";
 import Default from "../layout/Default";
 import { getFileById } from "../slices/folders.slice";
 const Home = () => {
   const ref = useRef();
-  const { folders } = useSelector((state) => state.folders);
+
   const { profile } = useSelector((state) => state.auth);
   const [files, setFiles] = useState([]);
   const dispatch = useDispatch();
@@ -26,7 +27,6 @@ const Home = () => {
   const getFolder = async () => {
     const data = { id: profile.id, folderID: currFolder, page: currPage };
     const res = await dispatch(getFileById(data));
-    console.log(res);
     unwrapResult(res);
     setFiles(res.payload);
   };
@@ -37,7 +37,6 @@ const Home = () => {
     const getFolder = async () => {
       const data = { id: profile.id, folderID: currFolder, page: currPage };
       const res = await dispatch(getFileById(data));
-      console.log(res);
       unwrapResult(res);
       setFiles(res.payload);
     };
@@ -75,7 +74,6 @@ const Home = () => {
     try {
       const res = getFile();
       unwrapResult(res);
-      console.log(res.payload);
       const url = URL.createObjectURL(new Blob([res.payload]));
       setUrl(url);
       setName("test");
@@ -91,25 +89,21 @@ const Home = () => {
       ///delete folder
     }
   };
-  const handleShare = async (data) => {
-    console.log(data);
-  };
+
   const onShowSizeChange = (curr) => {
     setCurrPage(curr);
   };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleModalShareOk = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleModalShareCancel = () => {
-    setIsModalOpen(false);
+  const handleShare = (id) => {
+    const showModal = () => {
+      setIsModalOpen(true);
+    };
+    const setFileId = (id) => {
+      localStorage.setItem("IdFileShare", JSON.stringify(id));
+    };
+    showModal();
+    setFileId(id);
   };
   return (
     <Default
@@ -128,7 +122,7 @@ const Home = () => {
 
       <List
         itemLayout="horizontal"
-        dataSource={folders.files || files.files}
+        dataSource={files.files}
         renderItem={(item, idx) => (
           <List.Item className="hover:bg-slate-200 px-4 flex justify-between">
             <Link
@@ -153,7 +147,11 @@ const Home = () => {
               <FaCloudDownloadAlt />
             </Button>
 
-            <Button shape="round" className="ml-4" onClick={showModal}>
+            <Button
+              shape="round"
+              className="ml-4"
+              onClick={() => handleShare(item.id)}
+            >
               <FaShare />
             </Button>
             <Button

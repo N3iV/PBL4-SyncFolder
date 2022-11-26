@@ -23,12 +23,17 @@ export const folderShareWithMe = createAsyncThunk(
   "folder/shareWithMe",
   payloadCreator(foldersApi.sharedFolders)
 );
+export const setPermission = createAsyncThunk(
+  "folder/setPermission",
+  payloadCreator(foldersApi.setPermission)
+);
 
 const handleFulfilled = (state, action) => {
-  const _data = action.payload;
-  console.log(_data);
-  state.folders = _data;
-  localStorage.setItem(LocalStorage.folders, JSON.stringify(state.folders));
+  console.log(action.payload);
+  localStorage.setItem(
+    LocalStorage.folders,
+    JSON.stringify(action.payload.files)
+  );
 };
 const folders = createSlice({
   name: "folders",
