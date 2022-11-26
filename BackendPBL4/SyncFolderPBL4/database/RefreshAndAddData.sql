@@ -31,47 +31,47 @@ INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created
 INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('15', 'Xu ly tin hieu so', '1', '3', 'StoreLocation\\trancongnguyenhai\\Xu ly tin hieu so', '2022-11-23', '2022-11-23', '1');
 INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('16', 'PBL4', '1', '4', 'StoreLocation\\nguyenthexuanly\\PBL4', '2022-11-23', '2022-11-23', '1');
 
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('17', 'code1.txt', '2', '1', 'StoreLocation\\dangvannhatminh\\Chuong trinh dich\\code1.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('18', 'code2.txt', '2', '1', 'StoreLocation\\dangvannhatminh\\Chuong trinh dich\\code2.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('19', 'code3.txt', '2', '1', 'StoreLocation\\dangvannhatminh\\Chuong trinh dich\\code3.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('20', 'code1.txt', '2', '1', 'StoreLocation\\dangvannhatminh\\Lap trinh mang\\code1.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('21', 'code2.txt', '2', '1', 'StoreLocation\\dangvannhatminh\\Lap trinh mang\\code2.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('22', 'code3.txt', '2', '1', 'StoreLocation\\dangvannhatminh\\Lap trinh mang\\code3.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('23', 'code1.txt', '2', '1', 'StoreLocation\\dangvannhatminh\\Toan ung dung CNTT\\code1.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('24', 'code2.txt', '2', '1', 'StoreLocation\\dangvannhatminh\\Toan ung dung CNTT\\code2.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('25', 'code3.txt', '2', '1', 'StoreLocation\\dangvannhatminh\\Toan ung dung CNTT\\code3.txt', '2022-11-23', '2022-11-23', '1');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('17', 'code1.txt', '2', '1', 'StoreLocation\\dangvannhatminh\\Chuong trinh dich\\code1.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('18', 'code2.txt', '2', '1', 'StoreLocation\\dangvannhatminh\\Chuong trinh dich\\code2.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('19', 'code3.txt', '2', '1', 'StoreLocation\\dangvannhatminh\\Chuong trinh dich\\code3.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('20', 'code1.txt', '2', '1', 'StoreLocation\\dangvannhatminh\\Lap trinh mang\\code1.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('21', 'code2.txt', '2', '1', 'StoreLocation\\dangvannhatminh\\Lap trinh mang\\code2.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('22', 'code3.txt', '2', '1', 'StoreLocation\\dangvannhatminh\\Lap trinh mang\\code3.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('23', 'code1.txt', '2', '1', 'StoreLocation\\dangvannhatminh\\Toan ung dung CNTT\\code1.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('24', 'code2.txt', '2', '1', 'StoreLocation\\dangvannhatminh\\Toan ung dung CNTT\\code2.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('25', 'code3.txt', '2', '1', 'StoreLocation\\dangvannhatminh\\Toan ung dung CNTT\\code3.txt', '2022-11-23', '2022-11-23', '2');
 
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('26', 'code1.txt', '2', '2', 'StoreLocation\\huynhdinhhoangvien\\CNXH Khoa hoc\\code1.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('27', 'code2.txt', '2', '2', 'StoreLocation\\huynhdinhhoangvien\\CNXH Khoa hoc\\code2.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('28', 'code3.txt', '2', '2', 'StoreLocation\\huynhdinhhoangvien\\CNXH Khoa hoc\\code3.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('29', 'code1.txt', '2', '2', 'StoreLocation\\huynhdinhhoangvien\\Cong nghe Web\\code1.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('30', 'code2.txt', '2', '2', 'StoreLocation\\huynhdinhhoangvien\\Cong nghe Web\\code2.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('31', 'code3.txt', '2', '2', 'StoreLocation\\huynhdinhhoangvien\\Cong nghe Web\\code3.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('32', 'code1.txt', '2', '2', 'StoreLocation\\huynhdinhhoangvien\\Phap luat dai cuong\\code1.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('33', 'code2.txt', '2', '2', 'StoreLocation\\huynhdinhhoangvien\\Phap luat dai cuong\\code2.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('34', 'code3.txt', '2', '2', 'StoreLocation\\huynhdinhhoangvien\\Phap luat dai cuong\\code3.txt', '2022-11-23', '2022-11-23', '1');
-
-
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('35', 'code1.txt', '2', '3', 'StoreLocation\\trancongnguyenhai\\Lap trinh linux\\code1.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('36', 'code2.txt', '2', '3', 'StoreLocation\\trancongnguyenhai\\Lap trinh linux\\code2.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('37', 'code3.txt', '2', '3', 'StoreLocation\\trancongnguyenhai\\Lap trinh linux\\code3.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('38', 'code1.txt', '2', '3', 'StoreLocation\\trancongnguyenhai\\Thi nghiem vat ly\\code1.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('39', 'code2.txt', '2', '3', 'StoreLocation\\trancongnguyenhai\\Thi nghiem vat ly\\code2.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('40', 'code3.txt', '2', '3', 'StoreLocation\\trancongnguyenhai\\Thi nghiem vat ly\\code3.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('41', 'code1.txt', '2', '3', 'StoreLocation\\trancongnguyenhai\\Xu ly tin hieu so\\code1.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('42', 'code2.txt', '2', '3', 'StoreLocation\\trancongnguyenhai\\Xu ly tin hieu so\\code2.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('43', 'code3.txt', '2', '3', 'StoreLocation\\trancongnguyenhai\\Xu ly tin hieu so\\code3.txt', '2022-11-23', '2022-11-23', '1');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('26', 'code1.txt', '2', '2', 'StoreLocation\\huynhdinhhoangvien\\CNXH Khoa hoc\\code1.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('27', 'code2.txt', '2', '2', 'StoreLocation\\huynhdinhhoangvien\\CNXH Khoa hoc\\code2.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('28', 'code3.txt', '2', '2', 'StoreLocation\\huynhdinhhoangvien\\CNXH Khoa hoc\\code3.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('29', 'code1.txt', '2', '2', 'StoreLocation\\huynhdinhhoangvien\\Cong nghe Web\\code1.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('30', 'code2.txt', '2', '2', 'StoreLocation\\huynhdinhhoangvien\\Cong nghe Web\\code2.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('31', 'code3.txt', '2', '2', 'StoreLocation\\huynhdinhhoangvien\\Cong nghe Web\\code3.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('32', 'code1.txt', '2', '2', 'StoreLocation\\huynhdinhhoangvien\\Phap luat dai cuong\\code1.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('33', 'code2.txt', '2', '2', 'StoreLocation\\huynhdinhhoangvien\\Phap luat dai cuong\\code2.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('34', 'code3.txt', '2', '2', 'StoreLocation\\huynhdinhhoangvien\\Phap luat dai cuong\\code3.txt', '2022-11-23', '2022-11-23', '2');
 
 
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('44', 'code1.txt', '2', '4', 'StoreLocation\\nguyenthexuanly\\Dien toan dam may\\code1.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('45', 'code2.txt', '2', '4', 'StoreLocation\\nguyenthexuanly\\Dien toan dam may\\code2.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('46', 'code3.txt', '2', '4', 'StoreLocation\\nguyenthexuanly\\Dien toan dam may\\code3.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('47', 'code1.txt', '2', '4', 'StoreLocation\\nguyenthexuanly\\Mang may tinh\\code1.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('48', 'code2.txt', '2', '4', 'StoreLocation\\nguyenthexuanly\\Mang may tinh\\code2.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('49', 'code3.txt', '2', '4', 'StoreLocation\\nguyenthexuanly\\Mang may tinh\\code3.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('50', 'code1.txt', '2', '4', 'StoreLocation\\nguyenthexuanly\\PBL4\\code1.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('51', 'code2.txt', '2', '4', 'StoreLocation\\nguyenthexuanly\\PBL4\\code2.txt', '2022-11-23', '2022-11-23', '1');
-INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('52', 'code3.txt', '2', '4', 'StoreLocation\\nguyenthexuanly\\PBL4\\code3.txt', '2022-11-23', '2022-11-23', '1');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('35', 'code1.txt', '2', '3', 'StoreLocation\\trancongnguyenhai\\Lap trinh linux\\code1.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('36', 'code2.txt', '2', '3', 'StoreLocation\\trancongnguyenhai\\Lap trinh linux\\code2.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('37', 'code3.txt', '2', '3', 'StoreLocation\\trancongnguyenhai\\Lap trinh linux\\code3.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('38', 'code1.txt', '2', '3', 'StoreLocation\\trancongnguyenhai\\Thi nghiem vat ly\\code1.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('39', 'code2.txt', '2', '3', 'StoreLocation\\trancongnguyenhai\\Thi nghiem vat ly\\code2.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('40', 'code3.txt', '2', '3', 'StoreLocation\\trancongnguyenhai\\Thi nghiem vat ly\\code3.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('41', 'code1.txt', '2', '3', 'StoreLocation\\trancongnguyenhai\\Xu ly tin hieu so\\code1.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('42', 'code2.txt', '2', '3', 'StoreLocation\\trancongnguyenhai\\Xu ly tin hieu so\\code2.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('43', 'code3.txt', '2', '3', 'StoreLocation\\trancongnguyenhai\\Xu ly tin hieu so\\code3.txt', '2022-11-23', '2022-11-23', '2');
+
+
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('44', 'code1.txt', '2', '4', 'StoreLocation\\nguyenthexuanly\\Dien toan dam may\\code1.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('45', 'code2.txt', '2', '4', 'StoreLocation\\nguyenthexuanly\\Dien toan dam may\\code2.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('46', 'code3.txt', '2', '4', 'StoreLocation\\nguyenthexuanly\\Dien toan dam may\\code3.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('47', 'code1.txt', '2', '4', 'StoreLocation\\nguyenthexuanly\\Mang may tinh\\code1.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('48', 'code2.txt', '2', '4', 'StoreLocation\\nguyenthexuanly\\Mang may tinh\\code2.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('49', 'code3.txt', '2', '4', 'StoreLocation\\nguyenthexuanly\\Mang may tinh\\code3.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('50', 'code1.txt', '2', '4', 'StoreLocation\\nguyenthexuanly\\PBL4\\code1.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('51', 'code2.txt', '2', '4', 'StoreLocation\\nguyenthexuanly\\PBL4\\code2.txt', '2022-11-23', '2022-11-23', '2');
+INSERT INTO `pbl4`.`file` (`id`, `name`, `node_id`, `owner_id`, `path`, `created_date`, `modified_date`, `type_id`) VALUES ('52', 'code3.txt', '2', '4', 'StoreLocation\\nguyenthexuanly\\PBL4\\code3.txt', '2022-11-23', '2022-11-23', '2');
 
 
 -- Insert role
@@ -108,12 +108,12 @@ INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `up
 INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (31, 2, 1, 1);
 INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (32, 2, 1, 1);
 INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (33, 2, 1, 1);
-INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (34, 2, 0, 1);
-INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (35, 3, 0, 0);
-INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (36, 3, 0, 0);
-INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (37, 3, 1, 0);
-INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (38, 3, 1, 0);
-INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (39, 3, 1, 0);
+INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (34, 2, 1, 1);
+INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (35, 3, 1, 1);
+INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (36, 3, 1, 1);
+INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (37, 3, 1, 1);
+INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (38, 3, 1, 1);
+INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (39, 3, 1, 1);
 INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (40, 3, 1, 1);
 INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (41, 3, 1, 1);
 INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (42, 3, 1, 1);
@@ -123,8 +123,8 @@ INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `up
 INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (46, 4, 1, 1);
 INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (47, 4, 1, 1);
 INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (48, 4, 1, 1);
-INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (49, 4, 1, 0);
-INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (50, 4, 1, 0);
-INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (51, 4, 1, 0);
-INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (52, 4, 1, 0);
+INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (49, 4, 1, 1);
+INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (50, 4, 1, 1);
+INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (51, 4, 1, 1);
+INSERT INTO `pbl4`.`user_role_file` (`file_id`, `user_id`, `readPermission`, `updatePermission`) VALUES (52, 4, 1, 1);
 
