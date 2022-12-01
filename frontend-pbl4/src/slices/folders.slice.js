@@ -27,9 +27,16 @@ export const setPermission = createAsyncThunk(
   "folder/setPermission",
   payloadCreator(foldersApi.setPermission)
 );
+export const deleteFile = createAsyncThunk(
+  "folder/file/delete",
+  payloadCreator(foldersApi.deleteFile)
+);
+export const deleteFolder = createAsyncThunk(
+  "folder/delete",
+  payloadCreator(foldersApi.deleteFolder)
+);
 
 const handleFulfilled = (state, action) => {
-  console.log(action.payload);
   localStorage.setItem(
     LocalStorage.folders,
     JSON.stringify(action.payload.files)

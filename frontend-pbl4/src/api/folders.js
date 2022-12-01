@@ -1,4 +1,3 @@
-import LocalStorage from "../constant/localStorage";
 import http from "../utils/http";
 const foldersApi = {
   getFolders(id, config) {
@@ -7,9 +6,7 @@ const foldersApi = {
 
   getFileById(data) {
     console.log(data);
-    return http.get(
-      `users/${data.id}/folders/${data.folderID}?page=${data.page}`
-    );
+    return http.get(`users/${data.id}/folders/${data.folderID}?page=1`);
   },
   downloadFile(id, config) {
     return http.get(`folders/file/${id}/download`, config);
@@ -20,8 +17,11 @@ const foldersApi = {
   sharedFolders(id, config) {
     return http.get(`/users/${id}/folders/share?page=1`, config);
   },
-  deleteFile(id) {
-    return http.post(`folders/file/${id}/delete`);
+  deleteFile(data) {
+    return http.delete("folders/file", data);
+  },
+  deleteFolder(data) {
+    return http.delete("folders", data);
   },
   setPermission(data) {
     return http.post("/users/folders/permission", data);

@@ -11,25 +11,20 @@ import {
 } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import LocalStorage from "../constant/localStorage";
 import { path } from "../constant/path";
 import Default from "../layout/Default";
-import { getFileById } from "../slices/folders.slice";
+import { deleteFile, deleteFolder, getFileById } from "../slices/folders.slice";
 const Home = () => {
   const ref = useRef();
-
   const { profile } = useSelector((state) => state.auth);
   const [files, setFiles] = useState([]);
   const dispatch = useDispatch();
   const [currPage, setCurrPage] = useState(1);
   const [currFolder, setCurrFolder] = useState(1);
   const [personalFolder, setPersonalFolder] = useState([]);
-  const getFolder = async () => {
-    const data = { id: profile.id, folderID: currFolder, page: currPage };
-    const res = await dispatch(getFileById(data));
-    unwrapResult(res);
-    setFiles(res.payload);
-  };
+
+  const navigate = useNavigate();
+
   const handleSelectMenu = async (value) => {
     setCurrFolder(value.key);
   };
@@ -82,11 +77,19 @@ const Home = () => {
     } catch (error) {}
   };
   const handleDelete = async (item) => {
-    console.log(item);
+    console.log(item, "delete");
+    const data = {
+      userId: profile.id,
+      fileId: item.id,
+    };
+    navigate(0);
+
     if (item?.type?.name === "File") {
       //delete file
+      await dispatch(deleteFile(data));
     } else if (item?.type?.name === "Directory") {
       ///delete folder
+      await dispatch(deleteFolder(data));
     }
   };
 

@@ -20,6 +20,7 @@ import {
   FaUser,
 } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { getUsers } from "../slices/auth.slice";
 import {
   createFolder,
@@ -42,7 +43,7 @@ const Default = ({
   const [users, setUsers] = useState([]);
   const { profile } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   useEffect(() => {
     const _getFolder = async () => {
       try {
@@ -90,12 +91,13 @@ const Default = ({
 
   const handleOk = () => {
     const _createFolder = async () => {
-      const res = await dispatch(
+      await dispatch(
         createFolder({
           name: folderName,
         })
       );
     };
+    navigate(0);
     _createFolder();
     setIsModalOpen(false);
   };
