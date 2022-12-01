@@ -80,6 +80,7 @@ public class RoleService implements IRoleService{
 		HibernateUtils.startTrans(roleDao);
 		
 		UserRoleFileEntity userRoleFile =  roleDao.getRoleByRoleId(roleId);
+		if(userRoleFile != null)
 		System.out.println(userRoleFile.getFile());
 		
 		HibernateUtils.commitTrans();

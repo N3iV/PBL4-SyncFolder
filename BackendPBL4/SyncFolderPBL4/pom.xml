@@ -83,6 +83,18 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.11.0</version>
 		</dependency>
+		<dependency>
+			<groupId>io.socket</groupId>
+			<artifactId>socket.io-server</artifactId>
+			<version>4.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.websocket</groupId>
+			<artifactId>javax.websocket-api</artifactId>
+			<version>1.1</version>
+			<scope>provided</scope>
+		</dependency>
+		
 	</dependencies>
 	<build>
 		<plugins>
