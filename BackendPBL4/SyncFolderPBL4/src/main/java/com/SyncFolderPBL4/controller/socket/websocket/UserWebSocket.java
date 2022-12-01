@@ -3,6 +3,7 @@ package com.SyncFolderPBL4.controller.socket.websocket;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Predicate;
@@ -33,6 +34,7 @@ import com.SyncFolderPBL4.model.service.impl.FileService;
 import com.SyncFolderPBL4.model.service.impl.RoleService;
 import com.SyncFolderPBL4.model.service.impl.UserService;
 import com.SyncFolderPBL4.utils.FileUtils;
+import com.SyncFolderPBL4.utils.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -46,11 +48,12 @@ public class UserWebSocket {
 	private int roomOwnerId;
 	private String username;
 	private static String pathApp = System.getProperty("user.dir") + "\\";
-
 	private static Gson gson;
 	private IUserService userService;
 	private IFileService fileService;
 	private IRoleService roleService;
+
+	private Map<String, Object> data = new HashMap<>();
 
 	public UserWebSocket() {
 		userService = new UserService();
@@ -74,31 +77,28 @@ public class UserWebSocket {
 	@OnMessage
 	public void onMessage(Session session, MessageFunction messageFunc) throws IOException, EncodeException {
 		String message = null;
+		MessageReply msgRep = null;
 		switch (messageFunc.getFunc()) {
 		case "delete":
 			RoleID roleId = gson.fromJson(messageFunc.getContentMsg(), RoleID.class);
 			roleId.setUserId(users.get(session.getId()));
 			UserRoleFileEntity userRole = roleService.getRoleByRoleId(roleId);
-			if(userRole == null) {
+			if (userRole == null) {
 				message = "File không tồn tại hoặc bạn không có quyền với file này";
 				break;
 			}
-			if (userRole.getFile().getType().getName().equals("File")) {
-				message = deleteFileStrategy(userRole, t -> t.getFile().getType().getName().equals("File"),
-						"File không tồn tại");
-			} else {
-				if (userRole.getFile().getNodeId() == 0)
-					message = "Không thể xóa thư mục gốc";
-				else {
-					message = deleteFileStrategy(userRole, t -> t.getFile().getType().getName().equals("Directory"),
-							"Folder không tồn tại");
-				}
-			}
+			message = deleteFileStrategy(userRole);
+
 			break;
 		default:
 			break;
 		}
-		MessageReply msgRep = new MessageReply("Server", message);
+
+		if (data.isEmpty()) {
+			msgRep = new MessageReply("Server", message, null);
+		} else {
+			msgRep = new MessageReply("Server", message, data);
+		}
 		senderResponse(msgRep);
 	}
 
@@ -106,10 +106,6 @@ public class UserWebSocket {
 	public void onClose(Session session) throws IOException, EncodeException {
 
 		chatEndpoints.remove(this);
-//		MessageJoin message = new MessageJoin();
-//		message.setFrom(users.get(session.getId()));
-//		message.setContent("Disconnected!");
-//		broadcast(message);
 	}
 
 	@OnError
@@ -134,23 +130,27 @@ public class UserWebSocket {
 		this.session.getBasicRemote().sendObject(messageRep);
 	}
 
-	public String deleteFileStrategy(UserRoleFileEntity userRole, Predicate<UserRoleFileEntity> compareHelper,
-			String msgFolderNotExist) throws IOException, EncodeException {
+	public String deleteFileStrategy(UserRoleFileEntity userRole) throws IOException, EncodeException {
 		String contentRep = "";
+		String path = null;
 		if (!userRole.isUpdatePermission()) {
 			return "Không cho phép xóa";
 		}
-		if (compareHelper.test(userRole)) {
-			fileService.deleteFile(userRole);
-			String readPath = pathApp.concat(userRole.getFile().getPath());
-			FileUtils.deleteFile(readPath, userRole.getFile().getType().getName());
-			contentRep = this.username + " đã xóa thành công " + userRole.getFile().getType().getName() + " "
-					+ userRole.getFile().getName();
-			MessageReply msgRep = new MessageReply(this.username, contentRep);
-			broadcast(msgRep);
-			return "Xóa thành công";
-		} else {
-			return msgFolderNotExist;
+		if (userRole.getFile().getNodeId() == 0) {
+			return "Không thể xóa thư mục gốc";
 		}
+		fileService.deleteFile(userRole);
+		
+		path = StringUtils.cutLastElementPath(userRole.getFile().getPath());
+		data = fileService.getFileUsers(roomOwnerId, userRole.getFile().getNodeId(), path, 1);
+		
+		String readPath = pathApp.concat(userRole.getFile().getPath());
+		FileUtils.deleteFile(readPath, userRole.getFile().getType().getName());
+		contentRep = this.username + " đã xóa thành công " + userRole.getFile().getType().getName() + " "
+				+ userRole.getFile().getName();
+		MessageReply msgRep = new MessageReply(this.username, contentRep, data);
+		broadcast(msgRep);
+		return "Xóa thành công";
+
 	}
 }
