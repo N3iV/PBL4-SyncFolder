@@ -33,7 +33,6 @@ public class PermisUserMapper {
 		this.updatePermission = updatePermission;
 	}
 	public PermisUserMapper(List<Integer> userIds, Integer fileId, boolean readPermission, boolean updatePermission) {
-		super();
 		this.userIds = userIds;
 		this.fileId = fileId;
 		this.readPermission = readPermission;

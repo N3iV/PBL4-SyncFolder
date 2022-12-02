@@ -84,8 +84,13 @@ public class UserWebSocket {
 			roleId.setUserId(users.get(session.getId()));
 			UserRoleFileEntity userRole = roleService.getRoleByRoleId(roleId);
 			if (userRole == null) {
-				message = "File không tồn tại hoặc bạn không có quyền với file này";
-				break;
+				UserRoleFileEntity userRoleCreateFromParent = roleService.getRoleFromParent(roleId);
+				if(userRoleCreateFromParent == null)
+				{
+					message = "File không tồn tại hoặc bạn không có quyền với file này";
+					break;
+				}
+				userRole = userRoleCreateFromParent;
 			}
 			message = deleteFileStrategy(userRole);
 

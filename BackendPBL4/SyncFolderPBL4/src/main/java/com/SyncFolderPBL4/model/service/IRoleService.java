@@ -5,7 +5,14 @@ import com.SyncFolderPBL4.model.entities.RoleID;
 import com.SyncFolderPBL4.model.entities.UserRoleFileEntity;
 
 public interface IRoleService extends GenericService<UserRoleFileEntity> {
+	
+	boolean setRolesNotTransaction(PermisUserMapper permisUser);
+	
 	boolean setRoles(PermisUserMapper permisUser);
 
 	UserRoleFileEntity getRoleByRoleId(RoleID roleId);
+	
+	UserRoleFileEntity getRoleByRoleIdNotTransaction(RoleID roleId);
+
+	UserRoleFileEntity getRoleFromParent(RoleID roleId);
 }
