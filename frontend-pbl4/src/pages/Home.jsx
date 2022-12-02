@@ -42,6 +42,7 @@ const Home = () => {
   }, [lastMessage]);
 
   const handleSelectMenu = async (value) => {
+    console.log(value);
     setCurrFolder(value.key);
     console.log(value);
   };
