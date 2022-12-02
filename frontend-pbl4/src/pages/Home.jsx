@@ -1,5 +1,5 @@
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, List, Modal, Pagination } from "antd";
+import { Button, List, Pagination } from "antd";
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -10,10 +10,11 @@ import {
   FaTrash,
 } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import useWebSocket from "react-use-websocket";
 import { path } from "../constant/path";
 import Default from "../layout/Default";
-import useWebSocket, { ReadyState } from "react-use-websocket";
 import { deleteFile, deleteFolder, getFileById } from "../slices/folders.slice";
 
 const Home = () => {
@@ -23,27 +24,26 @@ const Home = () => {
   const dispatch = useDispatch();
   const [currPage, setCurrPage] = useState(1);
   const [currFolder, setCurrFolder] = useState(1);
-  const [personalFolder, setPersonalFolder] = useState([]);
   const [socketUrl, setSocketUrl] = useState(
     `ws://localhost:8080/SyncFolderPBL4/sync/1/1`
   );
-  const [messageHistory, setMessageHistory] = useState([]);
 
-  const { sendMessage, lastMessage, readyState, getWebSocket } =
-    useWebSocket(socketUrl);
-  if (lastMessage) {
-    console.log(JSON.parse(lastMessage?.data), "test");
-  }
-
+  const { sendMessage, lastMessage } = useWebSocket(socketUrl);
+  console.log(files);
   useEffect(() => {
     if (lastMessage !== null) {
-      setMessageHistory((prev) => prev.concat(lastMessage));
+      const { data, message } = JSON.parse(lastMessage?.data);
+      setFiles(data);
+      toast.success(message, {
+        position: "top-right",
+        autoClose: 2000,
+      });
     }
-  }, [lastMessage, setMessageHistory]);
-  const navigate = useNavigate();
+  }, [lastMessage]);
 
   const handleSelectMenu = async (value) => {
     setCurrFolder(value.key);
+    console.log(value);
   };
   useEffect(() => {
     const getFolder = async () => {
@@ -54,16 +54,7 @@ const Home = () => {
     };
     getFolder();
   }, [currFolder, currPage, dispatch, profile.id]);
-  const type = [
-    {
-      type: "Directory",
-      icon: <FaFolder />,
-    },
-    {
-      type: "File",
-      icon: <FaFileAlt />,
-    },
-  ];
+
   const typeOfFile = Object.freeze({
     Directory: <FaFolder />,
     File: <FaFileAlt />,
@@ -94,25 +85,20 @@ const Home = () => {
     } catch (error) {}
   };
   const handleDelete = async (item) => {
-    console.log(item, "delete");
     setSocketUrl(
       `ws://localhost:8080/SyncFolderPBL4/sync/${item.ownerId}/${profile.id}`
     );
     sendMessage(`{
-      "func": "delete",
-      "contentMsg": "{fileId: ${item.id}}"
-  }`);
+        "func": "delete",
+        "contentMsg": "{fileId: ${item.id}}"
+    }`);
     const data = {
       userId: profile.id,
       fileId: item.id,
     };
-    // navigate(0);
-
     if (item?.type?.name === "File") {
-      //delete file
       await dispatch(deleteFile(data));
     } else if (item?.type?.name === "Directory") {
-      ///delete folder
       await dispatch(deleteFolder(data));
     }
   };

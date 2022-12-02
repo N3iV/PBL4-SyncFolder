@@ -8,21 +8,25 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Test from "./pages/Test";
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function App() {
   return (
-    <Routes>
-      <Route element={<UnauthenticatedGuard />}>
-        <Route path={path.login} element={<Login />} />
-        <Route path={path.register} element={<Register />} />
-      </Route>
-      <Route element={<AuthenticatedGuard />}>
-        <Route path={path.home} element={<Home />} />
-        <Route path={path.folders} element={<Folders />} />
-        <Route path={path.folderDetail} element={<FolderDetail />} />
-      </Route>
-      <Route path="/test" element={<Test />} />
-    </Routes>
+    <>
+      <ToastContainer />
+      <Routes>
+        <Route element={<UnauthenticatedGuard />}>
+          <Route path={path.login} element={<Login />} />
+          <Route path={path.register} element={<Register />} />
+        </Route>
+        <Route element={<AuthenticatedGuard />}>
+          <Route path={path.home} element={<Home />} />
+          <Route path={path.folders} element={<Folders />} />
+          <Route path={path.folderDetail} element={<FolderDetail />} />
+        </Route>
+        <Route path="/test" element={<Test />} />
+      </Routes>
+    </>
   );
 }
 
