@@ -13,7 +13,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { path } from "../constant/path";
 import Default from "../layout/Default";
+import useWebSocket, { ReadyState } from "react-use-websocket";
 import { deleteFile, deleteFolder, getFileById } from "../slices/folders.slice";
+
 const Home = () => {
   const ref = useRef();
   const { profile } = useSelector((state) => state.auth);
@@ -22,7 +24,22 @@ const Home = () => {
   const [currPage, setCurrPage] = useState(1);
   const [currFolder, setCurrFolder] = useState(1);
   const [personalFolder, setPersonalFolder] = useState([]);
+  const [socketUrl, setSocketUrl] = useState(
+    `ws://localhost:8080/SyncFolderPBL4/sync/1/1`
+  );
+  const [messageHistory, setMessageHistory] = useState([]);
 
+  const { sendMessage, lastMessage, readyState, getWebSocket } =
+    useWebSocket(socketUrl);
+  if (lastMessage) {
+    console.log(JSON.parse(lastMessage?.data), "test");
+  }
+
+  useEffect(() => {
+    if (lastMessage !== null) {
+      setMessageHistory((prev) => prev.concat(lastMessage));
+    }
+  }, [lastMessage, setMessageHistory]);
   const navigate = useNavigate();
 
   const handleSelectMenu = async (value) => {
@@ -78,11 +95,18 @@ const Home = () => {
   };
   const handleDelete = async (item) => {
     console.log(item, "delete");
+    setSocketUrl(
+      `ws://localhost:8080/SyncFolderPBL4/sync/${item.ownerId}/${profile.id}`
+    );
+    sendMessage(`{
+      "func": "delete",
+      "contentMsg": "{fileId: ${item.id}}"
+  }`);
     const data = {
       userId: profile.id,
       fileId: item.id,
     };
-    navigate(0);
+    // navigate(0);
 
     if (item?.type?.name === "File") {
       //delete file
