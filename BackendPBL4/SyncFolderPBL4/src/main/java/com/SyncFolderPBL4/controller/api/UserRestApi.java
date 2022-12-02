@@ -106,7 +106,7 @@ public class UserRestApi {
 		FileEntity fileEntity = fileService.findOne(folderId);
 		if (fileEntity != null && fileEntity.getType().getName().equals("Directory")) {
 			return Response
-					.ok(gson.toJson(fileService.getFileUsers(ownerId, fileEntity.getNodeId() + 1, page)))
+					.ok(gson.toJson(fileService.getFileUsers(ownerId, fileEntity.getNodeId() + 1,fileEntity.getPath(), page)))
 					.build();
 
 		} else {

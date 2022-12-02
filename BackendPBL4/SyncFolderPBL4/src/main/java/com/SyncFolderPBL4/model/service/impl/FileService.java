@@ -66,14 +66,15 @@ public class FileService implements IFileService {
 	}
 
 	@Override
-	public Map<String, Object> getFileUsers(int id, int nodeId, int page) {
+	public Map<String, Object> getFileUsers(int ownerid, int nodeId, String path, int page) {
 		Map<String, Object> result = new HashMap<>();
 		HibernateUtils.startTrans(fileDao);
 
-		Long maxItem = fileDao.countFilesByOwnerIdAndNodeId(id, nodeId);
+		Long maxItem = fileDao.countFilesByOwnerIdAndNodeId(ownerid, nodeId);
 		int numPage = (int) (Math.ceil((double) maxItem / SystemConstant.MAX_PAGE_SIZE));
-
-		result.put("files", fileDao.getFilesByOwnerIdAndNodeId(id, nodeId, page));
+		
+		path = path.replace(File.separator, "%").concat("%");
+		result.put("files", fileDao.getFilesByOwnerIdAndNodeId(ownerid, nodeId,path, page));
 		result.put("page", page);
 		result.put("numberOfPage", numPage);
 
@@ -81,10 +82,10 @@ public class FileService implements IFileService {
 		return result;
 	}
 
-	@Override
-	public Map<String, Object> getFileUsers(int id, int page) {
-		return getFileUsers(id, 1, page);
-	}
+//	@Override
+//	public Map<String, Object> getFileUsers(int id, int page) {
+////		return getFileUsers(id, 1, page);
+//	}
 
 	
 

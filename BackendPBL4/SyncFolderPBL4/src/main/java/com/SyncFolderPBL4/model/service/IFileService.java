@@ -12,9 +12,9 @@ import com.SyncFolderPBL4.model.entities.UserRoleFileEntity;
 
 public interface IFileService extends GenericService<FileEntity> {
 
-	Map<String, Object> getFileUsers(int id, int nodeId, int page);
+	Map<String, Object> getFileUsers(int id, int nodeId, String path, int page);
 
-	Map<String, Object> getFileUsers(int id, int page);
+//	Map<String, Object> getFileUsers(int id, String path, int page);
 
 	Map<String, Object> createFolder(int fileParentId, String fileName, String dirPath);
 
@@ -24,5 +24,4 @@ public interface IFileService extends GenericService<FileEntity> {
 
 	void deleteFile(UserRoleFileEntity role);
 
-	
 }

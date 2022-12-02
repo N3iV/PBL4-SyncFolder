@@ -5,7 +5,7 @@ import java.util.List;
 import com.SyncFolderPBL4.model.entities.FileEntity;
 
 public interface IFileDao extends GenericDao<FileEntity> {
-	List<FileEntity> getFilesByOwnerIdAndNodeId(int ownerId, int nodeId, int page);
+	List<FileEntity> getFilesByOwnerIdAndNodeId(int ownerId, int nodeId, String path, int page);
 
 	Long countFilesByOwnerIdAndNodeId(int ownerId, int nodeId);
 
@@ -14,12 +14,11 @@ public interface IFileDao extends GenericDao<FileEntity> {
 	Long countFiles(int ownerId, int nodeId);
 
 	FileEntity findOneByOwnerIdAndNodeId(int ownerId, int nodeId);
-	
+
 	Long countSharedFiles(int userId);
-	
+
 	List<FileEntity> getSharedFiles(int userId, int page);
-	
+
 	void deleteFileByPath(String path, int ownerId);
-	
-	
+
 }
