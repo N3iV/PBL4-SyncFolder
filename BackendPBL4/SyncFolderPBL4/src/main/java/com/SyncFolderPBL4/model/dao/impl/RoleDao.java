@@ -57,7 +57,7 @@ public class RoleDao extends AbstractDao<UserRoleFileEntity> implements IRoleDao
 												
 	}
 	@Override
-	public UserRoleFileEntity getParentRole(int userId, String path) {
+	public UserRoleFileEntity getRoleByUserIdAndPath(int userId, String path) {
 		String sql = "SELECT * "
 					+"FROM user_role_file "
 					+"WHERE user_id = ?0 "

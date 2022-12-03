@@ -51,6 +51,7 @@ public class RoleService implements IRoleService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 	@Override
 	public boolean setRolesNotTransaction(PermisUserMapper permisUser) {
 		FileEntity file = fileDao.findOneById(permisUser.getFileId());
@@ -74,12 +75,13 @@ public class RoleService implements IRoleService {
 	@Override
 	public boolean setRoles(PermisUserMapper permisUser) {
 		HibernateUtils.startTrans(userDao, fileDao, roleDao);
-		
+
 		boolean checkRole = this.setRolesNotTransaction(permisUser);
 
 		HibernateUtils.commitTrans();
 		return checkRole;
 	}
+
 	@Override
 	public UserRoleFileEntity getRoleByRoleIdNotTransaction(RoleID roleId) {
 		UserRoleFileEntity userRoleFile = roleDao.getRoleByRoleId(roleId);
@@ -102,22 +104,21 @@ public class RoleService implements IRoleService {
 	@Override
 	public UserRoleFileEntity getRoleFromParent(RoleID roleId) {
 		UserRoleFileEntity result = null;
-		
+
 		HibernateUtils.startTrans(userDao, roleDao, fileDao);
 		FileEntity file = fileDao.findOneById(roleId.getFileId());
 		int round = file.getNodeId();
 		String path = file.getPath();
-		for(int i = round ; i > 0 ; i--)
-		{
+		for (int i = round; i > 0; i--) {
 			path = StringUtils.cutLastElementPath(path);
-			UserRoleFileEntity parentRole = roleDao.getParentRole(roleId.getUserId(),path.replace(File.separator, "%"));
-			if(parentRole != null)
-			{
-				PermisUserMapper uMapper = new PermisUserMapper(Arrays.asList(roleId.getUserId())
-																,roleId.getFileId() 
-																, parentRole.isReadPermission()
-																, parentRole.isUpdatePermission());
-				if ( this.setRolesNotTransaction(uMapper) == true )
+			UserRoleFileEntity parentRole = roleDao.getRoleByUserIdAndPath(roleId.getUserId(),
+					path.replace(File.separator, "%"));
+			if (parentRole != null) {
+				PermisUserMapper uMapper = new PermisUserMapper(Arrays.asList(roleId.getUserId()),
+																roleId.getFileId(),
+																parentRole.isReadPermission(),
+																parentRole.isUpdatePermission());
+				if (this.setRolesNotTransaction(uMapper) == true)
 					result = this.getRoleByRoleIdNotTransaction(roleId);
 				HibernateUtils.commitTrans();
 				return result;
@@ -128,6 +129,28 @@ public class RoleService implements IRoleService {
 		return result;
 	}
 
-	
+	@Override
+	public UserRoleFileEntity getParentRole(RoleID roleId) {
+		UserRoleFileEntity result = null;
+
+		HibernateUtils.startTrans(userDao, roleDao, fileDao);
+		FileEntity file = fileDao.findOneById(roleId.getFileId());
+		int round = file.getNodeId();
+		String path = file.getPath();
+		for (int i = round; i >= 0; i--) {
+			UserRoleFileEntity parentRole = roleDao.getRoleByUserIdAndPath(roleId.getUserId(),
+					path.replace(File.separator, "%"));
+			if (parentRole != null) {
+				result = parentRole;
+			}
+			path = StringUtils.cutLastElementPath(path);
+		}
+		if(result != null)
+		{
+			System.out.println(result.getFile());
+		}
+		HibernateUtils.commitTrans();
+		return result;
+	}
 
 }

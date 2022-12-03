@@ -94,7 +94,6 @@ public class FileService implements IFileService {
 		Map<String,Object> result = new HashMap<>();
 		
 		HibernateUtils.startTrans(fileDao,typeDao,userDao,roleDao);
-		
 		FileEntity fileCreate = saveFile(fileParentId, fileName, typeDao.findOneById(1));
 		UserEntity user = userDao.findOneById(fileCreate.getOwnerId());
 		UserRoleFileEntity role = new UserRoleFileEntity(new RoleID(user.getId(),fileCreate.getId()),
@@ -143,6 +142,7 @@ public class FileService implements IFileService {
 	@Override
 	public FileEntity saveFile(int fileParentId, String fileName, TypeEntity type) {
 		FileEntity parentFile = fileDao.findOneById(fileParentId);
+		
 		FileEntity fileEntityUpload = new FileBuilder()
 								.addName(fileName)
 								.addNodeId(parentFile.getNodeId() + 1)

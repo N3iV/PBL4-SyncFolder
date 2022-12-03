@@ -7,4 +7,5 @@ public class SystemConstant {
 	public static final String CONCAT_PATH = "StoreLocation";
 	public static final Integer MAX_PAGE_SIZE = 10;
 	public static final String CHARSET = ";charset=UTF-8";
+	public static final String SERVER_NAME = "SERVER";
 }
