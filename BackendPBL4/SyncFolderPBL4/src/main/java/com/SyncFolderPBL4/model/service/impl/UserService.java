@@ -141,6 +141,22 @@ public class UserService implements IUserService {
 		return result;
 	}
 
-	
+	@Override
+	public Map<String, Object> getSharedFilesEndPage(int userId) {
+		Map<String, Object> result = new HashMap<>();
+		HibernateUtils.startTrans(fileDao);
+		
+		Long maxItem = fileDao.countSharedFiles(userId);
+		int numPage = (int) (Math.ceil((double) maxItem / SystemConstant.MAX_PAGE_SIZE));
+
+		result.put("files", fileDao.getSharedFiles(userId, numPage));
+		result.put("page", numPage);
+		result.put("numberOfPage", numPage);
+		
+		HibernateUtils.commitTrans();
+
+		
+		return result;
+	}
 
 }
