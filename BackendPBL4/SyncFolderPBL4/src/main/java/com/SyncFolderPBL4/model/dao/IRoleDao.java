@@ -9,5 +9,5 @@ public interface IRoleDao extends GenericDao<UserRoleFileEntity> {
 
 	void deleteRoleByPath(String path, int ownerId);
 
-	UserRoleFileEntity getParentRole(int userId, String path);
+	UserRoleFileEntity getRoleByUserIdAndPath(int userId, String path);
 }

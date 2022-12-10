@@ -3,10 +3,16 @@ package com.SyncFolderPBL4.controller.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.annotations.Expose;
+
 public class PermisUserMapper {
+	@Expose
 	private List<Integer> userIds = new ArrayList<>();
+	@Expose
 	private Integer fileId;
+	@Expose
 	private boolean readPermission;
+	@Expose
 	private boolean updatePermission;
 	public List<Integer> getUserIds() {
 		return userIds;

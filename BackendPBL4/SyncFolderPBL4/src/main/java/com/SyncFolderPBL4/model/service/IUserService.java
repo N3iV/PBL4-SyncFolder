@@ -12,6 +12,8 @@ public interface IUserService extends GenericService<UserEntity> {
 
 	Map<String, Object> getAllUser(int userId, int page);
 
-	Map<String,Object> getSharedFiles(int userId, int page);
+	Map<String, Object> getSharedFiles(int userId, int page);
+	
+	Map<String, Object> getSharedFilesEndPage(int userId);
 
 }

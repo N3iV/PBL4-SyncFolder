@@ -1,5 +1,7 @@
 package com.SyncFolderPBL4.model.entities;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -98,5 +100,24 @@ public class UserRoleFileEntity {
 	public UserRoleFileEntity() {
 		// TODO Auto-generated constructor stub
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(roleIds);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UserRoleFileEntity other = (UserRoleFileEntity) obj;
+		return Objects.equals(roleIds, other.roleIds);
+	}
+	
+	
 	
 }
