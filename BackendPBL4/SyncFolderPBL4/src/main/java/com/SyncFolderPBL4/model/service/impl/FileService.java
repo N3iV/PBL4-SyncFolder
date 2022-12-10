@@ -73,7 +73,7 @@ public class FileService implements IFileService {
 		Long maxItem = fileDao.countFilesByOwnerIdAndNodeIdAndPath(ownerid, nodeId, currentPath);
 		int numPage = (int) (Math.ceil((double) maxItem / SystemConstant.MAX_PAGE_SIZE));
 		
-		result.put("files", fileDao.getFilesByOwnerIdAndNodeIdAndPath(ownerid, nodeId,path, page));
+		result.put("files", fileDao.getFilesByOwnerIdAndNodeIdAndPath(ownerid, nodeId, currentPath, page));
 		result.put("page", page);
 		result.put("numberOfPage", numPage);
 
