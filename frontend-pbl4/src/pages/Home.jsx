@@ -49,12 +49,12 @@ const Home = () => {
   };
   useEffect(() => {
     const getFolder = async () => {
-      const _item = sharedFolders.files.filter(
-        (item) => item.id === Number(currFolder)
-      );
+      const _item =
+        sharedFolders.files &&
+        sharedFolders.files.filter((item) => item.id === Number(currFolder));
       console.log(_item, "-------------------");
       const data = {
-        id: _item[0]?.ownerId || profile.id,
+        id: _item?.[0]?.ownerId || profile.id,
         folderID: currFolder,
         page: currPage,
       };
