@@ -16,7 +16,7 @@ public class FileDao extends AbstractDao<FileEntity> implements IFileDao {
 	}
 
 	@Override
-	public List<FileEntity> getFilesByOwnerIdAndNodeId(int ownerId, int nodeId,String path, int page) {
+	public List<FileEntity> getFilesByOwnerIdAndNodeIdAndPath(int ownerId, int nodeId, String path, int page) {
 		String hql =  "FROM FileEntity f "
 					+ "where f.ownerId = ?0 and f.nodeId = ?1 and f.path LIKE ?2 "
 					+ "ORDER BY f.type.id ASC , f.id ASC";
@@ -27,32 +27,33 @@ public class FileDao extends AbstractDao<FileEntity> implements IFileDao {
 	}
 
 	@Override
-	public Long countFilesByOwnerIdAndNodeId(int ownerId, int nodeId) {
-		String hql = "select count(f) from FileEntity f where f.ownerId = ?0 and f.nodeId = ?1";
+	public Long countFilesByOwnerIdAndNodeIdAndPath(int ownerId, int nodeId, String path) {
+		String hql = "select count(f) from FileEntity f where f.ownerId = ?0 and f.nodeId = ?1 and f.path LIKE ?2";
 		Query<Long> query = session.createQuery(hql, Long.class)
 							.setParameter(0, ownerId)
-							.setParameter(1, nodeId);
+							.setParameter(1, nodeId)
+							.setParameter(2, path);
 		return query.uniqueResult();
 	}
 
-	@Override
-	public Long countFiles(int ownerId, int nodeId) {
-		String hql = "SELECT COUNT(*) FROM FileEntity f WHERE f.nodeId = ?0 and f.ownerId = ?1";
-		Query<Long> query = session.createQuery(hql, Long.class)
-							.setParameter(0, nodeId)
-							.setParameter(1, ownerId);
-		return query.uniqueResult();
-
-	}
-
-	@Override
-	public List<FileEntity> getAllFiles(int page, int ownerId, int nodeId) {
-		String hql = "FROM FileEntity f WHERE f.nodeId = ?0 and f.ownerId = ?1";
-		Query<FileEntity> query = setListParamsInHQL(session.createQuery(hql, FileEntity.class), nodeId, ownerId)
-									.setFirstResult((page - 1) * SystemConstant.MAX_PAGE_SIZE)
-									.setMaxResults(SystemConstant.MAX_PAGE_SIZE);
-		return query.getResultList();
-	}
+//	@Override
+//	public Long countFiles(int ownerId, int nodeId) {
+//		String hql = "SELECT COUNT(*) FROM FileEntity f WHERE f.nodeId = ?0 and f.ownerId = ?1";
+//		Query<Long> query = session.createQuery(hql, Long.class)
+//							.setParameter(0, nodeId)
+//							.setParameter(1, ownerId);
+//		return query.uniqueResult();
+//
+//	}
+//
+//	@Override
+//	public List<FileEntity> getAllFiles(int page, int ownerId, int nodeId) {
+//		String hql = "FROM FileEntity f WHERE f.nodeId = ?0 and f.ownerId = ?1";
+//		Query<FileEntity> query = setListParamsInHQL(session.createQuery(hql, FileEntity.class), nodeId, ownerId)
+//									.setFirstResult((page - 1) * SystemConstant.MAX_PAGE_SIZE)
+//									.setMaxResults(SystemConstant.MAX_PAGE_SIZE);
+//		return query.getResultList();
+//	}
 
 	@Override
 	public FileEntity findOneByOwnerIdAndNodeId(int ownerId, int nodeId) {
@@ -96,6 +97,13 @@ public class FileDao extends AbstractDao<FileEntity> implements IFileDao {
 				.setParameter(0, path)
 				.setParameter(1, ownerId);
 		query.executeUpdate();
+	}
+
+	@Override
+	public FileEntity getFileByNameAndPathAndNodeId(String name, String path, int nodeId) {
+		String sql = "FROM FileEntity WHERE path LIKE ?0 AND name = ?1 AND nodeId = ?2";
+		return setListParamsInHQL(session.createQuery(sql,FileEntity.class), path, name, nodeId)
+				.uniqueResult();
 	}
 
 }

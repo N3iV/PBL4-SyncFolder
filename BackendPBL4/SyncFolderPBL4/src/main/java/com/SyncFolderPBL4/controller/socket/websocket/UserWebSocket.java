@@ -21,6 +21,7 @@ import javax.websocket.server.ServerEndpoint;
 
 import com.SyncFolderPBL4.config.LocalDateTimeAdapter;
 import com.SyncFolderPBL4.constant.SystemConstant;
+import com.SyncFolderPBL4.controller.mapper.FileCreateMapperJson;
 import com.SyncFolderPBL4.controller.socket.cls.MessageFunction;
 import com.SyncFolderPBL4.controller.socket.cls.MessageReply;
 import com.SyncFolderPBL4.controller.socket.endecoder.MessageFunctionDecoder;
@@ -81,7 +82,7 @@ public class UserWebSocket {
 		String message = null;
 		MessageReply msgRep = null;
 		switch (messageFunc.getFunc()) {
-		// delete file/folder
+		// delete file/folder feature
 		case "delete":
 			RoleID roleId = gson.fromJson(messageFunc.getContentMsg(), RoleID.class);
 			roleId.setUserId(users.get(session.getId()));
@@ -95,16 +96,13 @@ public class UserWebSocket {
 					return;
 				}
 			}
-			deleteFileStrategy(userRole, roleId.getFileId());
-
+			handleDeleteWebSocketFile(userRole, roleId.getFileId());
 			break;
 		// create folder feature
-//		case "create":
-//			FileCreateMapperJson fileInfoInput = gson.fromJson(messageFunc.getContentMsg(), FileCreateMapperJson.class);
-//			data = fileService.createFolder(fileInfoInput.getParentFolderId(), fileInfoInput.getFolderName(), pathApp);
-//			String contentRep = this.username + " đã tạo thành công folder " + fileInfoInput.getFolderName();
-//			msgRep = new MessageReply(this.username, contentRep, data);
-//			broadcast(msgRep);
+		case "create":
+			FileCreateMapperJson fileInfoInput = gson.fromJson(messageFunc.getContentMsg(), FileCreateMapperJson.class);
+			handleUploadWebsocketFile(fileInfoInput);
+			break;
 		}
 	}
 
@@ -120,8 +118,23 @@ public class UserWebSocket {
 	}
 
 
-
-	public void deleteFileStrategy(UserRoleFileEntity userRole, int fileId) throws IOException, EncodeException {
+	// ===================================== handle feature ====================================
+	
+	public void handleUploadWebsocketFile(FileCreateMapperJson sourcefile) throws IOException, EncodeException {
+		Map<String, Object> data = fileService.createFolder(sourcefile.getParentFolderId(), sourcefile.getFolderName(), pathApp);
+		@SuppressWarnings("unchecked")
+		FileEntity fileEntity = ((List<FileEntity>)data.get("files"))
+													.stream()
+													.filter(file -> sourcefile.getFolderName().equals(file.getName()))
+													.findFirst()
+													.get();
+		Map<Integer, String> tableSendMsg = checkPermissionAllUserInRoomForResponse(fileEntity.getId());
+		String contentRep = this.username + " đã tạo thành công folder " + sourcefile.getFolderName();
+		MessageReply msgRep = new MessageReply(this.username, contentRep, data);
+		broadcastIfCondition(msgRep,tableSendMsg,"Tạo folder thành công");
+	}
+	
+	public void handleDeleteWebSocketFile(UserRoleFileEntity userRole, int fileId) throws IOException, EncodeException {
 		String contentRep = "";
 		String path = null;
 		if (!userRole.isUpdatePermission()) {
@@ -146,11 +159,11 @@ public class UserWebSocket {
 		MessageReply msgRep = new MessageReply(this.username, contentRep, data);
 		
 		// broad cast
-		broadcastIfCondition(msgRep,tableSendMsg);
+		broadcastIfCondition(msgRep,tableSendMsg, "Xóa thành công");
 	}
 	// ===================================== send ====================================
 
-	private void broadcastIfCondition(MessageReply messageRep, Map<Integer, String> tableSendMsg) throws IOException, EncodeException {
+	private void broadcastIfCondition(MessageReply messageRep, Map<Integer, String> tableSendMsg, String serverMsg) throws IOException, EncodeException {
 					
 			chatEndpoints.forEach(endpoint -> {
 				try {
@@ -163,7 +176,7 @@ public class UserWebSocket {
 							if(endpoint == this)
 							{
 								endpoint.session.getBasicRemote().sendObject(new MessageReply(SystemConstant.SERVER_NAME,
-																								"Xóa thành công",
+																								serverMsg,
 																								messageRep.getData())
 																			);
 							}else 
@@ -183,7 +196,7 @@ public class UserWebSocket {
 							if (endpoint == this)
 							{
 								endpoint.session.getBasicRemote().sendObject(new MessageReply(SystemConstant.SERVER_NAME,
-																								"Xóa thành công",
+																								serverMsg,
 																								msgEmptyData.getData())
 																			);
 							} else

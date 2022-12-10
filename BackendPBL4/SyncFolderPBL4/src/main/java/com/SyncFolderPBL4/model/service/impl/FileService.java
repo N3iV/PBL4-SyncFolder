@@ -27,6 +27,7 @@ import com.SyncFolderPBL4.model.entities.builder.FileBuilder;
 import com.SyncFolderPBL4.model.service.IFileService;
 import com.SyncFolderPBL4.utils.FileUtils;
 import com.SyncFolderPBL4.utils.HibernateUtils;
+import com.SyncFolderPBL4.utils.StringUtils;
 
 public class FileService implements IFileService {
 
@@ -55,13 +56,11 @@ public class FileService implements IFileService {
 
 	@Override
 	public FileEntity findOne(FileEntity obj) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Integer save(FileEntity obj) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -70,11 +69,11 @@ public class FileService implements IFileService {
 		Map<String, Object> result = new HashMap<>();
 		HibernateUtils.startTrans(fileDao);
 
-		Long maxItem = fileDao.countFilesByOwnerIdAndNodeId(ownerid, nodeId);
+		String currentPath = path.replace(File.separator, "%").concat("%");
+		Long maxItem = fileDao.countFilesByOwnerIdAndNodeIdAndPath(ownerid, nodeId, currentPath);
 		int numPage = (int) (Math.ceil((double) maxItem / SystemConstant.MAX_PAGE_SIZE));
 		
-		path = path.replace(File.separator, "%").concat("%");
-		result.put("files", fileDao.getFilesByOwnerIdAndNodeId(ownerid, nodeId,path, page));
+		result.put("files", fileDao.getFilesByOwnerIdAndNodeIdAndPath(ownerid, nodeId,path, page));
 		result.put("page", page);
 		result.put("numberOfPage", numPage);
 
@@ -102,12 +101,17 @@ public class FileService implements IFileService {
 															true,true);
 		roleDao.save(role);
 		FileUtils.createNewDir(dirPath + File.separator + fileCreate.getPath());
-		
 		// Pagination 
-		Long maxItem = fileDao.countFiles(fileCreate.getOwnerId(), fileCreate.getNodeId());
+		
+		// Lấy path của parent
+		String path = StringUtils.cutLastElementPath(fileCreate.getPath())
+								 .replace(File.separator, "%")
+								 .concat("%");
+		
+		Long maxItem = fileDao.countFilesByOwnerIdAndNodeIdAndPath(fileCreate.getOwnerId(), fileCreate.getNodeId(), path);
 		int numPage = (int) (Math.ceil((double) maxItem / SystemConstant.MAX_PAGE_SIZE));
 		int page = numPage;
-		result.put("files", fileDao.getAllFiles(page, fileCreate.getOwnerId(), fileCreate.getNodeId()));
+		result.put("files", fileDao.getFilesByOwnerIdAndNodeIdAndPath(fileCreate.getOwnerId(), fileCreate.getNodeId(), path, page));
 		result.put("page", page);
 		result.put("numberOfPage", numPage);
 		
@@ -126,10 +130,11 @@ public class FileService implements IFileService {
 		File fileUpload = FileUtils.createNewFile(dirPath + File.separator + fileEntityUpload.getPath());
 		FileUtils.writeFile(fileUpload, is);
 		// Pagination 
-		Long maxItem = fileDao.countFiles(fileEntityUpload.getOwnerId(), fileEntityUpload.getNodeId());
+		String path = StringUtils.cutLastElementPath(fileEntityUpload.getPath());
+		Long maxItem = fileDao.countFilesByOwnerIdAndNodeIdAndPath(fileEntityUpload.getOwnerId(), fileEntityUpload.getNodeId(), path);
 		int numPage = (int) (Math.ceil((double) maxItem / SystemConstant.MAX_PAGE_SIZE));
 		int page = numPage;
-		result.put("files", fileDao.getAllFiles(page, fileEntityUpload.getOwnerId(), fileEntityUpload.getNodeId()));
+		result.put("files", fileDao.getFilesByOwnerIdAndNodeIdAndPath(fileEntityUpload.getOwnerId(), fileEntityUpload.getNodeId(), path, page));
 		result.put("page", page);
 		result.put("numberOfPage", numPage);
 				
@@ -142,12 +147,13 @@ public class FileService implements IFileService {
 	@Override
 	public FileEntity saveFile(int fileParentId, String fileName, TypeEntity type) {
 		FileEntity parentFile = fileDao.findOneById(fileParentId);
+		String fileNameExisted = getFileNameIfExisted(parentFile,fileName);
 		
 		FileEntity fileEntityUpload = new FileBuilder()
-								.addName(fileName)
+								.addName(fileNameExisted)
 								.addNodeId(parentFile.getNodeId() + 1)
 								.addOwnerId(parentFile.getOwnerId())
-								.addPath(parentFile.getPath() + File.separator + fileName)
+								.addPath(parentFile.getPath() + File.separator + fileNameExisted)
 								.addType(type)
 								.addCreatedDate(LocalDateTime.now())
 								.addModifiedDate(LocalDateTime.now())
@@ -156,7 +162,20 @@ public class FileService implements IFileService {
 		return fileEntityUpload;
 	}
 
-	
+	public String getFileNameIfExisted(FileEntity parentFile, String fileName)
+	{	
+		String fileNameExisted = fileName;
+		int i = 1;
+		while(true)
+		{
+			FileEntity file = fileDao.getFileByNameAndPathAndNodeId(fileNameExisted,
+					parentFile.getPath().replace(File.separator, "%").concat("%"),
+					parentFile.getNodeId() + 1);
+			if(file == null)
+				return fileNameExisted;
+			fileNameExisted = (new StringBuilder(fileNameExisted)).append("(").append(i++).append(")").toString();
+		}
+	}
 	
 	@Override
 	public void deleteFile(UserRoleFileEntity role) {
