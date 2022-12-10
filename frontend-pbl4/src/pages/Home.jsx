@@ -10,7 +10,7 @@ import {
   FaTrash,
 } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import useWebSocket from "react-use-websocket";
 import { path } from "../constant/path";
@@ -20,16 +20,18 @@ import { deleteFile, deleteFolder, getFileById } from "../slices/folders.slice";
 const Home = () => {
   const ref = useRef();
   const { profile } = useSelector((state) => state.auth);
+  const { sharedFolders } = useSelector((state) => state.folders);
+  console.log({ sharedFolders });
   const [files, setFiles] = useState([]);
   const dispatch = useDispatch();
   const [currPage, setCurrPage] = useState(1);
   const [currFolder, setCurrFolder] = useState(1);
+  const navigate = useNavigate();
   const [socketUrl, setSocketUrl] = useState(
     `ws://localhost:8080/SyncFolderPBL4/sync/1/1`
   );
 
   const { sendMessage, lastMessage } = useWebSocket(socketUrl);
-  console.log(files);
   useEffect(() => {
     if (lastMessage !== null) {
       const { data, message } = JSON.parse(lastMessage?.data);
@@ -42,19 +44,27 @@ const Home = () => {
   }, [lastMessage]);
 
   const handleSelectMenu = async (value) => {
-    console.log(value);
+    console.log(value, "select menu");
     setCurrFolder(value.key);
-    console.log(value);
   };
   useEffect(() => {
     const getFolder = async () => {
-      const data = { id: profile.id, folderID: currFolder, page: currPage };
+      const _item = sharedFolders.files.filter(
+        (item) => item.id === Number(currFolder)
+      );
+      console.log(_item, "-------------------");
+      const data = {
+        id: _item[0]?.ownerId || profile.id,
+        folderID: currFolder,
+        page: currPage,
+      };
       const res = await dispatch(getFileById(data));
+      console.log(res);
       unwrapResult(res);
       setFiles(res.payload);
     };
     getFolder();
-  }, [currFolder, currPage, dispatch, profile.id]);
+  }, [currFolder, currPage, dispatch, profile.id, sharedFolders.files]);
 
   const typeOfFile = Object.freeze({
     Directory: <FaFolder />,

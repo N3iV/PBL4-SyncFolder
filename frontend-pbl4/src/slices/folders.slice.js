@@ -42,14 +42,19 @@ const handleFulfilled = (state, action) => {
     JSON.stringify(action.payload.files)
   );
 };
+const getShareFolders = (state, action) => {
+  state.sharedFolders = action.payload;
+};
 const folders = createSlice({
   name: "folders",
   initialState: {
     folders: [],
+    sharedFolders: [],
   },
 
   extraReducers: {
     [createFolder.fulfilled]: handleFulfilled,
+    [folderShareWithMe.fulfilled]: getShareFolders,
   },
 });
 

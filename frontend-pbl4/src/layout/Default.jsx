@@ -25,6 +25,7 @@ import { getUsers } from "../slices/auth.slice";
 import {
   createFolder,
   folderShareWithMe,
+  getFileById,
   getFolder,
   setPermission,
 } from "../slices/folders.slice";
@@ -49,8 +50,10 @@ const Default = ({
       try {
         const res = await dispatch(getFolder(profile.id));
         const sharedFoldersRes = await dispatch(folderShareWithMe(profile.id));
+        //no clean code, bcz I lười :D
         unwrapResult(res);
         setSharedFolders(sharedFoldersRes.payload.files);
+
         setPersonalFolder(res.payload);
       } catch (error) {}
     };

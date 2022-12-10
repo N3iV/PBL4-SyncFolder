@@ -10,6 +10,7 @@ import Register from "./pages/Register";
 import Test from "./pages/Test";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ShareForMe from "./pages/ShareForMe";
 function App() {
   return (
     <>
@@ -21,6 +22,7 @@ function App() {
         </Route>
         <Route element={<AuthenticatedGuard />}>
           <Route path={path.home} element={<Home />} />
+          <Route path={path.shareForMe} element={<ShareForMe />} />
           <Route path={path.folders} element={<Folders />} />
           <Route path={path.folderDetail} element={<FolderDetail />} />
         </Route>
