@@ -103,15 +103,6 @@ const Home = () => {
         "func": "delete",
         "contentMsg": "{fileId: ${item.id}}"
     }`);
-    const data = {
-      userId: profile.id,
-      fileId: item.id,
-    };
-    if (item?.type?.name === "File") {
-      await dispatch(deleteFile(data));
-    } else if (item?.type?.name === "Directory") {
-      await dispatch(deleteFolder(data));
-    }
   };
 
   const onShowSizeChange = (curr) => {

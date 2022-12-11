@@ -3,7 +3,7 @@ console.log(process.env.REACT_APP_API);
 class Http {
   constructor() {
     this.instance = axios.create({
-      baseURL: `http://localhost:8080/SyncFolderPBL4/api/`,
+      baseURL: process.env.REACT_APP_API,
       name: "Sync folder",
       timeout: 10000,
       headers: {
