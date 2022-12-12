@@ -4,11 +4,13 @@ import {
   Avatar,
   Button,
   Checkbox,
+  Dropdown,
   Input,
   Layout,
   Menu,
   Modal,
   Select,
+  Typography,
 } from "antd";
 import React, { useEffect, useState } from "react";
 import {
@@ -20,14 +22,15 @@ import {
   FaUser,
 } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { getUsers } from "../slices/auth.slice";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useWebSocket } from "react-use-websocket/dist/lib/use-websocket";
+import { path } from "../constant/path";
+import { getUsers, logout } from "../slices/auth.slice";
 import {
   createFolder,
   folderShareWithMe,
-  getFileById,
   getFolder,
-  setPermission,
 } from "../slices/folders.slice";
 import { convertDataPersonToSelectOptions } from "../utils/helper";
 
@@ -44,7 +47,23 @@ const Default = ({
   const [users, setUsers] = useState([]);
   const { profile } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const { idFolder } = useParams();
+
+  const [socketUrl, setSocketUrl] = useState(
+    `ws://localhost:8080/SyncFolderPBL4/sync/${profile.id}/${profile.id}}`
+  );
+
+  const { sendMessage, lastMessage } = useWebSocket(socketUrl);
+  useEffect(() => {
+    if (lastMessage !== null) {
+      const { data, message } = JSON.parse(lastMessage?.data);
+      console.log(data, "data from default layout");
+      toast.success(message, {
+        position: "top-right",
+        autoClose: 2000,
+      });
+    }
+  }, [lastMessage]);
   useEffect(() => {
     const _getFolder = async () => {
       try {
@@ -88,20 +107,33 @@ const Default = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [folderName, setFolderName] = useState("Untitled folder");
   const [userShare, setUserShare] = useState([]);
+  const navigate = useNavigate();
   const showModal = () => {
     setIsModalOpen(true);
   };
 
   const handleOk = () => {
-    const _createFolder = async () => {
-      await dispatch(
-        createFolder({
-          name: folderName,
-        })
-      );
-    };
-    navigate(0);
-    _createFolder();
+    setSocketUrl(
+      `ws://localhost:8080/SyncFolderPBL4/sync/${profile.id}/${profile.id}`
+    );
+    const msg = `{
+      "func": "create",
+      "contentMsg": "{'parentFolderId' : ${
+        idFolder || profile.id
+      }, 'folderName':'${folderName}'}"
+  }`;
+    console.log(msg);
+    sendMessage(msg);
+
+    // const _createFolder = async () => {
+    //   await dispatch(
+    //     createFolder({
+    //       id: idFolder || profile.id,
+    //       name: folderName,
+    //     })
+    //   );
+    // };
+    // _createFolder();
     setIsModalOpen(false);
   };
 
@@ -118,18 +150,20 @@ const Default = ({
     setIsModalShareOpen(false);
     setUserShare([]);
     setShareOptions([]);
-    try {
-      const data = {
-        userIds: [...userShare],
-        fileId: Number(localStorage.getItem("IdFileShare")),
-        readPermission: shareOptions.includes("read"),
-        updatePermission: shareOptions.includes("update"),
-      };
-      const res = await dispatch(setPermission(data));
-      unwrapResult(res);
-      console.log(res);
-      console.log(data, "data");
-    } catch (error) {}
+    setSocketUrl(
+      `ws://localhost:8080/SyncFolderPBL4/sync/${profile.id}/${profile.id}`
+    );
+    const msg = `{
+      "func": "permission",
+      "contentMsg": "{ 'userIds' : [${[...userShare]}],  'fileId' : ${Number(
+      localStorage.getItem("IdFileShare")
+    )}, 'readPermission': ${shareOptions.includes(
+      "read"
+    )}, 'updatePermission': ${shareOptions.includes("update")} }"
+  }`;
+    console.log(msg);
+
+    sendMessage(msg);
   };
 
   const handleChange = (value) => {
@@ -144,16 +178,31 @@ const Default = ({
   const onCheckBoxChange = (values) => {
     setShareOptions([...values]);
   };
+
+  const DropDown = (onClick) => {
+    return (
+      <Menu>
+        <Menu.Item onClick={onClick}>
+          <span>Đăng xuất</span>
+        </Menu.Item>
+      </Menu>
+    );
+  };
+
+  const onMenuDropDownClick = (e) => {
+    const res = dispatch(logout());
+    unwrapResult(res);
+  };
   return (
     <Layout className="min-h-screen">
       <Header>
         <div className="container mx-auto flex items-center justify-between">
-          <div className="logo">
+          <Link to="/" className="logo">
             <img
               src="https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_48dp.png"
               alt=""
             />
-          </div>
+          </Link>
           <div>
             <Input
               size="large"
@@ -163,11 +212,17 @@ const Default = ({
             />
           </div>
           <div className="flex items-center">
-            <FaGripHorizontal className="text-xl" />
-            <Avatar
-              className="ml-4 flex justify-center items-center"
-              icon={<UserOutlined />}
-            />
+            <Dropdown
+              overlay={DropDown(onMenuDropDownClick)}
+              trigger={["click"]}
+            >
+              <span className="flex items-center ml-4">
+                <Avatar src="" icon={<UserOutlined />} />
+                <Typography.Text className=" !text-white px-2 m-0">
+                  {profile.email}
+                </Typography.Text>
+              </span>
+            </Dropdown>
           </div>
         </div>
       </Header>

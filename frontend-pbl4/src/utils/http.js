@@ -18,7 +18,6 @@ class Http {
       },
       ({ response }) => {
         if (response.status === 401) {
-          console.log("erro");
         }
         const result = { ...response.data, status: response.status };
         return Promise.reject(result);

@@ -13,7 +13,6 @@ const Register = () => {
   const onFinish = async (values) => {
     const { firstname, lastname, email, password } = values;
     const data = { firstname, lastname, email, password };
-    console.log(data);
     try {
       const res = await dispatch(register(data));
       unwrapResult(res);

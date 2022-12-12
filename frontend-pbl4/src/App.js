@@ -7,7 +7,6 @@ import FolderDetail from "./pages/Folder/FolderDetail";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Test from "./pages/Test";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ShareForMe from "./pages/ShareForMe";
@@ -26,7 +25,6 @@ function App() {
           <Route path={path.folders} element={<Folders />} />
           <Route path={path.folderDetail} element={<FolderDetail />} />
         </Route>
-        <Route path="/test" element={<Test />} />
       </Routes>
     </>
   );

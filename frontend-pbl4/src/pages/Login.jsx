@@ -12,7 +12,6 @@ const Login = ({ heading, role }) => {
   const [error, setError] = useState("");
   const onFinish = async (values) => {
     try {
-      console.log(values);
       const res = await dispatch(login(values));
       unwrapResult(res);
 

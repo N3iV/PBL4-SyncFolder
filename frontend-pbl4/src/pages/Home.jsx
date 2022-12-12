@@ -21,14 +21,13 @@ const Home = () => {
   const ref = useRef();
   const { profile } = useSelector((state) => state.auth);
   const { sharedFolders } = useSelector((state) => state.folders);
-  console.log({ sharedFolders });
   const [files, setFiles] = useState([]);
   const dispatch = useDispatch();
   const [currPage, setCurrPage] = useState(1);
   const [currFolder, setCurrFolder] = useState(1);
   const navigate = useNavigate();
   const [socketUrl, setSocketUrl] = useState(
-    `ws://localhost:8080/SyncFolderPBL4/sync/1/1`
+    `ws://localhost:8080/SyncFolderPBL4/sync/1/${profile.id}`
   );
 
   const { sendMessage, lastMessage } = useWebSocket(socketUrl);
@@ -36,6 +35,8 @@ const Home = () => {
     if (lastMessage !== null) {
       const { data, message } = JSON.parse(lastMessage?.data);
       setFiles(data);
+      console.log(message, "message");
+      console.log(data, "socket data home ");
       toast.success(message, {
         position: "top-right",
         autoClose: 2000,
@@ -44,22 +45,20 @@ const Home = () => {
   }, [lastMessage]);
 
   const handleSelectMenu = async (value) => {
-    console.log(value, "select menu");
-    setCurrFolder(value.key);
+    console.log(value);
+    navigate(path.folders + `/${value.key}`);
   };
   useEffect(() => {
     const getFolder = async () => {
       const _item =
         sharedFolders.files &&
         sharedFolders.files.filter((item) => item.id === Number(currFolder));
-      console.log(_item, "-------------------");
       const data = {
         id: _item?.[0]?.ownerId || profile.id,
         folderID: currFolder,
         page: currPage,
       };
       const res = await dispatch(getFileById(data));
-      console.log(res);
       unwrapResult(res);
       setFiles(res.payload);
     };
@@ -103,6 +102,7 @@ const Home = () => {
         "func": "delete",
         "contentMsg": "{fileId: ${item.id}}"
     }`);
+    setSocketUrl(`ws://localhost:8080/SyncFolderPBL4/sync/1/${profile.id}`);
   };
 
   const onShowSizeChange = (curr) => {

@@ -5,14 +5,15 @@ const foldersApi = {
   },
 
   getFileById(data) {
-    console.log(data);
     return http.get(`users/${data.id}/folders/${data.folderID}?page=1`);
   },
   downloadFile(id, config) {
     return http.get(`folders/file/${id}/download`, config);
   },
-  createFolder(folderId) {
-    return http.post(`folders/1`, folderId);
+  createFolder(data) {
+    const { id, name } = data;
+    console.log(data);
+    return http.post(`folders/${id}`, { name });
   },
   sharedFolders(id, config) {
     return http.get(`/users/${id}/folders/share?page=1`, config);
