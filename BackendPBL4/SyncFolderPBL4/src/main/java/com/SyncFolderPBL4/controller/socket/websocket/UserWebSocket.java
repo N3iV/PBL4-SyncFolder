@@ -108,6 +108,10 @@ public class UserWebSocket {
 			break;
 		case "permission":
 			PermisUserMapper userMapper = gson.fromJson(messageFunc.getContentMsg(), PermisUserMapper.class);
+			if (userMapper.isUpdatePermission() == true)
+			{
+				userMapper.setReadPermission(true);
+			}
 			handleSetPermisssionWebsocketFile(userMapper);
 			break;
 		}

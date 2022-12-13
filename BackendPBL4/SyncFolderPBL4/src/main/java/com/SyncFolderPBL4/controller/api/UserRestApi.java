@@ -5,6 +5,8 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
@@ -25,6 +27,7 @@ import com.SyncFolderPBL4.config.UserRoleFileAdapter;
 import com.SyncFolderPBL4.constant.SystemConstant;
 import com.SyncFolderPBL4.controller.mapper.PermisUserMapper;
 import com.SyncFolderPBL4.model.entities.FileEntity;
+import com.SyncFolderPBL4.model.entities.RoleID;
 import com.SyncFolderPBL4.model.entities.UserEntity;
 import com.SyncFolderPBL4.model.entities.UserRoleFileEntity;
 import com.SyncFolderPBL4.model.service.IFileService;
@@ -98,16 +101,25 @@ public class UserRestApi {
 	}
 
 	@GET
-	@Path("/{ownerId}/folders/{folderId}")
+	@Path("/{userId}/folders/{folderId}")
 	@Produces(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
-	public Response getUserFiles(@PathParam("ownerId") int ownerId, 
+	public Response getUserFiles(@PathParam("userId") int userId, 
 									@PathParam("folderId") int folderId,
 								@DefaultValue("1") @QueryParam("page") int page) {
+		int ownerId = 0;
 		FileEntity fileEntity = fileService.findOne(folderId);
+		// check permission
+		
 		if (fileEntity != null && fileEntity.getType().getName().equals("Directory")) {
-			return Response
-					.ok(gson.toJson(fileService.getFileUsers(ownerId, fileEntity.getNodeId() + 1,fileEntity.getPath(), page)))
-					.build();
+			if (roleService.getParentRole(new RoleID(userId, folderId)) != null)
+			{
+				ownerId = fileEntity.getOwnerId();
+				return Response
+						.ok(gson.toJson(fileService.getFileUsers(ownerId, fileEntity.getNodeId() + 1,fileEntity.getPath(), page)))
+						.build();
+			} else {
+				return HttpUtils.messageResponse(Response.Status.UNAUTHORIZED, "Bạn không có quyền này", gson);
+			}
 
 		} else {
 			return HttpUtils.messageResponse(Response.Status.NOT_FOUND, "Folder Không tồn tại", gson);
@@ -141,8 +153,12 @@ public class UserRestApi {
 		if (userFind == null) {
 			return 	HttpUtils.messageResponse(Response.Status.UNAUTHORIZED, "Đăng nhập thất bại", gson);
 		} else {
+			FileEntity fileOfUser = userService.findUserFolder(userFind.getId());
+			Map<String, Object> responseMap = new HashMap<>();
+			responseMap.put("user", userFind);
+			responseMap.put("file", fileOfUser);
 			return Response
-					.ok(gson.toJson(userFind))
+					.ok(gson.toJson(responseMap))
 					.build();
 		}
 	}
@@ -170,7 +186,10 @@ public class UserRestApi {
 	@Produces(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
 	public Response setPermissionFile(PermisUserMapper permisUser)
 	{
-		
+		if (permisUser.isUpdatePermission() == true)
+		{
+			permisUser.setReadPermission(true);
+		}
 		if (roleService.setRoles(permisUser)) {
 			return HttpUtils.messageResponse(Response.Status.ACCEPTED, "Chia sẻ quyền thành công", gson);
 		} else 

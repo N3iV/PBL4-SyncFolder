@@ -81,17 +81,10 @@ public class FileService implements IFileService {
 		return result;
 	}
 
-//	@Override
-//	public Map<String, Object> getFileUsers(int id, int page) {
-////		return getFileUsers(id, 1, page);
-//	}
-
-	
-
 	@Override
 	public Map<String, Object> createFolder(int fileParentId, String fileName, String dirPath) {
 		Map<String,Object> result = new HashMap<>();
-		
+		System.out.println("start trans");
 		HibernateUtils.startTrans(fileDao,typeDao,userDao,roleDao);
 		FileEntity fileCreate = saveFile(fileParentId, fileName, typeDao.findOneById(1));
 		UserEntity user = userDao.findOneById(fileCreate.getOwnerId());
@@ -116,7 +109,7 @@ public class FileService implements IFileService {
 		result.put("numberOfPage", numPage);
 		
 		HibernateUtils.commitTrans();
-		
+		System.out.println("success");
 		
 		return result;
 	}
@@ -173,7 +166,7 @@ public class FileService implements IFileService {
 					parentFile.getNodeId() + 1);
 			if(file == null)
 				return fileNameExisted;
-			fileNameExisted = (new StringBuilder(fileNameExisted)).append("(").append(i++).append(")").toString();
+			fileNameExisted = (new StringBuilder(fileName)).append("(").append(i++).append(")").toString();
 		}
 	}
 	
