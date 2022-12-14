@@ -9,6 +9,7 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import com.SyncFolderPBL4.model.entities.FileEntity;
 import com.SyncFolderPBL4.model.entities.TypeEntity;
 import com.SyncFolderPBL4.model.entities.UserRoleFileEntity;
+import com.google.gson.JsonElement;
 
 public interface IFileService extends GenericService<FileEntity> {
 
@@ -23,5 +24,7 @@ public interface IFileService extends GenericService<FileEntity> {
 	FileEntity saveFile(int fileParentId, String fileName, TypeEntity type);
 
 	void deleteFile(UserRoleFileEntity role);
+
+	List<FileEntity> searchFile(int userId, String nameFile);
 
 }

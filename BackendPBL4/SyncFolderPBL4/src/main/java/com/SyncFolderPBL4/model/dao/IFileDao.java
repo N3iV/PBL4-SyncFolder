@@ -22,4 +22,6 @@ public interface IFileDao extends GenericDao<FileEntity> {
 	void deleteFileByPath(String path, int ownerId);
 	
 	FileEntity getFileByNameAndPathAndNodeId(String name, String path, int nodeId);
+
+	List<FileEntity> searchFile(int userId, String nameFile);
 }

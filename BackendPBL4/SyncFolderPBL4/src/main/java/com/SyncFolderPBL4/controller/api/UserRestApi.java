@@ -143,6 +143,16 @@ public class UserRestApi {
 				.ok(gson.toJson(userService.getSharedFiles(userId, page)))
 				.build();
 	}
+	
+	@GET
+	@Path("/{userId}/folders/search")
+	@Produces(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
+	public Response searchFile(@PathParam("userId") int userId, FileEntity file)
+	{
+		return Response
+					.ok(gson.toJson(fileService.searchFile(userId,file.getName())))
+					.build();
+	}
 
 	@POST
 	@Path("/login")

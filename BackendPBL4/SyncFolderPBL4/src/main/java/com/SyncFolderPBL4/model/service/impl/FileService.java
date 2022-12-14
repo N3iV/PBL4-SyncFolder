@@ -3,6 +3,7 @@ package com.SyncFolderPBL4.model.service.impl;
 import java.io.File;
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -187,7 +188,16 @@ public class FileService implements IFileService {
 		HibernateUtils.commitTrans();
 	}
 
-	
+	@Override
+	public List<FileEntity> searchFile(int userId, String nameFile) {
+		List<FileEntity> result = new ArrayList<>();
+		HibernateUtils.startTrans(fileDao);
+		
+		result = fileDao.searchFile(userId, nameFile);
+
+		HibernateUtils.commitTrans();
+		return result;
+	}
 
 	
 
