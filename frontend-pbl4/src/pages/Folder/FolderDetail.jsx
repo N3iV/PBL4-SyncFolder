@@ -26,17 +26,17 @@ const FolderDetail = () => {
 
   useEffect(() => {
     const getFolder = async () => {
-      const data = { id: profile.id, folderID: idFolder };
+      const data = { id: profile?.user?.id, folderID: idFolder };
       console.log(data, "test detail");
       const res = await dispatch(getFileById(data));
       unwrapResult(res);
       setFiles(res.payload);
     };
     getFolder();
-  }, [dispatch, idFolder, profile.id]);
+  }, [dispatch, idFolder, profile?.user?.id]);
 
   const [socketUrl, setSocketUrl] = useState(
-    `ws://localhost:8080/SyncFolderPBL4/sync/1/${profile.id}`
+    `ws://localhost:8080/SyncFolderPBL4/sync/1/${profile?.user?.id}`
   );
 
   const { sendMessage, lastMessage } = useWebSocket(socketUrl);
@@ -80,13 +80,15 @@ const FolderDetail = () => {
 
   const handleDelete = async (item) => {
     setSocketUrl(
-      `ws://localhost:8080/SyncFolderPBL4/sync/${item.ownerId}/${profile.id}`
+      `ws://localhost:8080/SyncFolderPBL4/sync/${item.ownerId}/${profile?.user?.id}`
     );
     sendMessage(`{
         "func": "delete",
         "contentMsg": "{fileId: ${item.id}}"
     }`);
-    setSocketUrl(`ws://localhost:8080/SyncFolderPBL4/sync/1/${profile.id}`);
+    setSocketUrl(
+      `ws://localhost:8080/SyncFolderPBL4/sync/1/${profile?.user?.id}`
+    );
   };
 
   const onShowSizeChange = (curr) => {

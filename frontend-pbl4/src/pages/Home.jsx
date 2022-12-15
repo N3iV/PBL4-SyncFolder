@@ -15,7 +15,13 @@ import { toast } from "react-toastify";
 import useWebSocket from "react-use-websocket";
 import { path } from "../constant/path";
 import Default from "../layout/Default";
-import { deleteFile, deleteFolder, getFileById } from "../slices/folders.slice";
+import {
+  deleteFile,
+  deleteFolder,
+  foldersActions,
+  getFileById,
+} from "../slices/folders.slice";
+import { isSharingSocket } from "../utils/helper";
 
 const Home = () => {
   const ref = useRef();
@@ -27,7 +33,7 @@ const Home = () => {
   const [currFolder, setCurrFolder] = useState(1);
   const navigate = useNavigate();
   const [socketUrl, setSocketUrl] = useState(
-    `ws://localhost:8080/SyncFolderPBL4/sync/1/${profile.id}`
+    `ws://localhost:8080/SyncFolderPBL4/sync/1/${profile?.user?.id}`
   );
 
   const { sendMessage, lastMessage } = useWebSocket(socketUrl);
@@ -35,14 +41,15 @@ const Home = () => {
     if (lastMessage !== null) {
       const { data, message } = JSON.parse(lastMessage?.data);
       setFiles(data);
-      console.log(message, "message");
-      console.log(data, "socket data home ");
       toast.success(message, {
         position: "top-right",
         autoClose: 2000,
       });
+      if (isSharingSocket) {
+        dispatch(foldersActions.updateSharedBy(data));
+      }
     }
-  }, [lastMessage]);
+  }, [dispatch, lastMessage]);
 
   const handleSelectMenu = async (value) => {
     console.log(value);
@@ -54,7 +61,7 @@ const Home = () => {
         sharedFolders.files &&
         sharedFolders.files.filter((item) => item.id === Number(currFolder));
       const data = {
-        id: _item?.[0]?.ownerId || profile.id,
+        id: _item?.[0]?.ownerId || profile?.user?.id,
         folderID: currFolder,
         page: currPage,
       };
@@ -63,7 +70,7 @@ const Home = () => {
       setFiles(res.payload);
     };
     getFolder();
-  }, [currFolder, currPage, dispatch, profile.id, sharedFolders.files]);
+  }, [currFolder, currPage, dispatch, profile?.user?.id, sharedFolders.files]);
 
   const typeOfFile = Object.freeze({
     Directory: <FaFolder />,
@@ -96,13 +103,15 @@ const Home = () => {
   };
   const handleDelete = async (item) => {
     setSocketUrl(
-      `ws://localhost:8080/SyncFolderPBL4/sync/${item.ownerId}/${profile.id}`
+      `ws://localhost:8080/SyncFolderPBL4/sync/${item.ownerId}/${profile?.user?.id}`
     );
     sendMessage(`{
         "func": "delete",
         "contentMsg": "{fileId: ${item.id}}"
     }`);
-    setSocketUrl(`ws://localhost:8080/SyncFolderPBL4/sync/1/${profile.id}`);
+    setSocketUrl(
+      `ws://localhost:8080/SyncFolderPBL4/sync/${profile?.user?.id}/${profile?.user?.id}`
+    );
   };
 
   const onShowSizeChange = (curr) => {

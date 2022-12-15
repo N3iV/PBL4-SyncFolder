@@ -13,13 +13,13 @@ const ShareForMe = () => {
   useEffect(() => {
     const _getFolder = async () => {
       try {
-        const res = await dispatch(folderShareWithMe(profile.id));
+        const res = await dispatch(folderShareWithMe(profile?.user?.id));
         unwrapResult(res);
         setSharedFolders(res.payload.files);
       } catch (error) {}
     };
     _getFolder();
-  }, [dispatch, profile.id]);
+  }, [dispatch, profile?.user?.id]);
   return <Default>ShareForMe</Default>;
 };
 

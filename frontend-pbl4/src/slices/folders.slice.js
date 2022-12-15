@@ -45,13 +45,19 @@ const handleFulfilled = (state, action) => {
 const getShareFolders = (state, action) => {
   state.sharedFolders = action.payload;
 };
+const updateSharedBy = (state, action) => {
+  state.sharedFolders = action.payload;
+  console.log(action.payload);
+};
 const folders = createSlice({
   name: "folders",
   initialState: {
     folders: [],
     sharedFolders: [],
   },
-
+  reducers: {
+    updateSharedBy,
+  },
   extraReducers: {
     [createFolder.fulfilled]: handleFulfilled,
     [folderShareWithMe.fulfilled]: getShareFolders,
@@ -59,4 +65,5 @@ const folders = createSlice({
 });
 
 const foldersReducer = folders.reducer;
+export const foldersActions = folders.actions;
 export default foldersReducer;

@@ -23,3 +23,5 @@ export const convertDataPersonToSelectOptions = (data) =>
     label: item.email,
     value: item.id,
   }));
+
+export const isSharingSocket = (msg) => msg.includes(" đã cấp quyền");

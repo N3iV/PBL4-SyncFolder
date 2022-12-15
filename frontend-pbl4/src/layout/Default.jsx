@@ -13,6 +13,8 @@ import {
   Typography,
 } from "antd";
 import React, { useEffect, useState } from "react";
+import { useMemo } from "react";
+import { useCallback } from "react";
 import {
   FaFolder,
   FaGripHorizontal,
@@ -43,17 +45,22 @@ const Default = ({
   setIsModalShareOpen,
 }) => {
   const [personalFolder, setPersonalFolder] = useState([]);
-  const [sharedFolders, setSharedFolders] = useState([]);
+  const { sharedFolders: data } = useSelector((state) => state.folders);
+  console.log(data, "share form here");
+  const [sharedFolders, setSharedFolders] = useState(data?.files);
   const [users, setUsers] = useState([]);
   const { profile } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const { idFolder } = useParams();
 
   const [socketUrl, setSocketUrl] = useState(
-    `ws://localhost:8080/SyncFolderPBL4/sync/${profile.id}/${profile.id}}`
+    `ws://localhost:8080/SyncFolderPBL4/sync/${profile?.user?.id}/${profile?.user?.id}}`
   );
 
   const { sendMessage, lastMessage } = useWebSocket(socketUrl);
+  useEffect(() => {
+    setSharedFolders(data.files);
+  }, [data]);
   useEffect(() => {
     if (lastMessage !== null) {
       const { data, message } = JSON.parse(lastMessage?.data);
@@ -67,8 +74,10 @@ const Default = ({
   useEffect(() => {
     const _getFolder = async () => {
       try {
-        const res = await dispatch(getFolder(profile.id));
-        const sharedFoldersRes = await dispatch(folderShareWithMe(profile.id));
+        const res = await dispatch(getFolder(profile?.user?.id));
+        const sharedFoldersRes = await dispatch(
+          folderShareWithMe(profile?.user?.id)
+        );
         //no clean code, bcz I lười :D
         unwrapResult(res);
         setSharedFolders(sharedFoldersRes.payload.files);
@@ -78,13 +87,13 @@ const Default = ({
     };
     const _getUsers = async () => {
       try {
-        const res = await dispatch(getUsers(profile.id));
+        const res = await dispatch(getUsers(profile?.user?.id));
         setUsers(res.payload.users);
       } catch (error) {}
     };
     _getFolder();
     _getUsers();
-  }, [dispatch, profile.id]);
+  }, [dispatch, profile?.user?.id]);
   function getItem(label, key, icon, children) {
     return {
       key,
@@ -93,17 +102,22 @@ const Default = ({
       label,
     };
   }
-  const items = [
-    getItem("Drive của tôi", "1", <FaUser />, [
-      getItem(personalFolder.name, personalFolder.id, <FaFolder />),
-    ]),
-    getItem(
-      "Chia sẻ với tôi",
-      "sub1",
-      <FaShare />,
-      sharedFolders?.map((item) => getItem(item.name, item.id))
-    ),
-  ];
+  console.log(sharedFolders, "share folder");
+  const items = useMemo(() => {
+    const result = [
+      getItem("Drive của tôi", "1", <FaUser />, [
+        getItem(personalFolder.name, personalFolder.id, <FaFolder />),
+      ]),
+      getItem(
+        "Chia sẻ với tôi",
+        "sub1",
+        <FaShare />,
+        sharedFolders?.map((item) => getItem(item.name, item.id))
+      ),
+    ];
+    return result;
+  }, [sharedFolders]);
+  console.log(items);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [folderName, setFolderName] = useState("Untitled folder");
   const [userShare, setUserShare] = useState([]);
@@ -114,26 +128,15 @@ const Default = ({
 
   const handleOk = () => {
     setSocketUrl(
-      `ws://localhost:8080/SyncFolderPBL4/sync/${profile.id}/${profile.id}`
+      `ws://localhost:8080/SyncFolderPBL4/sync/${profile?.user?.id}/${profile?.user?.id}`
     );
     const msg = `{
       "func": "create",
       "contentMsg": "{'parentFolderId' : ${
-        idFolder || profile.id
+        idFolder || profile?.user?.id
       }, 'folderName':'${folderName}'}"
   }`;
-    console.log(msg);
     sendMessage(msg);
-
-    // const _createFolder = async () => {
-    //   await dispatch(
-    //     createFolder({
-    //       id: idFolder || profile.id,
-    //       name: folderName,
-    //     })
-    //   );
-    // };
-    // _createFolder();
     setIsModalOpen(false);
   };
 
@@ -151,7 +154,7 @@ const Default = ({
     setUserShare([]);
     setShareOptions([]);
     setSocketUrl(
-      `ws://localhost:8080/SyncFolderPBL4/sync/${profile.id}/${profile.id}`
+      `ws://localhost:8080/SyncFolderPBL4/sync/${profile?.user?.id}/${profile?.user?.id}`
     );
     const msg = `{
       "func": "permission",
@@ -161,7 +164,6 @@ const Default = ({
       "read"
     )}, 'updatePermission': ${shareOptions.includes("update")} }"
   }`;
-    console.log(msg);
 
     sendMessage(msg);
   };
@@ -219,7 +221,7 @@ const Default = ({
               <span className="flex items-center ml-4">
                 <Avatar src="" icon={<UserOutlined />} />
                 <Typography.Text className=" !text-white px-2 m-0">
-                  {profile.email}
+                  {profile?.user?.email}
                 </Typography.Text>
               </span>
             </Dropdown>
