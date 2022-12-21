@@ -163,7 +163,7 @@ public class UserWebSocket {
 		@SuppressWarnings("unchecked")
 		FileEntity fileEntity = ((List<FileEntity>)data.get("files"))
 													.stream()
-													.filter(file -> sourcefile.getFolderName().equals(file.getName()))
+													.filter(file -> file.getName().contains(sourcefile.getFolderName()))
 													.findFirst()
 													.get();
 		Map<Integer, String> tableSendMsg = checkPermissionAllUserInRoomForResponse(fileEntity.getId());

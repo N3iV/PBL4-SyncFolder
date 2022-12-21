@@ -40,6 +40,7 @@ public class UserService implements IUserService {
 
 	@Override
 	public UserEntity findOne(Integer id) {
+		HibernateUtils.checkTransactionAlreadyActive();
 		HibernateUtils.startTrans(userDao);
 		UserEntity user = userDao.findOneById(id);
 
@@ -49,6 +50,7 @@ public class UserService implements IUserService {
 
 	@Override
 	public UserEntity findOne(UserEntity user) {
+		HibernateUtils.checkTransactionAlreadyActive();
 		HibernateUtils.startTrans(userDao);
 		
 		UserEntity userResult = userDao.findOneByEmailPassword(user.getEmail(), user.getPassword());
@@ -64,6 +66,7 @@ public class UserService implements IUserService {
 
 	@Override
 	public Integer createUser(UserEntity user, String dirPath) {
+		HibernateUtils.checkTransactionAlreadyActive();
 		Integer idUser = null;
 		HibernateUtils.startTrans(userDao,typeDao,fileDao,roleDao);
 		
@@ -101,6 +104,7 @@ public class UserService implements IUserService {
 
 	@Override
 	public FileEntity findUserFolder(int ownerId) {
+		HibernateUtils.checkTransactionAlreadyActive();
 		HibernateUtils.startTrans(userDao,typeDao,fileDao,roleDao);
 		
 		FileEntity fileResult = fileDao.findOneByOwnerIdAndNodeId(ownerId, 0);
@@ -111,6 +115,7 @@ public class UserService implements IUserService {
 
 	@Override
 	public Map<String, Object> getAllUser(int userId, int page) {
+		HibernateUtils.checkTransactionAlreadyActive();
 		Map<String, Object> result = new HashMap<>();
 		HibernateUtils.startTrans(userDao);
 		
@@ -127,6 +132,7 @@ public class UserService implements IUserService {
 
 	@Override
 	public Map<String, Object> getSharedFiles(int userId, int page) {
+		HibernateUtils.checkTransactionAlreadyActive();
 		Map<String, Object> result = new HashMap<>();
 		HibernateUtils.startTrans(fileDao);
 		
@@ -143,6 +149,7 @@ public class UserService implements IUserService {
 
 	@Override
 	public Map<String, Object> getSharedFilesEndPage(int userId) {
+		HibernateUtils.checkTransactionAlreadyActive();
 		Map<String, Object> result = new HashMap<>();
 		HibernateUtils.startTrans(fileDao);
 		

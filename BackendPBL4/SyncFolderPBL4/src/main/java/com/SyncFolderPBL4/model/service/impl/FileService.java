@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.hibernate.resource.transaction.spi.TransactionStatus;
 
 import com.SyncFolderPBL4.constant.SystemConstant;
 import com.SyncFolderPBL4.model.dao.IFileDao;
@@ -67,6 +68,8 @@ public class FileService implements IFileService {
 
 	@Override
 	public Map<String, Object> getFileUsers(int ownerid, int nodeId, String path, int page) {
+		HibernateUtils.checkTransactionAlreadyActive();
+		
 		Map<String, Object> result = new HashMap<>();
 		HibernateUtils.startTrans(fileDao);
 
@@ -84,8 +87,9 @@ public class FileService implements IFileService {
 
 	@Override
 	public Map<String, Object> createFolder(int fileParentId, String fileName, String dirPath) {
+		HibernateUtils.checkTransactionAlreadyActive();
+		
 		Map<String,Object> result = new HashMap<>();
-		System.out.println("start trans");
 		HibernateUtils.startTrans(fileDao,typeDao,userDao,roleDao);
 		FileEntity fileCreate = saveFile(fileParentId, fileName, typeDao.findOneById(1));
 		UserEntity user = userDao.findOneById(fileCreate.getOwnerId());
@@ -117,6 +121,8 @@ public class FileService implements IFileService {
 
 	@Override
 	public Map<String, Object> uploadFile(int fileParentId, InputStream is, FormDataContentDisposition fdcd, String dirPath) {
+		HibernateUtils.checkTransactionAlreadyActive();
+		
 		Map<String,Object> result = new HashMap<>();
 		HibernateUtils.startTrans(fileDao,typeDao,userDao,roleDao);
 		
@@ -173,6 +179,7 @@ public class FileService implements IFileService {
 	
 	@Override
 	public void deleteFile(UserRoleFileEntity role) {
+		HibernateUtils.checkTransactionAlreadyActive();
 
 		HibernateUtils.startTrans(roleDao, fileDao);
 		if(role.getFile().getType().getName().equals("File")) {
@@ -190,6 +197,8 @@ public class FileService implements IFileService {
 
 	@Override
 	public List<FileEntity> searchFile(int userId, String nameFile) {
+		HibernateUtils.checkTransactionAlreadyActive();
+		
 		List<FileEntity> result = new ArrayList<>();
 		HibernateUtils.startTrans(fileDao);
 		

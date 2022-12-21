@@ -74,6 +74,7 @@ public class RoleService implements IRoleService {
 
 	@Override
 	public boolean setRoles(PermisUserMapper permisUser) {
+		HibernateUtils.checkTransactionAlreadyActive();
 		HibernateUtils.startTrans(userDao, fileDao, roleDao);
 
 		boolean checkRole = this.setRolesNotTransaction(permisUser);
@@ -92,6 +93,7 @@ public class RoleService implements IRoleService {
 
 	@Override
 	public UserRoleFileEntity getRoleByRoleId(RoleID roleId) {
+		HibernateUtils.checkTransactionAlreadyActive();
 		HibernateUtils.startTrans(roleDao);
 
 		UserRoleFileEntity userRoleFile = this.getRoleByRoleIdNotTransaction(roleId);
@@ -103,6 +105,7 @@ public class RoleService implements IRoleService {
 
 	@Override
 	public UserRoleFileEntity getRoleFromParent(RoleID roleId) {
+		HibernateUtils.checkTransactionAlreadyActive();
 		UserRoleFileEntity result = null;
 
 		HibernateUtils.startTrans(userDao, roleDao, fileDao);
@@ -131,6 +134,7 @@ public class RoleService implements IRoleService {
 
 	@Override
 	public UserRoleFileEntity getParentRole(RoleID roleId) {
+		HibernateUtils.checkTransactionAlreadyActive();
 		UserRoleFileEntity result = null;
 
 		HibernateUtils.startTrans(userDao, roleDao, fileDao);
