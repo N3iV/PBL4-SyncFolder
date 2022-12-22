@@ -104,11 +104,10 @@ public class UserService implements IUserService {
 
 	@Override
 	public FileEntity findUserFolder(int ownerId) {
-		HibernateUtils.checkTransactionAlreadyActive();
+ 		HibernateUtils.checkTransactionAlreadyActive();
 		HibernateUtils.startTrans(userDao,typeDao,fileDao,roleDao);
 		
 		FileEntity fileResult = fileDao.findOneByOwnerIdAndNodeId(ownerId, 0);
-		
 		HibernateUtils.commitTrans();
 		return fileResult;
 	}

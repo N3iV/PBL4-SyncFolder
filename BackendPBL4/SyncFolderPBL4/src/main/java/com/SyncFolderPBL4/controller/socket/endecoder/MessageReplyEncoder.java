@@ -7,14 +7,19 @@ import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
 
 import com.SyncFolderPBL4.config.LocalDateTimeAdapter;
+import com.SyncFolderPBL4.config.UserRoleFileAdapter;
 import com.SyncFolderPBL4.controller.socket.cls.MessageReply;
+import com.SyncFolderPBL4.model.entities.UserRoleFileEntity;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class MessageReplyEncoder implements Encoder.Text<MessageReply> {
 
     private static Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
-			.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).setPrettyPrinting().create();;
+									    		.registerTypeAdapter(UserRoleFileEntity.class, new UserRoleFileAdapter())
+												.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+												.setPrettyPrinting()
+												.create();
 
     @Override
     public String encode(MessageReply message) throws EncodeException {

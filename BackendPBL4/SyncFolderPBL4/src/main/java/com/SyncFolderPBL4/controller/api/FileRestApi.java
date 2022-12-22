@@ -21,6 +21,7 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import com.SyncFolderPBL4.config.LocalDateTimeAdapter;
+import com.SyncFolderPBL4.config.UserRoleFileAdapter;
 import com.SyncFolderPBL4.constant.SystemConstant;
 import com.SyncFolderPBL4.model.entities.FileEntity;
 import com.SyncFolderPBL4.model.entities.RoleID;
@@ -52,6 +53,7 @@ public class FileRestApi {
 		roleService = new RoleService();
 		gson = new GsonBuilder()
 				.excludeFieldsWithoutExposeAnnotation()
+				.registerTypeAdapter(UserRoleFileEntity.class, new UserRoleFileAdapter())
 				.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
 				.setPrettyPrinting()
 				.create();

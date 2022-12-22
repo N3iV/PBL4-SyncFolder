@@ -65,8 +65,11 @@ public class RoleService implements IRoleService {
 				HibernateUtils.commitTrans();
 				return false;
 			}
-			UserRoleFileEntity roleResult = new UserRoleFileEntity(new RoleID(userId, permisUser.getFileId()), user,
-					file, permisUser.isReadPermission(), permisUser.isUpdatePermission());
+			UserRoleFileEntity roleResult = new UserRoleFileEntity(new RoleID(userId, permisUser.getFileId()), 
+																	user,
+																	file, 
+																	permisUser.isReadPermission(), 
+																	permisUser.isUpdatePermission());
 			roleDao.getSession().saveOrUpdate(roleResult);
 		}
 		return true;
@@ -136,7 +139,7 @@ public class RoleService implements IRoleService {
 	public UserRoleFileEntity getParentRole(RoleID roleId) {
 		HibernateUtils.checkTransactionAlreadyActive();
 		UserRoleFileEntity result = null;
-
+		
 		HibernateUtils.startTrans(userDao, roleDao, fileDao);
 		FileEntity file = fileDao.findOneById(roleId.getFileId());
 		int round = file.getNodeId();
