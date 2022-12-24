@@ -42,13 +42,13 @@ import com.SyncFolderPBL4.utils.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-@ServerEndpoint(value = "/sync/{ownerId}/{userId}", decoders = MessageFunctionDecoder.class, encoders = MessageReplyEncoder.class)
+@ServerEndpoint(value = "/sync/{userId}", decoders = MessageFunctionDecoder.class, encoders = MessageReplyEncoder.class)
 public class UserWebSocket {
 
 	private Session session;
 	private static Set<UserWebSocket> chatEndpoints = new CopyOnWriteArraySet<>();
 	private static Map<String, Integer> users = new HashMap<>();
-	private int roomOwnerId;
+//	private int roomOwnerId;
 	private String username;
 	private static String pathApp = System.getProperty("user.dir") + "\\";
 	private static Gson gson;
@@ -70,13 +70,13 @@ public class UserWebSocket {
 	}
 
 	@OnOpen
-	public void onOpen(Session session, @PathParam("ownerId") String ownerId, @PathParam("userId") String userId)
+	public void onOpen(Session session,  @PathParam("userId") String userId)
 			throws IOException, EncodeException {
 
 		this.session = session;
 		chatEndpoints.add(this);
 		users.put(session.getId(), Integer.parseInt(userId));
-		roomOwnerId = Integer.parseInt(ownerId);
+//		roomOwnerId = Integer.parseInt(ownerId);
 		username = userService.findOne(users.get(session.getId())).getUsername();
 	}
 
@@ -171,7 +171,7 @@ public class UserWebSocket {
 													.filter(file -> file.getName().contains(sourcefile.getFolderName()))
 													.findFirst()
 													.get();
-		Map<Integer, String> tableSendMsg = checkPermissionAllUserInRoomForResponse(fileEntity.getId());
+		Map<Integer, String> tableSendMsg = checkPermissionAllUserInRoomForResponse(fileEntity.getId(),fileEntity.getOwnerId());
 		String contentRep = this.username + " đã tạo thành công folder " + sourcefile.getFolderName();
 		MessageReply msgRep = new MessageReply(this.username, contentRep, data);
 		broadcastIfHavePermission(msgRep,tableSendMsg,"Tạo folder thành công");
@@ -187,13 +187,13 @@ public class UserWebSocket {
 			senderResponse(new MessageReply(SystemConstant.SERVER_NAME, "Không được phép xóa thư mục gốc",null));
 		}
 		// Check response List user
-		Map<Integer, String> tableSendMsg = checkPermissionAllUserInRoomForResponse(fileId);
+		Map<Integer, String> tableSendMsg = checkPermissionAllUserInRoomForResponse(fileId, userRole.getFile().getOwnerId());
 		
 		// Delete file
 		fileService.deleteFile(userRole);
 
 		path = StringUtils.cutLastElementPath(userRole.getFile().getPath());
-		Map<String, Object> data = fileService.getFileUsers(roomOwnerId, userRole.getFile().getNodeId(), path, 1);
+		Map<String, Object> data = fileService.getFileUsers(userRole.getFile().getOwnerId(), userRole.getFile().getNodeId(), path, 1);
 
 		String readPath = pathApp.concat(userRole.getFile().getPath());
 		FileUtils.deleteFile(readPath, userRole.getFile().getType().getName());
@@ -275,7 +275,7 @@ public class UserWebSocket {
 	
 	// ===================================== utils ===================================
 	
-	private Map<Integer, String> checkPermissionAllUserInRoomForResponse(int fileId)
+	private Map<Integer, String> checkPermissionAllUserInRoomForResponse(int fileId, int ownerId)
 	{
 		Map<Integer, String> tableSendMsg = new HashMap<>();
 		for(Entry<String, Integer> entry : users.entrySet())
@@ -289,7 +289,7 @@ public class UserWebSocket {
 				{
 					tableSendMsg.put(entry.getValue(), "Send full data");
 				} else {
-					if(roleCurrentFile.equals(roleOfUser) && !entry.getValue().equals(roomOwnerId))
+					if(roleCurrentFile.equals(roleOfUser) && !entry.getValue().equals(ownerId))
 					{
 						tableSendMsg.put(entry.getValue(), "Send empty data");
 					}else {					
