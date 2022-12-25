@@ -5,8 +5,6 @@ const foldersApi = {
   },
 
   getFileById(data) {
-    console.log(data, "get data");
-    console.log(`api: users/${data.id}/folders/${data.folderID}?page=1`);
     return http.get(`users/${data.id}/folders/${data.folderID}?page=1`);
   },
   downloadFile(id, config) {
@@ -17,6 +15,7 @@ const foldersApi = {
     return http.post(`folders/${id}`, { name });
   },
   sharedFolders(id, config) {
+    console.log(config, "config ?");
     return http.get(`/users/${id}/folders/share?page=1`, config);
   },
   deleteFile(data) {
@@ -27,6 +26,10 @@ const foldersApi = {
   },
   setPermission(data) {
     return http.post("/users/folders/permission", data);
+  },
+  search(data) {
+    const { id, name } = data;
+    return http.get(`users/${id}/folders/search?search=${name}`);
   },
 };
 

@@ -33,13 +33,14 @@ const Default = ({
   const [personalFolder, setPersonalFolder] = useState([]);
   const { sharedFolders: data } = useSelector((state) => state.folders);
   const [sharedFolders, setSharedFolders] = useState(data?.files);
+  const [searchVal, setSearchVal] = useState("");
   const [users, setUsers] = useState([]);
   const { profile } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const { idFolder } = useParams();
 
   const [socketUrl, setSocketUrl] = useState(
-    `ws://localhost:8080/SyncFolderPBL4/sync/${profile?.user?.id}/${profile?.user?.id}}`
+    `ws://localhost:8080/SyncFolderPBL4/sync/${profile?.user?.id}}`
   );
 
   const { sendMessage, lastMessage } = useWebSocket(socketUrl);
@@ -65,7 +66,6 @@ const Default = ({
         //no clean code, bcz I lười :D
         unwrapResult(res);
         setSharedFolders(sharedFoldersRes.payload.files);
-
         setPersonalFolder(res.payload);
       } catch (error) {}
     };
@@ -112,7 +112,7 @@ const Default = ({
 
   const handleOk = () => {
     setSocketUrl(
-      `ws://localhost:8080/SyncFolderPBL4/sync/${profile?.user?.id}/${profile?.user?.id}`
+      `ws://localhost:8080/SyncFolderPBL4/sync/${profile?.user?.id}`
     );
     const msg = `{
       "func": "create",
@@ -120,7 +120,6 @@ const Default = ({
         idFolder || profile?.user?.id
       }, 'folderName':'${folderName}'}"
   }`;
-    console.log(msg);
     sendMessage(msg);
     setIsModalOpen(false);
   };
@@ -138,7 +137,7 @@ const Default = ({
     setIsModalShareOpen(false);
 
     setSocketUrl(
-      `ws://localhost:8080/SyncFolderPBL4/sync/${profile?.user?.id}/${profile?.user?.id}`
+      `ws://localhost:8080/SyncFolderPBL4/sync/${profile?.user?.id}`
     );
     const msg = `{
       "func": "permission",
@@ -180,6 +179,10 @@ const Default = ({
     const res = dispatch(logout());
     unwrapResult(res);
   };
+  const handleSearch = () => {
+    navigate(`/?search=${searchVal}`);
+    setSearchVal("");
+  };
   return (
     <Layout className="min-h-screen">
       <Header>
@@ -190,13 +193,18 @@ const Default = ({
               alt=""
             />
           </Link>
-          <div>
+          <div className="flex h-12 items-center">
             <Input
+              value={searchVal}
+              onChange={(e) => setSearchVal(e.target.value)}
               size="large"
               placeholder="Search ..."
               prefix={<FaSearch />}
               className="rounded-xl text-xl"
             />
+            <Button onClick={handleSearch} className="h-full rounded-lg ml-2">
+              Search
+            </Button>
           </div>
           <div className="flex items-center">
             <Dropdown

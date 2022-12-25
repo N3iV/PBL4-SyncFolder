@@ -2,43 +2,58 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { Button, List, Pagination } from "antd";
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
-import {
-  FaCloudDownloadAlt,
-  FaFileAlt,
-  FaFolder,
-  FaShare,
-  FaTrash,
-} from "react-icons/fa";
+import { FaFileAlt, FaFolder, FaInfo, FaShare, FaTrash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { toast } from "react-toastify";
 import useWebSocket from "react-use-websocket";
+import ModalInfo from "../components/ModalInfo";
 import { path } from "../constant/path";
+import useQuery from "../hooks/useQuery";
 import Default from "../layout/Default";
-import {
-  deleteFile,
-  deleteFolder,
-  foldersActions,
-  getFileById,
-} from "../slices/folders.slice";
-import { isSharingSocket } from "../utils/helper";
-
+import { foldersActions, searchFolders } from "../slices/folders.slice";
+import { isDeleteSocket, isSharingSocket } from "../utils/helper";
 const Home = () => {
   const ref = useRef();
   const { profile } = useSelector((state) => state.auth);
+  const { search } = useQuery();
+  console.log(search, "search qeury");
+  const [searchRes, setSearchRes] = useState([]);
   const { sharedFolders, personalFolder } = useSelector(
     (state) => state.folders
   );
   const [files, setFiles] = useState([]);
   const dispatch = useDispatch();
   const [currPage, setCurrPage] = useState(1);
-  const [currFolder, setCurrFolder] = useState(1);
+  const [currFolder, setCurrFolder] = useState({});
   const navigate = useNavigate();
-  const [socketUrl, setSocketUrl] = useState(
-    `ws://localhost:8080/SyncFolderPBL4/sync/1/${profile?.user?.id}`
-  );
 
+  const showModalInfo = (item) => {
+    setCurrFolder(item);
+  };
+
+  const [socketUrl, setSocketUrl] = useState(
+    `ws://localhost:8080/SyncFolderPBL4/sync/${profile?.user?.id}`
+  );
   const { sendMessage, lastMessage } = useWebSocket(socketUrl);
+
+  useEffect(() => {
+    const _searchFolders = async () => {
+      const data = {
+        id: profile?.user?.id,
+        name: search,
+      };
+      const res = await dispatch(searchFolders(data));
+      unwrapResult(res);
+      setSearchRes(res.payload);
+    };
+    _searchFolders();
+  }, [dispatch, profile?.user?.id, search]);
   useEffect(() => {
     if (lastMessage !== null) {
       const { data, message } = JSON.parse(lastMessage?.data);
@@ -49,6 +64,12 @@ const Home = () => {
       });
       if (isSharingSocket(message)) {
         dispatch(foldersActions.updateSharedBy(data));
+      }
+      if (isDeleteSocket(message)) {
+        const folderName = message
+          .split("đã xóa thành công Directory")[1]
+          .trim();
+        dispatch(foldersActions.deleteShareFolders(folderName));
       }
     }
   }, [dispatch, lastMessage]);
@@ -87,21 +108,13 @@ const Home = () => {
     } catch (error) {}
   };
   const handleDelete = async (item) => {
-    console.log(`{
-      "func": "delete",
-      "contentMsg": "{fileId: ${item.id}}"
-  }`);
-    console.log(item);
     setSocketUrl(
-      `ws://localhost:8080/SyncFolderPBL4/sync/${item.ownerId}/${profile?.user?.id}`
+      `ws://localhost:8080/SyncFolderPBL4/sync/${profile?.user?.id}`
     );
     sendMessage(`{
         "func": "delete",
         "contentMsg": "{fileId: ${item.id}}"
     }`);
-    setSocketUrl(
-      `ws://localhost:8080/SyncFolderPBL4/sync/${profile?.user?.id}/${profile?.user?.id}`
-    );
   };
 
   const onShowSizeChange = (curr) => {
@@ -125,6 +138,8 @@ const Home = () => {
       setIsModalShareOpen={setIsModalOpen}
       showModalShare={isModalOpen}
     >
+      <ModalInfo item={currFolder} />
+
       {/* <Breadcrumb className="p-4" separator=">">
         <Breadcrumb.Item className="text-xl">
           Được chia sẻ với tôi
@@ -133,10 +148,9 @@ const Home = () => {
           Provo - Writing
         </Breadcrumb.Item>
       </Breadcrumb> */}
-
       <List
         itemLayout="horizontal"
-        dataSource={personalFolder?.files}
+        dataSource={searchRes || personalFolder?.files}
         renderItem={(item, idx) => (
           <List.Item className="hover:bg-slate-200 px-4 flex justify-between">
             <Link
@@ -153,12 +167,13 @@ const Home = () => {
               </div>
             </Link>
             <a href={url} className="hidden" download={name} ref={ref}></a>
+
             <Button
               shape="round"
               className="ml-12"
-              onClick={() => handleDownloadFile(item.id)}
+              onClick={() => showModalInfo(item)}
             >
-              <FaCloudDownloadAlt />
+              <FaInfo />
             </Button>
 
             <Button

@@ -20,6 +20,10 @@ export const getUsers = createAsyncThunk(
   payloadCreator(authApi.getUsers)
 );
 
+const handleGetUsersFullfilled = (state, action) => {
+  state.users = action.payload;
+};
+
 const handleAuthFulfilled = (state, action) => {
   const _data = action.payload;
   state.profile = _data;
@@ -29,7 +33,6 @@ const handleRegisterFulfilled = (state, action) => {
   state.profile.user = action.payload.data;
 };
 const handleUnauth = (state) => {
-  console.log("log out");
   state.profile = {};
   localStorage.removeItem(LocalStorage.user);
   localStorage.removeItem("IdFileShare");
@@ -48,6 +51,7 @@ const auth = createSlice({
     [register.fulfilled]: handleRegisterFulfilled,
     [login.fulfilled]: handleAuthFulfilled,
     [logout.fulfilled]: handleUnauth,
+    [getUsers.fulfilled]: handleGetUsersFullfilled,
   },
 });
 

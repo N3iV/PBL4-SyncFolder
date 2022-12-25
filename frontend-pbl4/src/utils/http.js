@@ -13,7 +13,7 @@ class Http {
     //Interceptor la trung gian, dung de config request trc khi gui len server hoc config respone khi dc xu ly boi then va catch
     this.instance.interceptors.response.use(
       (response) => {
-        const result = { ...response.data, status: response.status };
+        const result = response.data;
         return result;
       },
       ({ response }) => {

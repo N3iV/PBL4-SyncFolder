@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
 import foldersApi from "../api/folders";
 import LocalStorage from "../constant/localStorage";
 import { payloadCreator } from "../utils/helper";
@@ -35,6 +35,10 @@ export const deleteFolder = createAsyncThunk(
   "folder/delete",
   payloadCreator(foldersApi.deleteFolder)
 );
+export const searchFolders = createAsyncThunk(
+  "folder/search",
+  payloadCreator(foldersApi.search)
+);
 
 const handleFulfilled = (state, action) => {
   localStorage.setItem(
@@ -48,6 +52,14 @@ const getShareFolders = (state, action) => {
 const updateSharedBy = (state, action) => {
   state.sharedFolders = action.payload;
 };
+const deleteShareFolders = (state, action) => {
+  state.sharedFolders = {
+    ...state.sharedFolders,
+    files: state.sharedFolders.files.filter(
+      (item) => item.name !== action.payload
+    ),
+  };
+};
 const getFolderFulfilled = (state, action) => {
   state.personalFolder = action.payload;
 };
@@ -59,6 +71,7 @@ const folders = createSlice({
   },
   reducers: {
     updateSharedBy,
+    deleteShareFolders,
   },
   extraReducers: {
     [createFolder.fulfilled]: handleFulfilled,

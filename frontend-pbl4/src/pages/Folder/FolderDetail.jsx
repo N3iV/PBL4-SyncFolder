@@ -5,6 +5,7 @@ import {
   FaCloudDownloadAlt,
   FaFileAlt,
   FaFolder,
+  FaInfo,
   FaShare,
   FaTrash,
 } from "react-icons/fa";
@@ -12,10 +13,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useWebSocket } from "react-use-websocket/dist/lib/use-websocket";
+import ModalInfo from "../../components/ModalInfo";
 import { path } from "../../constant/path";
 import Default from "../../layout/Default";
 import { foldersActions, getFileById } from "../../slices/folders.slice";
-import { isSharingSocket } from "../../utils/helper";
+import { isDeleteSocket, isSharingSocket } from "../../utils/helper";
 const FolderDetail = () => {
   const dispatch = useDispatch();
   const { profile } = useSelector((state) => state.auth);
@@ -25,12 +27,17 @@ const FolderDetail = () => {
   const [files, setFiles] = useState({});
   const [currPage, setCurrPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currFolder, setCurrFolder] = useState({});
+
+  const showModalInfo = (item) => {
+    setCurrFolder(item);
+  };
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const getFolder = async () => {
       const data = { id: profile?.user?.id, folderID: idFolder };
-      console.log(data, "data detail");
       const res = await dispatch(getFileById(data));
       unwrapResult(res);
       setFiles(res.payload);
@@ -39,7 +46,7 @@ const FolderDetail = () => {
   }, [dispatch, idFolder, profile?.user?.id]);
 
   const [socketUrl, setSocketUrl] = useState(
-    `ws://localhost:8080/SyncFolderPBL4/sync/1/${profile?.user?.id}`
+    `ws://localhost:8080/SyncFolderPBL4/sync/${profile?.user?.id}`
   );
 
   const { sendMessage, lastMessage } = useWebSocket(socketUrl);
@@ -55,6 +62,12 @@ const FolderDetail = () => {
       });
       if (isSharingSocket(message)) {
         dispatch(foldersActions.updateSharedBy(data));
+      }
+      if (isDeleteSocket(message)) {
+        const folderName = message
+          .split("đã xóa thành công Directory")[1]
+          .trim();
+        dispatch(foldersActions.deleteShareFolders(folderName));
       }
     }
   }, [lastMessage]);
@@ -89,17 +102,13 @@ const FolderDetail = () => {
       (folder) => folder.id === item.id
     );
     console.log(sharedFolder, "sharedFolder");
-    console.log(item, "item");
     setSocketUrl(
-      `ws://localhost:8080/SyncFolderPBL4/sync/${item.ownerId}/${profile?.user?.id}`
+      `ws://localhost:8080/SyncFolderPBL4/sync/${profile?.user?.id}`
     );
     sendMessage(`{
         "func": "delete",
         "contentMsg": "{fileId: ${item.id}}"
     }`);
-    setSocketUrl(
-      `ws://localhost:8080/SyncFolderPBL4/sync/1/${profile?.user?.id}`
-    );
   };
 
   const onShowSizeChange = (curr) => {
@@ -124,6 +133,7 @@ const FolderDetail = () => {
       setIsModalShareOpen={setIsModalOpen}
       showModalShare={isModalOpen}
     >
+      <ModalInfo item={currFolder} />
       <List
         itemLayout="horizontal"
         dataSource={files.files}
@@ -143,14 +153,14 @@ const FolderDetail = () => {
               </div>
             </Link>
             {/* <a href={url} className="hidden" download={name} ref={ref}></a> */}
+
             <Button
               shape="round"
-              className="ml-12"
-              // onClick={() => handleDownloadFile(item.id)}
+              className="ml-4"
+              onClick={() => showModalInfo(item)}
             >
-              <FaCloudDownloadAlt />
+              <FaInfo />
             </Button>
-
             <Button
               shape="round"
               className="ml-4"
@@ -168,14 +178,14 @@ const FolderDetail = () => {
           </List.Item>
         )}
       />
-      {files.numberOfPage && (
+      {files.numberOfPage ? (
         <Pagination
           defaultCurrent={currPage}
           current={currPage}
           total={files.numberOfPage * 10}
           onChange={onShowSizeChange}
         />
-      )}
+      ) : null}
     </Default>
   );
 };
