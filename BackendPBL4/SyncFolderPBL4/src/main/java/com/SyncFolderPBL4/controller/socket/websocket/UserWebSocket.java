@@ -18,9 +18,9 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
-import javax.ws.rs.core.Response;
 
 import com.SyncFolderPBL4.config.LocalDateTimeAdapter;
+import com.SyncFolderPBL4.config.UserRoleFileAdapter;
 import com.SyncFolderPBL4.constant.SystemConstant;
 import com.SyncFolderPBL4.controller.mapper.FileCreateMapperJson;
 import com.SyncFolderPBL4.controller.mapper.PermisUserMapper;
@@ -38,18 +38,17 @@ import com.SyncFolderPBL4.model.service.impl.FileService;
 import com.SyncFolderPBL4.model.service.impl.RoleService;
 import com.SyncFolderPBL4.model.service.impl.UserService;
 import com.SyncFolderPBL4.utils.FileUtils;
-import com.SyncFolderPBL4.utils.HttpUtils;
 import com.SyncFolderPBL4.utils.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-@ServerEndpoint(value = "/sync/{ownerId}/{userId}", decoders = MessageFunctionDecoder.class, encoders = MessageReplyEncoder.class)
+@ServerEndpoint(value = "/sync/{userId}", decoders = MessageFunctionDecoder.class, encoders = MessageReplyEncoder.class)
 public class UserWebSocket {
 
 	private Session session;
 	private static Set<UserWebSocket> chatEndpoints = new CopyOnWriteArraySet<>();
 	private static Map<String, Integer> users = new HashMap<>();
-	private int roomOwnerId;
+//	private int roomOwnerId;
 	private String username;
 	private static String pathApp = System.getProperty("user.dir") + "\\";
 	private static Gson gson;
@@ -64,26 +63,26 @@ public class UserWebSocket {
 		roleService = new RoleService();
 		gson = new GsonBuilder()
 				.excludeFieldsWithoutExposeAnnotation()
+				.registerTypeAdapter(UserRoleFileEntity.class, new UserRoleFileAdapter())
 				.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
 				.setPrettyPrinting()
 				.create();
 	}
 
 	@OnOpen
-	public void onOpen(Session session, @PathParam("ownerId") String ownerId, @PathParam("userId") String userId)
+	public void onOpen(Session session,  @PathParam("userId") String userId)
 			throws IOException, EncodeException {
 
 		this.session = session;
 		chatEndpoints.add(this);
 		users.put(session.getId(), Integer.parseInt(userId));
-		roomOwnerId = Integer.parseInt(ownerId);
+//		roomOwnerId = Integer.parseInt(ownerId);
 		username = userService.findOne(users.get(session.getId())).getUsername();
 	}
 
 	@OnMessage
 	public void onMessage(Session session, MessageFunction messageFunc) throws IOException, EncodeException {
 		String message = null;
-		MessageReply msgRep = null;
 		switch (messageFunc.getFunc()) {
 		// delete file/folder feature
 		case "delete":
@@ -132,11 +131,16 @@ public class UserWebSocket {
 
 	// ===================================== handle feature ====================================
 	private void handleSetPermisssionWebsocketFile(PermisUserMapper userMapper) throws IOException, EncodeException{
-		if(!roleService.setRoles(userMapper)) {
-			senderResponse(new MessageReply(SystemConstant.SERVER_NAME,"Chia sẻ quyền thất bại", null));
+		Map<Integer, MessageReply>  usersResponse = new HashMap<>();
+		List<Integer> userNeedSetPermis = new ArrayList<>();
+		String msgResponseUserAlreadyHavePermis = getMsgResponseUserAlreadyHavePermis(userMapper, userNeedSetPermis);
+		String msgResponseUserSetPermisSuccess = "";
+		userMapper.setUserIds(userNeedSetPermis);
+		if(!roleService.setRoles(userMapper) || userNeedSetPermis.isEmpty()) {
+			senderResponse(new MessageReply(SystemConstant.SERVER_NAME, 
+											"Chia sẻ quyền thất bại".concat(msgResponseUserAlreadyHavePermis), null));
 			return ;
 		} 
-		
 		
 		FileEntity userSharedFile = fileService.findOne(userMapper.getFileId());
 		String contentMsg = this.username + " đã cấp quyền " 
@@ -144,20 +148,21 @@ public class UserWebSocket {
 							+ userSharedFile.getType().getName() + " "
 							+ userSharedFile.getName() + " "
 							+ "cho bạn";
-		Map<Integer, MessageReply>  usersResponse = new HashMap<>();
-		for (Integer userId : userMapper.getUserIds())
+		// get msg success
+		msgResponseUserSetPermisSuccess = getMsgResponseSuccess(userNeedSetPermis,msgResponseUserAlreadyHavePermis);
+		for (Integer userId : userNeedSetPermis)
 		{
 			MessageReply messageRep = new MessageReply(this.username, 
 													contentMsg, 
 													userService.getSharedFilesEndPage(userId));
 			usersResponse.put(userId, messageRep);
 		}
-		senderResponse(new MessageReply(SystemConstant.SERVER_NAME,"Chia sẻ quyền thành công", null));
+		senderResponse(new MessageReply(SystemConstant.SERVER_NAME, msgResponseUserSetPermisSuccess, null));
 		broadcastForUsers(usersResponse);
 		
 		
 	}
-	
+
 	public void handleUploadWebsocketFile(FileCreateMapperJson sourcefile) throws IOException, EncodeException {
 		Map<String, Object> data = fileService.createFolder(sourcefile.getParentFolderId(), sourcefile.getFolderName(), pathApp);
 		@SuppressWarnings("unchecked")
@@ -166,7 +171,7 @@ public class UserWebSocket {
 													.filter(file -> file.getName().contains(sourcefile.getFolderName()))
 													.findFirst()
 													.get();
-		Map<Integer, String> tableSendMsg = checkPermissionAllUserInRoomForResponse(fileEntity.getId());
+		Map<Integer, String> tableSendMsg = checkPermissionAllUserInRoomForResponse(fileEntity.getId(),fileEntity.getOwnerId());
 		String contentRep = this.username + " đã tạo thành công folder " + sourcefile.getFolderName();
 		MessageReply msgRep = new MessageReply(this.username, contentRep, data);
 		broadcastIfHavePermission(msgRep,tableSendMsg,"Tạo folder thành công");
@@ -182,13 +187,13 @@ public class UserWebSocket {
 			senderResponse(new MessageReply(SystemConstant.SERVER_NAME, "Không được phép xóa thư mục gốc",null));
 		}
 		// Check response List user
-		Map<Integer, String> tableSendMsg = checkPermissionAllUserInRoomForResponse(fileId);
+		Map<Integer, String> tableSendMsg = checkPermissionAllUserInRoomForResponse(fileId, userRole.getFile().getOwnerId());
 		
 		// Delete file
 		fileService.deleteFile(userRole);
 
 		path = StringUtils.cutLastElementPath(userRole.getFile().getPath());
-		Map<String, Object> data = fileService.getFileUsers(roomOwnerId, userRole.getFile().getNodeId(), path, 1);
+		Map<String, Object> data = fileService.getFileUsers(userRole.getFile().getOwnerId(), userRole.getFile().getNodeId(), path, 1);
 
 		String readPath = pathApp.concat(userRole.getFile().getPath());
 		FileUtils.deleteFile(readPath, userRole.getFile().getType().getName());
@@ -270,7 +275,7 @@ public class UserWebSocket {
 	
 	// ===================================== utils ===================================
 	
-	private Map<Integer, String> checkPermissionAllUserInRoomForResponse(int fileId)
+	private Map<Integer, String> checkPermissionAllUserInRoomForResponse(int fileId, int ownerId)
 	{
 		Map<Integer, String> tableSendMsg = new HashMap<>();
 		for(Entry<String, Integer> entry : users.entrySet())
@@ -284,7 +289,7 @@ public class UserWebSocket {
 				{
 					tableSendMsg.put(entry.getValue(), "Send full data");
 				} else {
-					if(roleCurrentFile.equals(roleOfUser) && !entry.getValue().equals(roomOwnerId))
+					if(roleCurrentFile.equals(roleOfUser) && !entry.getValue().equals(ownerId))
 					{
 						tableSendMsg.put(entry.getValue(), "Send empty data");
 					}else {					
@@ -295,6 +300,37 @@ public class UserWebSocket {
 			} 
 		}
 		return tableSendMsg;
+	}
+	private String getMsgResponseUserAlreadyHavePermis(PermisUserMapper userMapper, List<Integer> userNeedSetPermis)
+	{
+		StringBuilder builder = new StringBuilder();
+		builder.append(" | ");
+		for (Integer userId : userMapper.getUserIds())
+		{
+			if(roleService.getParentRole(new RoleID(userId,userMapper.getFileId())) == null) {
+				userNeedSetPermis.add(userId);
+				continue;
+			}
+			builder.append(userService.findOne(userId).getUsername()).append(" , ");
+		}
+		if(builder.toString().equals(" | "))
+		{
+			return "";
+		}
+		return builder.toString()
+					  .substring(0,builder.toString().lastIndexOf(","))
+					  .concat(" đã có quyền với file này");
+	}
+	private String getMsgResponseSuccess(List<Integer> userNeedSetPermis, String msgResponseUserAlreadyHavePermis) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Chia sẻ quyền thành công cho ");
+		for (Integer userId : userNeedSetPermis)
+		{
+			builder.append(userService.findOne(userId).getUsername()).append(" , ");
+		}
+		return builder.toString()
+				  .substring(0,builder.toString().lastIndexOf(","))
+				  .concat(msgResponseUserAlreadyHavePermis);
 	}
 	private String getReadAndUpdateMsg(boolean isRead, boolean isUpdate)
 	{

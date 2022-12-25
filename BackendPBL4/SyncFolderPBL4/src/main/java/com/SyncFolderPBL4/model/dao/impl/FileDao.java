@@ -50,7 +50,6 @@ public class FileDao extends AbstractDao<FileEntity> implements IFileDao {
 					+ "JOIN user_role_file urf "
 					+ "ON f.id = urf.file_id "
 					+ "WHERE urf.user_id = ?0 AND f.owner_id <> ?1";
-		System.out.println(sql);
 		Query query = session.createNativeQuery(sql)
 				.setParameter(0, userId)
 				.setParameter(1, userId);

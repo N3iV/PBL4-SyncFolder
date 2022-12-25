@@ -12,7 +12,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-public class UserRoleFileAdapter implements JsonSerializer<UserRoleFileEntity>, JsonDeserializer<UserRoleFileEntity> {
+public class UserRoleFileAdapter implements JsonDeserializer<UserRoleFileEntity> {
 
 	@Override
 	public UserRoleFileEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -32,11 +32,7 @@ public class UserRoleFileAdapter implements JsonSerializer<UserRoleFileEntity>, 
         return role;
 	}
 
-	@Override
-	public JsonElement serialize(UserRoleFileEntity src, Type typeOfSrc, JsonSerializationContext context) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	
 }
