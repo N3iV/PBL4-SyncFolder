@@ -18,7 +18,7 @@ const Sidebar = () => {
     setIsModalOpen(false);
   };
   const handleChangeFolderName = (e) => {
-    console.log(e.target.value);
+    e.target.value;
   };
   function getItem(label, key, icon, children) {
     return {

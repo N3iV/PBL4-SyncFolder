@@ -5,6 +5,8 @@ const foldersApi = {
   },
 
   getFileById(data) {
+    console.log(data, "get data");
+    console.log(`api: users/${data.id}/folders/${data.folderID}?page=1`);
     return http.get(`users/${data.id}/folders/${data.folderID}?page=1`);
   },
   downloadFile(id, config) {
@@ -12,7 +14,6 @@ const foldersApi = {
   },
   createFolder(data) {
     const { id, name } = data;
-    console.log(data);
     return http.post(`folders/${id}`, { name });
   },
   sharedFolders(id, config) {

@@ -26,7 +26,9 @@ import { isSharingSocket } from "../utils/helper";
 const Home = () => {
   const ref = useRef();
   const { profile } = useSelector((state) => state.auth);
-  const { sharedFolders } = useSelector((state) => state.folders);
+  const { sharedFolders, personalFolder } = useSelector(
+    (state) => state.folders
+  );
   const [files, setFiles] = useState([]);
   const dispatch = useDispatch();
   const [currPage, setCurrPage] = useState(1);
@@ -45,32 +47,15 @@ const Home = () => {
         position: "top-right",
         autoClose: 2000,
       });
-      if (isSharingSocket) {
+      if (isSharingSocket(message)) {
         dispatch(foldersActions.updateSharedBy(data));
       }
     }
   }, [dispatch, lastMessage]);
 
   const handleSelectMenu = async (value) => {
-    console.log(value);
     navigate(path.folders + `/${value.key}`);
   };
-  useEffect(() => {
-    const getFolder = async () => {
-      const _item =
-        sharedFolders.files &&
-        sharedFolders.files.filter((item) => item.id === Number(currFolder));
-      const data = {
-        id: _item?.[0]?.ownerId || profile?.user?.id,
-        folderID: currFolder,
-        page: currPage,
-      };
-      const res = await dispatch(getFileById(data));
-      unwrapResult(res);
-      setFiles(res.payload);
-    };
-    getFolder();
-  }, [currFolder, currPage, dispatch, profile?.user?.id, sharedFolders.files]);
 
   const typeOfFile = Object.freeze({
     Directory: <FaFolder />,
@@ -102,6 +87,11 @@ const Home = () => {
     } catch (error) {}
   };
   const handleDelete = async (item) => {
+    console.log(`{
+      "func": "delete",
+      "contentMsg": "{fileId: ${item.id}}"
+  }`);
+    console.log(item);
     setSocketUrl(
       `ws://localhost:8080/SyncFolderPBL4/sync/${item.ownerId}/${profile?.user?.id}`
     );
@@ -146,7 +136,7 @@ const Home = () => {
 
       <List
         itemLayout="horizontal"
-        dataSource={files.files}
+        dataSource={personalFolder?.files}
         renderItem={(item, idx) => (
           <List.Item className="hover:bg-slate-200 px-4 flex justify-between">
             <Link

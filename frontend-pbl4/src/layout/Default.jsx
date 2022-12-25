@@ -12,28 +12,14 @@ import {
   Select,
   Typography,
 } from "antd";
-import React, { useEffect, useState } from "react";
-import { useMemo } from "react";
-import { useCallback } from "react";
-import {
-  FaFolder,
-  FaGripHorizontal,
-  FaPlus,
-  FaSearch,
-  FaShare,
-  FaUser,
-} from "react-icons/fa";
+import React, { useEffect, useMemo, useState } from "react";
+import { FaFolder, FaPlus, FaSearch, FaShare, FaUser } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useWebSocket } from "react-use-websocket/dist/lib/use-websocket";
-import { path } from "../constant/path";
 import { getUsers, logout } from "../slices/auth.slice";
-import {
-  createFolder,
-  folderShareWithMe,
-  getFolder,
-} from "../slices/folders.slice";
+import { folderShareWithMe, getFolder } from "../slices/folders.slice";
 import { convertDataPersonToSelectOptions } from "../utils/helper";
 
 const { Header, Content, Sider } = Layout;
@@ -46,7 +32,6 @@ const Default = ({
 }) => {
   const [personalFolder, setPersonalFolder] = useState([]);
   const { sharedFolders: data } = useSelector((state) => state.folders);
-  console.log(data, "share form here");
   const [sharedFolders, setSharedFolders] = useState(data?.files);
   const [users, setUsers] = useState([]);
   const { profile } = useSelector((state) => state.auth);
@@ -64,7 +49,6 @@ const Default = ({
   useEffect(() => {
     if (lastMessage !== null) {
       const { data, message } = JSON.parse(lastMessage?.data);
-      console.log(data, "data from default layout");
       toast.success(message, {
         position: "top-right",
         autoClose: 2000,
@@ -102,7 +86,6 @@ const Default = ({
       label,
     };
   }
-  console.log(sharedFolders, "share folder");
   const items = useMemo(() => {
     const result = [
       getItem("Drive của tôi", "1", <FaUser />, [
@@ -117,9 +100,10 @@ const Default = ({
     ];
     return result;
   }, [sharedFolders]);
-  console.log(items);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [folderName, setFolderName] = useState("Untitled folder");
+  const [shareOptions, setShareOptions] = useState([]);
+
   const [userShare, setUserShare] = useState([]);
   const navigate = useNavigate();
   const showModal = () => {
@@ -136,6 +120,7 @@ const Default = ({
         idFolder || profile?.user?.id
       }, 'folderName':'${folderName}'}"
   }`;
+    console.log(msg);
     sendMessage(msg);
     setIsModalOpen(false);
   };
@@ -151,8 +136,7 @@ const Default = ({
   };
   const handleModalShareOk = async () => {
     setIsModalShareOpen(false);
-    setUserShare([]);
-    setShareOptions([]);
+
     setSocketUrl(
       `ws://localhost:8080/SyncFolderPBL4/sync/${profile?.user?.id}/${profile?.user?.id}`
     );
@@ -166,6 +150,8 @@ const Default = ({
   }`;
 
     sendMessage(msg);
+    setUserShare([]);
+    setShareOptions([]);
   };
 
   const handleChange = (value) => {
@@ -176,7 +162,6 @@ const Default = ({
     { label: "Update", value: "update" },
   ];
 
-  const [shareOptions, setShareOptions] = useState([]);
   const onCheckBoxChange = (values) => {
     setShareOptions([...values]);
   };
@@ -241,14 +226,16 @@ const Default = ({
           style={{ width: "100%" }}
           placeholder="Please select"
           defaultValue={userShare}
+          value={userShare}
           // defaultValue={["a10", "c12"]}
           onChange={handleChange}
           options={convertDataPersonToSelectOptions(users)}
         />
         <br />
         <Checkbox.Group
+          value={shareOptions}
           options={options}
-          defaultValue={["Read"]}
+          defaultValue={"read"}
           onChange={onCheckBoxChange}
         />
       </Modal>

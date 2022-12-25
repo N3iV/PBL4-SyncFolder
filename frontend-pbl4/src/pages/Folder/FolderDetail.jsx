@@ -14,10 +14,13 @@ import { toast } from "react-toastify";
 import { useWebSocket } from "react-use-websocket/dist/lib/use-websocket";
 import { path } from "../../constant/path";
 import Default from "../../layout/Default";
-import { getFileById } from "../../slices/folders.slice";
+import { foldersActions, getFileById } from "../../slices/folders.slice";
+import { isSharingSocket } from "../../utils/helper";
 const FolderDetail = () => {
   const dispatch = useDispatch();
   const { profile } = useSelector((state) => state.auth);
+  const { sharedFolders, folders } = useSelector((state) => state.folders);
+
   const { idFolder } = useParams();
   const [files, setFiles] = useState({});
   const [currPage, setCurrPage] = useState(1);
@@ -27,7 +30,7 @@ const FolderDetail = () => {
   useEffect(() => {
     const getFolder = async () => {
       const data = { id: profile?.user?.id, folderID: idFolder };
-      console.log(data, "test detail");
+      console.log(data, "data detail");
       const res = await dispatch(getFileById(data));
       unwrapResult(res);
       setFiles(res.payload);
@@ -44,12 +47,15 @@ const FolderDetail = () => {
     if (lastMessage !== null) {
       const { data, message } = JSON.parse(lastMessage?.data);
       setFiles(data);
-      console.log(message, "message");
+      console.log(message, "msg");
       console.log(data, "socket data home ");
       toast.success(message, {
         position: "top-right",
         autoClose: 2000,
       });
+      if (isSharingSocket(message)) {
+        dispatch(foldersActions.updateSharedBy(data));
+      }
     }
   }, [lastMessage]);
   //   const getFile = async () => {
@@ -79,6 +85,11 @@ const FolderDetail = () => {
   });
 
   const handleDelete = async (item) => {
+    const sharedFolder = sharedFolders?.files.find(
+      (folder) => folder.id === item.id
+    );
+    console.log(sharedFolder, "sharedFolder");
+    console.log(item, "item");
     setSocketUrl(
       `ws://localhost:8080/SyncFolderPBL4/sync/${item.ownerId}/${profile?.user?.id}`
     );
@@ -105,7 +116,6 @@ const FolderDetail = () => {
     setFileId(id);
   };
   const handleSelectMenu = async (value) => {
-    console.log("test");
     navigate(path.folders + `/${value.key}`);
   };
   return (
