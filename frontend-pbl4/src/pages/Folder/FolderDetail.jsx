@@ -1,14 +1,7 @@
 import { unwrapResult } from "@reduxjs/toolkit";
 import { Button, List, Pagination } from "antd";
 import React, { useEffect, useState } from "react";
-import {
-  FaCloudDownloadAlt,
-  FaFileAlt,
-  FaFolder,
-  FaInfo,
-  FaShare,
-  FaTrash,
-} from "react-icons/fa";
+import { FaFileAlt, FaFolder, FaInfo, FaShare, FaTrash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -22,6 +15,7 @@ const FolderDetail = () => {
   const dispatch = useDispatch();
   const { profile } = useSelector((state) => state.auth);
   const { sharedFolders, folders } = useSelector((state) => state.folders);
+  const [isSetPermission, setIsSetPermission] = useState(false);
 
   const { idFolder } = useParams();
   const [files, setFiles] = useState({});
@@ -35,15 +29,16 @@ const FolderDetail = () => {
 
   const navigate = useNavigate();
 
+  const getFolder = async () => {
+    console.log("test re get");
+    const data = { id: profile?.user?.id, folderID: idFolder };
+    const res = await dispatch(getFileById(data));
+    unwrapResult(res);
+    setFiles(res.payload);
+  };
   useEffect(() => {
-    const getFolder = async () => {
-      const data = { id: profile?.user?.id, folderID: idFolder };
-      const res = await dispatch(getFileById(data));
-      unwrapResult(res);
-      setFiles(res.payload);
-    };
     getFolder();
-  }, [dispatch, idFolder, profile?.user?.id]);
+  }, [isSetPermission, idFolder, profile?.user?.id]);
 
   const [socketUrl, setSocketUrl] = useState(
     `ws://localhost:8080/SyncFolderPBL4/sync/${profile?.user?.id}`
@@ -61,6 +56,7 @@ const FolderDetail = () => {
         autoClose: 2000,
       });
       if (isSharingSocket(message)) {
+        getFolder();
         dispatch(foldersActions.updateSharedBy(data));
       }
       if (isDeleteSocket(message)) {
@@ -98,13 +94,6 @@ const FolderDetail = () => {
   });
 
   const handleDelete = async (item) => {
-    const sharedFolder = sharedFolders?.files.find(
-      (folder) => folder.id === item.id
-    );
-    console.log(sharedFolder, "sharedFolder");
-    setSocketUrl(
-      `ws://localhost:8080/SyncFolderPBL4/sync/${profile?.user?.id}`
-    );
     sendMessage(`{
         "func": "delete",
         "contentMsg": "{fileId: ${item.id}}"
@@ -132,9 +121,11 @@ const FolderDetail = () => {
       onMenuSelect={handleSelectMenu}
       setIsModalShareOpen={setIsModalOpen}
       showModalShare={isModalOpen}
+      setIsSetPermission={setIsSetPermission}
     >
       <ModalInfo item={currFolder} />
       <List
+        className="h-3/4 mt-4"
         itemLayout="horizontal"
         dataSource={files.files}
         renderItem={(item, idx) => (
@@ -179,12 +170,14 @@ const FolderDetail = () => {
         )}
       />
       {files.numberOfPage ? (
-        <Pagination
-          defaultCurrent={currPage}
-          current={currPage}
-          total={files.numberOfPage * 10}
-          onChange={onShowSizeChange}
-        />
+        <div className="flex items-center justify-center mt-4">
+          <Pagination
+            defaultCurrent={currPage}
+            current={currPage}
+            total={files.numberOfPage * 10}
+            onChange={onShowSizeChange}
+          />
+        </div>
       ) : null}
     </Default>
   );

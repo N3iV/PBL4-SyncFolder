@@ -24,7 +24,8 @@ export const convertDataPersonToSelectOptions = (data) =>
     value: item.id,
   }));
 
-export const isSharingSocket = (msg) => msg.includes(" đã cấp quyền");
+export const isSharingSocket = (msg) =>
+  msg.includes(" đã cấp quyền") || msg.includes("Chia sẻ quyền");
 
 export const isDeleteSocket = (msg) => msg.includes(" đã xóa");
 

@@ -4,12 +4,7 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { FaFileAlt, FaFolder, FaInfo, FaShare, FaTrash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Link,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import useWebSocket from "react-use-websocket";
 import ModalInfo from "../components/ModalInfo";
@@ -27,6 +22,7 @@ const Home = () => {
   const { sharedFolders, personalFolder } = useSelector(
     (state) => state.folders
   );
+  console.log(personalFolder, "ehhehee");
   const [files, setFiles] = useState([]);
   const dispatch = useDispatch();
   const [currPage, setCurrPage] = useState(1);
@@ -149,8 +145,9 @@ const Home = () => {
         </Breadcrumb.Item>
       </Breadcrumb> */}
       <List
+        className="h-3/4 mt-4"
         itemLayout="horizontal"
-        dataSource={searchRes || personalFolder?.files}
+        dataSource={searchRes?.[0] ? searchRes : personalFolder?.files}
         renderItem={(item, idx) => (
           <List.Item className="hover:bg-slate-200 px-4 flex justify-between">
             <Link
@@ -194,12 +191,14 @@ const Home = () => {
         )}
       />
       {files.numberOfPage && (
-        <Pagination
-          defaultCurrent={currPage}
-          current={currPage}
-          total={files.numberOfPage * 10}
-          onChange={onShowSizeChange}
-        />
+        <div className="flex items-center justify-center mt-4">
+          <Pagination
+            defaultCurrent={currPage}
+            current={currPage}
+            total={files.numberOfPage * 10}
+            onChange={onShowSizeChange}
+          />
+        </div>
       )}
     </Default>
   );

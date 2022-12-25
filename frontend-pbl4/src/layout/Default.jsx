@@ -19,8 +19,16 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useWebSocket } from "react-use-websocket/dist/lib/use-websocket";
 import { getUsers, logout } from "../slices/auth.slice";
-import { folderShareWithMe, getFolder } from "../slices/folders.slice";
-import { convertDataPersonToSelectOptions } from "../utils/helper";
+import {
+  foldersActions,
+  folderShareWithMe,
+  getFileById,
+  getFolder,
+} from "../slices/folders.slice";
+import {
+  convertDataPersonToSelectOptions,
+  isSharingSocket,
+} from "../utils/helper";
 
 const { Header, Content, Sider } = Layout;
 
@@ -29,6 +37,7 @@ const Default = ({
   children,
   showModalShare,
   setIsModalShareOpen,
+  setIsSetPermission,
 }) => {
   const [personalFolder, setPersonalFolder] = useState([]);
   const { sharedFolders: data } = useSelector((state) => state.folders);
@@ -45,28 +54,39 @@ const Default = ({
 
   const { sendMessage, lastMessage } = useWebSocket(socketUrl);
   useEffect(() => {
-    setSharedFolders(data.files);
+    if (data) setSharedFolders(data.files);
   }, [data]);
   useEffect(() => {
     if (lastMessage !== null) {
       const { data, message } = JSON.parse(lastMessage?.data);
+      console.log(message, "message from defaut");
       toast.success(message, {
         position: "top-right",
         autoClose: 2000,
       });
+      if (isSharingSocket(message)) {
+        setIsSetPermission((prev) => !prev);
+        dispatch(foldersActions.updateSharedBy(data));
+      }
     }
   }, [lastMessage]);
   useEffect(() => {
     const _getFolder = async () => {
       try {
+        console.log("hehehehe");
         const res = await dispatch(getFolder(profile?.user?.id));
         const sharedFoldersRes = await dispatch(
           folderShareWithMe(profile?.user?.id)
         );
+
         //no clean code, bcz I lười :D
         unwrapResult(res);
         setSharedFolders(sharedFoldersRes.payload.files);
         setPersonalFolder(res.payload);
+        const data = { id: profile?.user?.id, folderID: res.payload.id };
+        const folderByID = await dispatch(getFileById(data));
+        unwrapResult(folderByID);
+        await dispatch(foldersActions.getPersonalFolder(folderByID.payload));
       } catch (error) {}
     };
     const _getUsers = async () => {
@@ -186,12 +206,9 @@ const Default = ({
   return (
     <Layout className="min-h-screen">
       <Header>
-        <div className="container mx-auto flex items-center justify-between">
-          <Link to="/" className="logo">
-            <img
-              src="https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_48dp.png"
-              alt=""
-            />
+        <div className=" px-6 flex items-center justify-between">
+          <Link to="/" className="logo font-bold text-2xl">
+            Sync Folder
           </Link>
           <div className="flex h-12 items-center">
             <Input
