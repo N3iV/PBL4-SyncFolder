@@ -147,10 +147,10 @@ public class UserRestApi {
 	@GET
 	@Path("/{userId}/folders/search")
 	@Produces(MediaType.APPLICATION_JSON + SystemConstant.CHARSET)
-	public Response searchFile(@PathParam("userId") int userId, FileEntity file)
-	{
+	public Response searchFile(@PathParam("userId") int userId,@QueryParam("search") String search) {
+	    System.out.println(search + " search");
 		return Response
-					.ok(gson.toJson(fileService.searchFile(userId,file.getName())))
+					.ok(gson.toJson(fileService.searchFile(userId,search)))
 					.build();
 	}
 
