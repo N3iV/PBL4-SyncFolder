@@ -17,6 +17,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
@@ -97,13 +98,12 @@ public class FileRestApi {
 	@Path("/file/{parentFolderId}/upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response uploadFile(@FormDataParam("uploadFile") InputStream is,
-							   @FormDataParam("uploadFile") FormDataContentDisposition fdcd,
+	public Response uploadFile(@FormDataParam("uploadFile") FormDataBodyPart body,
 							   @PathParam("parentFolderId") int parentFolderId)
 	{
 		String readPath = FileUtils.getPathProject(application.getRealPath(""));
 		return Response
-				.ok(gson.toJson(fileService.uploadFile(parentFolderId, is, fdcd, readPath)))
+				.ok(gson.toJson(fileService.uploadFile(parentFolderId, body, readPath)))
 				.build();
 	}
 	@POST
