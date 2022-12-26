@@ -8,8 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.glassfish.jersey.media.multipart.BodyPart;
+import org.glassfish.jersey.media.multipart.ContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.hibernate.resource.transaction.spi.TransactionStatus;
 
 import com.SyncFolderPBL4.constant.SystemConstant;
 import com.SyncFolderPBL4.model.dao.IFileDao;
@@ -114,23 +116,28 @@ public class FileService implements IFileService {
 		result.put("numberOfPage", numPage);
 		
 		HibernateUtils.commitTrans();
-		System.out.println("success");
 		
 		return result;
 	}
 
 	@Override
-	public Map<String, Object> uploadFile(int fileParentId, InputStream is, FormDataContentDisposition fdcd, String dirPath) {
+	public Map<String, Object> uploadFile(int fileParentId, FormDataBodyPart body, String dirPath) {
 		HibernateUtils.checkTransactionAlreadyActive();
-		
+		FileEntity fileEntityUpload = null;
 		Map<String,Object> result = new HashMap<>();
 		HibernateUtils.startTrans(fileDao,typeDao,userDao,roleDao);
-		
-		FileEntity fileEntityUpload = saveFile(fileParentId, fdcd.getFileName(), typeDao.findOneById(2));
-		File fileUpload = FileUtils.createNewFile(dirPath + File.separator + fileEntityUpload.getPath());
-		FileUtils.writeFile(fileUpload, is);
+		// upload multiple file
+		for(BodyPart part : body.getParent().getBodyParts()){
+	        InputStream is = part.getEntityAs(InputStream.class);
+	        fileEntityUpload = saveFile(fileParentId, part.getContentDisposition().getFileName(), typeDao.findOneById(2));
+	        System.out.println("File name: " + part.getContentDisposition().getFileName());
+	        File fileUpload = FileUtils.createNewFile(dirPath + File.separator + fileEntityUpload.getPath());
+	        FileUtils.writeFile(fileUpload, is);
+	    }
 		// Pagination 
-		String path = StringUtils.cutLastElementPath(fileEntityUpload.getPath());
+		String path = StringUtils.cutLastElementPath(fileEntityUpload.getPath())
+								 .replace(File.separator, "%")
+								 .concat("%");
 		Long maxItem = fileDao.countFilesByOwnerIdAndNodeIdAndPath(fileEntityUpload.getOwnerId(), fileEntityUpload.getNodeId(), path);
 		int numPage = (int) (Math.ceil((double) maxItem / SystemConstant.MAX_PAGE_SIZE));
 		int page = numPage;
