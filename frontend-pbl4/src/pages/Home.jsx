@@ -48,7 +48,7 @@ const Home = () => {
       unwrapResult(res);
       setSearchRes(res.payload);
     };
-    _searchFolders();
+    if (search) _searchFolders();
   }, [dispatch, profile?.user?.id, search]);
   useEffect(() => {
     if (lastMessage !== null) {
@@ -147,7 +147,7 @@ const Home = () => {
       <List
         className="h-3/4 mt-4"
         itemLayout="horizontal"
-        dataSource={searchRes?.[0] ? searchRes : personalFolder?.files}
+        dataSource={search ? searchRes : personalFolder?.files}
         renderItem={(item, idx) => (
           <List.Item className="hover:bg-slate-200 px-4 flex justify-between">
             <Link
