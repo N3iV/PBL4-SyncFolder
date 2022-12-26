@@ -15,7 +15,6 @@ const foldersApi = {
     return http.post(`folders/${id}`, { name });
   },
   sharedFolders(id, config) {
-    console.log(config, "config ?");
     return http.get(`/users/${id}/folders/share?page=1`, config);
   },
   deleteFile(data) {

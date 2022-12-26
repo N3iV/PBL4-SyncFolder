@@ -55,13 +55,16 @@ const updateSharedBy = (state, action) => {
 const deleteShareFolders = (state, action) => {
   state.sharedFolders = {
     ...state.sharedFolders,
-    files: state.sharedFolders.files.filter(
+    files: state?.sharedFolders?.files.filter(
       (item) => item.name !== action.payload
     ),
   };
 };
 const getPersonalFolder = (state, action) => {
-  console.log(action, "getPersonal Folder");
+  state.personalFolder = action.payload;
+};
+const updatePersonalFolder = (state, action) => {
+  console.log(action.payload, "upload");
   state.personalFolder = action.payload;
 };
 const folders = createSlice({
@@ -74,6 +77,7 @@ const folders = createSlice({
     updateSharedBy,
     deleteShareFolders,
     getPersonalFolder,
+    updatePersonalFolder,
   },
   extraReducers: {
     [createFolder.fulfilled]: handleFulfilled,

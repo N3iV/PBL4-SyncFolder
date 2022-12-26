@@ -60,12 +60,13 @@ const Default = ({
     if (lastMessage !== null) {
       const { data, message } = JSON.parse(lastMessage?.data);
       console.log(message, "message from defaut");
+      console.log(data, "data from default");
       toast.success(message, {
         position: "top-right",
         autoClose: 2000,
       });
       if (isSharingSocket(message)) {
-        setIsSetPermission((prev) => !prev);
+        setIsSetPermission && setIsSetPermission((prev) => !prev);
         dispatch(foldersActions.updateSharedBy(data));
       }
     }
@@ -73,7 +74,6 @@ const Default = ({
   useEffect(() => {
     const _getFolder = async () => {
       try {
-        console.log("hehehehe");
         const res = await dispatch(getFolder(profile?.user?.id));
         const sharedFoldersRes = await dispatch(
           folderShareWithMe(profile?.user?.id)

@@ -39,9 +39,9 @@ const ModalInfo = ({ item }) => {
       onOk={handleInfoModalOk}
     >
       {currentInfo?.map((item) => (
-        <>
+        <div key={item?.email}>
           {item.role && (
-            <div key={item?.email} className="flex justify-between p-3">
+            <div className="flex justify-between p-3">
               <h1>{item?.email}</h1>
               <Tag color="green">
                 {item?.role?.updatePermission
@@ -52,7 +52,7 @@ const ModalInfo = ({ item }) => {
               </Tag>
             </div>
           )}
-        </>
+        </div>
       ))}
     </Modal>
   );

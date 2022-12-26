@@ -30,7 +30,6 @@ const FolderDetail = () => {
   const navigate = useNavigate();
 
   const getFolder = async () => {
-    console.log("test re get");
     const data = { id: profile?.user?.id, folderID: idFolder };
     const res = await dispatch(getFileById(data));
     unwrapResult(res);
@@ -61,8 +60,8 @@ const FolderDetail = () => {
       }
       if (isDeleteSocket(message)) {
         const folderName = message
-          .split("đã xóa thành công Directory")[1]
-          .trim();
+          .split("đã xóa thành công Directory")?.[1]
+          ?.trim();
         dispatch(foldersActions.deleteShareFolders(folderName));
       }
     }

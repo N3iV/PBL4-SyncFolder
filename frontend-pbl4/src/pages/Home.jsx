@@ -17,13 +17,10 @@ const Home = () => {
   const ref = useRef();
   const { profile } = useSelector((state) => state.auth);
   const { search } = useQuery();
-  console.log(search, "search qeury");
   const [searchRes, setSearchRes] = useState([]);
   const { sharedFolders, personalFolder } = useSelector(
     (state) => state.folders
   );
-  console.log(personalFolder, "ehhehee");
-  const [files, setFiles] = useState([]);
   const dispatch = useDispatch();
   const [currPage, setCurrPage] = useState(1);
   const [currFolder, setCurrFolder] = useState({});
@@ -53,18 +50,18 @@ const Home = () => {
   useEffect(() => {
     if (lastMessage !== null) {
       const { data, message } = JSON.parse(lastMessage?.data);
-      setFiles(data);
       toast.success(message, {
         position: "top-right",
         autoClose: 2000,
       });
+      dispatch(foldersActions.updatePersonalFolder(data));
       if (isSharingSocket(message)) {
         dispatch(foldersActions.updateSharedBy(data));
       }
       if (isDeleteSocket(message)) {
         const folderName = message
-          .split("đã xóa thành công Directory")[1]
-          .trim();
+          .split("đã xóa thành công Directory")?.[1]
+          ?.trim();
         dispatch(foldersActions.deleteShareFolders(folderName));
       }
     }
@@ -135,15 +132,6 @@ const Home = () => {
       showModalShare={isModalOpen}
     >
       <ModalInfo item={currFolder} />
-
-      {/* <Breadcrumb className="p-4" separator=">">
-        <Breadcrumb.Item className="text-xl">
-          Được chia sẻ với tôi
-        </Breadcrumb.Item>
-        <Breadcrumb.Item className="text-xl font-semibold">
-          Provo - Writing
-        </Breadcrumb.Item>
-      </Breadcrumb> */}
       <List
         className="h-3/4 mt-4"
         itemLayout="horizontal"
@@ -190,12 +178,12 @@ const Home = () => {
           </List.Item>
         )}
       />
-      {files.numberOfPage && (
+      {personalFolder?.files?.numberOfPage && (
         <div className="flex items-center justify-center mt-4">
           <Pagination
             defaultCurrent={currPage}
             current={currPage}
-            total={files.numberOfPage * 10}
+            total={personalFolder?.files?.numberOfPage * 10}
             onChange={onShowSizeChange}
           />
         </div>
