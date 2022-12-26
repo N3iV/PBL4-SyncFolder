@@ -11,9 +11,18 @@ import {
   Modal,
   Select,
   Typography,
+  Upload,
 } from "antd";
+import axios from "axios";
 import React, { useEffect, useMemo, useState } from "react";
-import { FaFolder, FaPlus, FaSearch, FaShare, FaUser } from "react-icons/fa";
+import {
+  FaCloudUploadAlt,
+  FaFolder,
+  FaPlus,
+  FaSearch,
+  FaShare,
+  FaUser,
+} from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -24,6 +33,7 @@ import {
   folderShareWithMe,
   getFileById,
   getFolder,
+  uploadFile,
 } from "../slices/folders.slice";
 import {
   convertDataPersonToSelectOptions,
@@ -45,6 +55,7 @@ const Default = ({
   const [searchVal, setSearchVal] = useState("");
   const [users, setUsers] = useState([]);
   const { profile } = useSelector((state) => state.auth);
+  const [uploadFiles, setUploadFiles] = useState([]);
   const dispatch = useDispatch();
   const { idFolder } = useParams();
 
@@ -203,6 +214,44 @@ const Default = ({
     navigate(`/?search=${searchVal}`);
     setSearchVal("");
   };
+  const [fileList, setFileList] = useState([]);
+  const [uploading, setUploading] = useState(false);
+  const props = {
+    onRemove: (file) => {
+      const index = fileList.indexOf(file);
+      const newFileList = fileList.slice();
+      newFileList.splice(index, 1);
+      setFileList(newFileList);
+    },
+    beforeUpload: (file) => {
+      setFileList([...fileList, file]);
+
+      return false;
+    },
+    fileList,
+  };
+  const handleUpload = async () => {
+    const formData = new FormData();
+    fileList.forEach((file) => formData.append("uploadFile", file));
+
+    try {
+      setUploading(true);
+      const response = await axios({
+        method: "post",
+        url: `http://localhost:8080/SyncFolderPBL4/api/folders/file/${
+          idFolder || profile?.file?.id
+        }/upload`,
+        data: formData,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setUploading(false);
+      navigate(0);
+      console.log(response, "res");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <Layout className="min-h-screen">
       <Header>
@@ -280,27 +329,50 @@ const Default = ({
       <Layout>
         <Sider
           style={{ width: "400px", minWidth: "400px" }}
-          className=" min-h-screen site-layout-background"
+          className=" min-h-screen  site-layout-background  "
         >
-          <Button
-            className="my-4 flex items-center justify-center w-3/4 rounded-3xl font-bold text-xl py-5"
-            icon={<FaPlus className="mr-3" />}
-            onClick={showModal}
-          >
-            Mới
-          </Button>
+          <div className="h-screen flex flex-col justify-between">
+            <div>
+              <div className="ml-4">
+                <Button
+                  className="my-4 flex items-center justify-center w-3/4 rounded-3xl font-bold text-xl py-5"
+                  icon={<FaPlus className="mr-3" />}
+                  onClick={showModal}
+                >
+                  Mới
+                </Button>
+              </div>
 
-          <Menu
-            mode="inline"
-            defaultSelectedKeys={["1"]}
-            defaultOpenKeys={["sub1"]}
-            style={{
-              height: "100%",
-              borderRight: 0,
-            }}
-            items={items}
-            onClick={onMenuSelect}
-          ></Menu>
+              <Menu
+                mode="inline"
+                defaultSelectedKeys={["1"]}
+                defaultOpenKeys={["sub1"]}
+                items={items}
+                onClick={onMenuSelect}
+              ></Menu>
+            </div>
+            <div className="ml-4 w-full mb-40 ">
+              <Upload {...props} className="w-full">
+                <Button
+                  className="flex items-center h-12 "
+                  icon={<FaCloudUploadAlt />}
+                >
+                  <span className="ml-2">Select File</span>
+                </Button>
+              </Upload>
+              <Button
+                type="primary"
+                onClick={handleUpload}
+                disabled={fileList.length === 0}
+                loading={uploading}
+                style={{
+                  marginTop: 16,
+                }}
+              >
+                {uploading ? "Uploading" : "Start Upload"}
+              </Button>
+            </div>
+          </div>
         </Sider>
         <Layout
           style={{
