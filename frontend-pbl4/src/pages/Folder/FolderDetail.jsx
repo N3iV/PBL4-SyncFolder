@@ -1,7 +1,15 @@
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, List, Pagination } from "antd";
+import { Button, List, Pagination, Tooltip } from "antd";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { FaFileAlt, FaFolder, FaInfo, FaShare, FaTrash } from "react-icons/fa";
+import {
+  FaDownload,
+  FaFileAlt,
+  FaFolder,
+  FaInfo,
+  FaShare,
+  FaTrash,
+} from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -9,7 +17,11 @@ import { useWebSocket } from "react-use-websocket/dist/lib/use-websocket";
 import ModalInfo from "../../components/ModalInfo";
 import { path } from "../../constant/path";
 import Default from "../../layout/Default";
-import { foldersActions, getFileById } from "../../slices/folders.slice";
+import {
+  downloadFile,
+  foldersActions,
+  getFileById,
+} from "../../slices/folders.slice";
 import { isDeleteSocket, isSharingSocket } from "../../utils/helper";
 const FolderDetail = () => {
   const dispatch = useDispatch();
@@ -115,6 +127,42 @@ const FolderDetail = () => {
   const handleSelectMenu = async (value) => {
     navigate(path.folders + `/${value.key}`);
   };
+  const handleDownload = (item) => {
+    console.log(item);
+    let url = "";
+    let isFolder = false;
+    if (item.type.name === "Directory") {
+      url = `http://localhost:8080/SyncFolderPBL4/api/folders/${item.id}/download`;
+      isFolder = true;
+    } else {
+      url = `http://localhost:8080/SyncFolderPBL4/api/folders/file/${item.id}/download`;
+    }
+    axios
+      .request({
+        url,
+        method: "GET",
+        responseType: "blob", //important
+      })
+
+      .then(({ data }) => {
+        const downloadUrl = window.URL.createObjectURL(new Blob([data]));
+
+        const link = document.createElement("a");
+
+        link.href = downloadUrl;
+
+        link.setAttribute(
+          "download",
+          !isFolder ? item.name : `${item.name}.zip`
+        ); //any other extension
+
+        document.body.appendChild(link);
+
+        link.click();
+
+        link.remove();
+      });
+  };
   return (
     <Default
       onMenuSelect={handleSelectMenu}
@@ -128,44 +176,57 @@ const FolderDetail = () => {
         itemLayout="horizontal"
         dataSource={files.files}
         renderItem={(item, idx) => (
-          <List.Item className="hover:bg-slate-200 px-4 flex justify-between">
-            <Link
-              to={`${path.folders}/${item.id}`}
-              className="flex items-center  cursor-pointer justify-between w-full"
-            >
-              <div className="flex items-center">
-                <span className="text-xl">{typeOfFile[item?.type?.name]}</span>
-                <span className="ml-4 text-xl text-gray-500">{item.name}</span>
-              </div>
-              <div>
-                <span className="inline-block ">{item.createdDate}</span>
-                <span className="inline-block ml-8">{item.modifiedDate}</span>
-              </div>
-            </Link>
-            {/* <a href={url} className="hidden" download={name} ref={ref}></a> */}
+          <Tooltip key={item.id} title={item.name}>
+            <List.Item className="hover:bg-slate-200 px-4 flex justify-between">
+              <Link
+                to={`${path.folders}/${item.id}`}
+                className="flex items-center  cursor-pointer justify-between w-full"
+              >
+                <div className="flex items-center">
+                  <span className="text-xl">
+                    {typeOfFile[item?.type?.name]}
+                  </span>
+                  <span className="ml-4 text-xl text-gray-500">
+                    {item.name}
+                  </span>
+                </div>
+                <div>
+                  <span className="inline-block ">{item.createdDate}</span>
+                  <span className="inline-block ml-8">{item.modifiedDate}</span>
+                </div>
+              </Link>
+              {/* <a href={url} className="hidden" download={name} ref={ref}></a> */}
 
-            <Button
-              shape="round"
-              className="ml-4"
-              onClick={() => showModalInfo(item)}
-            >
-              <FaInfo />
-            </Button>
-            <Button
-              shape="round"
-              className="ml-4"
-              onClick={() => handleShare(item.id)}
-            >
-              <FaShare />
-            </Button>
-            <Button
-              shape="round"
-              className="ml-4"
-              onClick={() => handleDelete(item)}
-            >
-              <FaTrash />
-            </Button>
-          </List.Item>
+              <Button
+                shape="round"
+                className="ml-12"
+                onClick={() => handleDownload(item)}
+              >
+                <FaDownload />
+              </Button>
+              <Button
+                shape="round"
+                className="ml-4"
+                onClick={() => showModalInfo(item)}
+              >
+                <FaInfo />
+              </Button>
+              <Button
+                shape="round"
+                className="ml-4"
+                onClick={() => handleShare(item.id)}
+              >
+                <FaShare />
+              </Button>
+              <Button
+                shape="round"
+                className="ml-4"
+                onClick={() => handleDelete(item)}
+              >
+                <FaTrash />
+              </Button>
+            </List.Item>
+          </Tooltip>
         )}
       />
       {files.numberOfPage ? (

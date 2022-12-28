@@ -30,3 +30,9 @@ export const isSharingSocket = (msg) =>
 export const isDeleteSocket = (msg) => msg.includes(" đã xóa");
 
 export const isCreateSocket = (msg) => msg.includes(" đã tạo");
+
+export const formatPath = (path) => {
+  const pathArr = path.split("\\");
+  const newPath = pathArr.slice(0, pathArr.length - 1).join("/");
+  return newPath;
+};

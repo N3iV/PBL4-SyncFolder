@@ -8,6 +8,7 @@ const foldersApi = {
     return http.get(`users/${data.id}/folders/${data.folderID}?page=1`);
   },
   downloadFile(id, config) {
+    console.log(id, config, "-=---------------");
     return http.get(`folders/file/${id}/download`, config);
   },
   createFolder(data) {
