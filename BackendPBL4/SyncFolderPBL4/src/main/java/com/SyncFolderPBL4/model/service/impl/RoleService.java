@@ -120,6 +120,10 @@ public class RoleService implements IRoleService {
 			UserRoleFileEntity parentRole = roleDao.getRoleByUserIdAndPath(roleId.getUserId(),
 					path.replace(File.separator, "%"));
 			if (parentRole != null) {
+				if(parentRole.isUpdatePermission() == false)
+				{
+					return null;
+				}
 				PermisUserMapper uMapper = new PermisUserMapper(Arrays.asList(roleId.getUserId()),
 																roleId.getFileId(),
 																parentRole.isReadPermission(),

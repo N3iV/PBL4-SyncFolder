@@ -93,8 +93,15 @@ public class UserWebSocket {
 				userRole = roleService.getRoleFromParent(roleId);
 				if(userRole == null)
 				{					
-					message = "File không tồn tại hoặc bạn không có quyền này";
-					senderResponse(new MessageReply(SystemConstant.SERVER_NAME, message,null));
+					message = "Bạn không có quyền này";
+					senderResponse(new MessageReply(SystemConstant.SERVER_NAME, message, null));
+					return;
+				}
+			} else {
+				if (userRole.isUpdatePermission() == false)
+				{
+					message = "Bạn không có quyền này";
+					senderResponse(new MessageReply(SystemConstant.SERVER_NAME, message, null));
 					return;
 				}
 			}
@@ -103,6 +110,24 @@ public class UserWebSocket {
 		// create folder feature
 		case "create":
 			FileCreateMapperJson fileInfoInput = gson.fromJson(messageFunc.getContentMsg(), FileCreateMapperJson.class);
+			RoleID roleIdCreate = new RoleID(users.get(session.getId()), fileInfoInput.getParentFolderId());
+			UserRoleFileEntity userRoleCreate = roleService.getRoleByRoleId(roleIdCreate);
+			if (userRoleCreate == null) {
+				userRole = roleService.getRoleFromParent(roleIdCreate);
+				if(userRole == null)
+				{					
+					message = "Bạn không có quyền này";
+					senderResponse(new MessageReply(SystemConstant.SERVER_NAME, message, null));
+					return;
+				}
+			} else {
+				if (userRoleCreate.isUpdatePermission() == false)
+				{
+					message = "Bạn không có quyền này";
+					senderResponse(new MessageReply(SystemConstant.SERVER_NAME, message, null));
+					return;
+				}
+			}
 			handleUploadWebsocketFile(fileInfoInput);
 			break;
 		case "permission":

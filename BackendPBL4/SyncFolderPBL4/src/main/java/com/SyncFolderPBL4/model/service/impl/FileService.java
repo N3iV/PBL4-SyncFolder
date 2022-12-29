@@ -49,6 +49,7 @@ public class FileService implements IFileService {
 
 	@Override
 	public FileEntity findOne(Integer fileId) {
+		HibernateUtils.checkTransactionAlreadyActive();
 		FileEntity result = null;
 		HibernateUtils.startTrans(fileDao);
 
