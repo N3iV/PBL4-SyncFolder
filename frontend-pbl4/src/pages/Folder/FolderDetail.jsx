@@ -174,7 +174,7 @@ const FolderDetail = () => {
       <List
         className="h-3/4 mt-4"
         itemLayout="horizontal"
-        dataSource={files.files}
+        dataSource={files?.files}
         renderItem={(item, idx) => (
           <Tooltip key={item.id} title={item.name}>
             <List.Item className="hover:bg-slate-200 px-4 flex justify-between">
@@ -229,7 +229,7 @@ const FolderDetail = () => {
           </Tooltip>
         )}
       />
-      {files.numberOfPage ? (
+      {files?.numberOfPage ? (
         <div className="flex items-center justify-center mt-4">
           <Pagination
             defaultCurrent={currPage}
